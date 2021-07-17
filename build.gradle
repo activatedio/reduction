@@ -25,20 +25,6 @@ subprojects {
 
   publishing {
 
-    publishing {
-
-        publications {
-           mavenJava(MavenPublication) {
-
-               groupId "io.activated.pipeline"
-               artifactId "pipeline-${project.name}"
-
-               from components.java
-           }
-        }
-
-    }
-
     repositories {
       maven {
         def repoBase = "https://nexus.authkit.com/repository"
