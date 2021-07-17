@@ -4,3 +4,70 @@ buildscript {
     }
 }
 
+plugins {
+    id 'maven-publish'
+    id 'net.researchgate.release' version '2.8.1'
+    id 'com.diffplug.gradle.spotless' version '4.5.1'
+}
+
+subprojects {
+
+  repositories {
+      mavenCentral()
+  }
+
+  spotless {
+      java {
+          googleJavaFormat()
+      }
+  }
+
+  publishing {
+
+    publications {
+       mavenJava(MavenPublication) {
+
+           groupId "io.activated.pipeline"
+           artifactId "pipeline-${project.name}"
+
+           from components.java
+       }
+    }
+
+    repositories {
+      maven {
+        def repoBase = "https://nexus.authkit.com/repository"
+        def releasesRepoUrl = "$repoBase/maven-releases"
+        def snapshotsRepoUrl = "$repoBase/maven-snapshots"
+        url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        credentials {
+          username "$authkitMavenUser"
+          password "$authkitMavenPassword"
+        }
+      }
+    }
+  }
+
+  repositories {
+      maven {
+        url 'https://nexus.authkit.com/repository/maven-all/'
+        credentials {
+          username "$authkitMavenUser"
+          password "$authkitMavenPassword"
+        }
+      }
+  }
+
+  sourceCompatibility = 11
+  targetCompatibility = 11
+
+  release {
+      afterReleaseBuild.dependsOn publish
+      git {
+          pushToRemote = false
+      }
+  }
+
+
+}
+
