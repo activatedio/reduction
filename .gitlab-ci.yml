@@ -38,6 +38,8 @@ publish:
 release:
   stage: release
   script: 
+    - git config --global user.email "ci@activated.io"
+    - git config --global user.name "CI"
     - git checkout master
     - gradle release 
   cache:
