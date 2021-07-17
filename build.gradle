@@ -65,5 +65,5 @@ subprojects {
 }
 
 release {
-    buildTasks = [ "build" ]
+    buildTasks = [ ]
 }
