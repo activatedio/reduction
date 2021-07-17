@@ -13,6 +13,12 @@ plugins {
 
 subprojects {
 
+  apply plugin: 'java-library'
+
+  apply plugin: 'maven-publish'
+
+  apply plugin: 'com.diffplug.gradle.spotless'
+
   repositories {
       mavenCentral()
   }
@@ -24,6 +30,16 @@ subprojects {
   }
 
   publishing {
+
+    publications {
+       mavenJava(MavenPublication) {
+
+           groupId "io.activated.pipeline"
+           artifactId "pipeline-${project.name}"
+
+           from components.java
+       }
+    }
 
     repositories {
       maven {
