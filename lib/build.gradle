@@ -50,8 +50,6 @@ targetCompatibility = 11
 
 release {
     afterReleaseBuild.dependsOn publish
-    preTagCommitMessage = '[ci skip] [Gradle Release Plugin] - pre tag commit: '
-    tagCommitMessage = '[ci skip] [Gradle Release Plugin] - creating tag: '
     git {
         pushToRemote = false
     }

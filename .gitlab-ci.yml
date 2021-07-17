@@ -45,7 +45,7 @@ release:
     - git config --global user.name "CI"
     - git checkout master
     - gradle release 
-    - git push origin master
+    - git push -o ci.skip origin master
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
