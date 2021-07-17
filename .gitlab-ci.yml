@@ -38,10 +38,14 @@ publish:
 release:
   stage: release
   script: 
+    - export CI_PUSH_REPO=`echo "$CI_REPOSITORY_URL $OAUTH2_ACCESS_TOKEN" | sed 's/^.*\(@.*\)\s\(.*\)/https:\/\/oauth2:\2\1/g'`
+    - git config http.sslverify false
+    - git remote set-url --push origin "${CI_PUSH_REPO}"
     - git config --global user.email "ci@activated.io"
     - git config --global user.name "CI"
     - git checkout master
     - gradle release 
+    - git push origin master
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
