@@ -1,0 +1,48 @@
+image: gradle:7.1.0-jdk11
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+services:
+  - redis:latest
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - ln -s $JAVA_HOME ./jdk
+
+stages:
+  - verify
+  - publish
+  - release
+
+verify:
+  stage: verify
+  script: gradle --build-cache check
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+
+publish:
+  stage: publish
+  script: gradle --build-cache publish
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+  except:
+    - master
+
+release:
+  stage: release
+  script: gradle release 
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+  only:
+    - master
+
