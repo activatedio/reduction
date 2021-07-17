@@ -10,6 +10,11 @@ repositories {
 }
 
 publishing {
+
+  publications {
+     mavenJava(MavenPublication)
+  }
+
   repositories {
     maven {
       def repoBase = "https://nexus.authkit.com/repository"
