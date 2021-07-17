@@ -37,7 +37,9 @@ publish:
 
 release:
   stage: release
-  script: gradle release 
+  script: 
+    - git checkout master
+    - gradle release 
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
