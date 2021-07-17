@@ -1,0 +1,14 @@
+plugins {
+  id 'io.micronaut.library' version "${micronautVersion}"
+}
+
+micronaut {
+  version = "${micronautVersion}"
+}
+
+dependencies {
+    api project(":core")
+    api group: 'io.micronaut.graphql', name: 'micronaut-graphql', version: '2.3.1'
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}

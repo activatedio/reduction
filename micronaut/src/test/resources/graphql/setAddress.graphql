@@ -1,0 +1,7 @@
+mutation {
+    cartSetAddress(action: {
+        addressType: "S", address: {street: "New Street Value 2", state: "WA", city: "Test City 4"}}
+    ) {
+      state {shippingAddress{street, city}}
+    }
+}
