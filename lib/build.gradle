@@ -50,6 +50,9 @@ targetCompatibility = 11
 
 release {
     afterReleaseBuild.dependsOn publish
+    git {
+        pushToRemote = false
+    }
 }
 
 dependencies {
