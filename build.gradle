@@ -56,11 +56,14 @@ subprojects {
 
   release {
       afterReleaseBuild.dependsOn publish
+      buildTasks = [ "build" ]
       git {
           pushToRemote = false
       }
   }
 
-
 }
 
+release {
+    buildTasks = [ "build" ]
+}
