@@ -12,7 +12,13 @@ repositories {
 publishing {
 
   publications {
-     mavenJava(MavenPublication)
+     mavenJava(MavenPublication) {
+
+       groupId "io.activated.pipeline"
+       artifactId "pipeline"
+
+       from components.java
+     }
   }
 
   repositories {
