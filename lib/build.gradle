@@ -1,0 +1,50 @@
+
+plugins {
+    id 'maven-publish'
+    id 'java-library'
+    id 'net.researchgate.release' version '2.8.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+publishing {
+  repositories {
+    maven {
+      def repoBase = "https://nexus.authkit.com/repository"
+      def releasesRepoUrl = "$repoBase/maven-releases"
+      def snapshotsRepoUrl = "$repoBase/maven-snapshots"
+      url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+      credentials {
+        username "$authkitMavenUser"
+        password "$authkitMavenPassword"
+      }
+    }
+  }
+}
+
+repositories {
+    maven {
+      url 'https://repo.authkit.io/repository/maven-all/'
+      credentials {
+        username "$authkitMavenUser"
+        password "$authkitMavenPassword"
+      }
+    }
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:30.0-jre'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
