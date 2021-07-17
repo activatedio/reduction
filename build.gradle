@@ -5,10 +5,10 @@ buildscript {
 }
 
 plugins {
-    //id 'java-library'
+    id 'java-library'
     id 'maven-publish'
     id 'net.researchgate.release' version '2.8.1'
-//    id 'com.diffplug.gradle.spotless' version '4.5.1'
+    id 'com.diffplug.gradle.spotless' version '4.5.1'
 }
 
 subprojects {
@@ -17,13 +17,11 @@ subprojects {
       mavenCentral()
   }
 
-/*
   spotless {
       java {
           googleJavaFormat()
       }
   }
-  */
 
   publishing {
 
@@ -56,7 +54,6 @@ subprojects {
 
   release {
       afterReleaseBuild.dependsOn publish
-      buildTasks = [ "build" ]
       git {
           pushToRemote = false
       }
@@ -64,6 +61,3 @@ subprojects {
 
 }
 
-release {
-    buildTasks = [ ]
-}
