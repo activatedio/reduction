@@ -1,36 +1,27 @@
 package io.activated.pipeline.server.internal;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.function.Supplier;
-import javax.servlet.*;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.filter.FilterChain;
+import io.micronaut.http.filter.HttpFilter;
+import org.reactivestreams.Publisher;
 
-import io.activated.pipeline.PipelineException;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
-
-public class SessionIdFilter extends GenericFilterBean {
+@Filter("/**")
+public class SessionIdFilter implements HttpFilter {
 
   private static final String HEADER_NAME = "pipeline-session-id";
 
-  // private final Supplier<String> sessionIdSupplier = new SessionIdSupplierImpl();
-
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
+  public Publisher<? extends HttpResponse<?>> doFilter(HttpRequest<?> request, FilterChain chain) {
 
-    HttpServletRequest req = (HttpServletRequest) request;
-
-    var sessionId = req.getHeader(HEADER_NAME);
+    var sessionId = request.getHeaders().get(HEADER_NAME);
 
     if (sessionId != null) {
-      req.setAttribute(Constants.SESSION_ID_ATTRIBUTE_NAME, sessionId);
+      request.setAttribute(Constants.SESSION_ID_ATTRIBUTE_NAME, sessionId);
     }
 
-    chain.doFilter(request, response);
+    return chain.proceed(request);
   }
 
 }

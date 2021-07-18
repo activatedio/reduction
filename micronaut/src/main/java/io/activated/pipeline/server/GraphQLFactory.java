@@ -6,46 +6,35 @@ import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.builtin.security.SecurityStateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
-import io.activated.pipeline.env.SessionIdSupplier;
 import io.activated.pipeline.internal.*;
-import io.activated.pipeline.key.KeyStrategy;
-import io.activated.pipeline.key.SessionKeyStrategy;
 import io.activated.pipeline.repository.RedisStateRepository;
 import io.activated.pipeline.repository.StateRepository;
 import io.activated.pipeline.server.internal.MapTypeCache;
-import io.activated.pipeline.server.internal.SessionIdFilter;
 import io.lettuce.core.RedisClient;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import io.micronaut.context.annotation.Factory;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class PipelineSpringConfig {
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PipelineSpringConfig.class);
+@Factory
+public class GraphQLFactory {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(GraphQLFactory.class);
 
   private static final String QUERY_ROOT = "Query";
   private static final String MUTATION_ROOT = "Mutation";
 
-  @Bean
-  public FilterRegistrationBean sessionIdFilter() {
-    final FilterRegistrationBean reg = new FilterRegistrationBean(new SessionIdFilter());
-    reg.addUrlPatterns("/*");
-    reg.setOrder(1);
-    return reg;
-  }
-
-  @Bean
-  @Autowired
+  @Singleton
+  @Inject
   static GraphQLSchema pipelineSchema(
       final Registry pipelineRegistry,
       final TypeFactory typeFactory,
@@ -148,20 +137,14 @@ public class PipelineSpringConfig {
     return new String(c);
   }
 
-  @Bean
-  @Autowired
-  KeyStrategy keyStrategy(SessionIdSupplier sessionIdSupplier) {
-    return new SessionKeyStrategy(sessionIdSupplier);
-  }
-
-  @Bean
+  @Singleton
   TypeFactory typeFactory() {
     return new TypeFactoryImpl(
         new MapTypeCache<GraphQLInputType>(), new MapTypeCache<GraphQLOutputType>());
   }
 
-  @Bean
-  @Autowired
+  @Singleton
+  @Inject
   StateRepository stateRepository(MainRuntimeConfiguration configuration) {
 
     var host = configuration.getRedisHost();
@@ -176,8 +159,8 @@ public class PipelineSpringConfig {
     return new RedisStateRepository(client.connect(), config);
   }
 
-  @Bean
-  @Autowired
+  @Singleton
+  @Inject
   StateAccess stateAccess(
       Registry registry, StateRepository stateRepository, ChangeLogger changeLogger) {
     return new GuardedStateAccess(
@@ -185,8 +168,8 @@ public class PipelineSpringConfig {
         new StateAccessImpl(registry, stateRepository, new SnapshotterImpl(), changeLogger));
   }
 
-  @Bean
-  @Autowired
+  @Singleton
+  @Inject
   Pipeline pipeline(
       Registry registry,
       StateAccess stateAccess,
@@ -196,8 +179,8 @@ public class PipelineSpringConfig {
         registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger);
   }
 
-  @Bean
-  @Autowired
+  @Singleton
+  @Inject
   ChangeLogger changeLogger(ChangeLoggerRuntimeConfiguration configuration)
       throws PulsarClientException {
 
@@ -211,8 +194,8 @@ public class PipelineSpringConfig {
     return new Slf4JChangeLogger();
   }
 
-  @Bean
-  @Autowired
+  @Singleton
+  @Inject
   SecurityStateGuard securityStateGuard(PrincipalSupplier principalSupplier) {
     return new SecurityStateGuard(principalSupplier);
   }

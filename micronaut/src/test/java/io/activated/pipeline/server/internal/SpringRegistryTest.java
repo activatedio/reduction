@@ -11,7 +11,6 @@ import io.activated.pipeline.InitialState;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.StateGuard;
-import io.activated.pipeline.env.ObjectProvider;
 import io.activated.pipeline.internal.InitialStateKey;
 import io.activated.pipeline.internal.ReducerKey;
 import io.activated.pipeline.key.KeyStrategy;

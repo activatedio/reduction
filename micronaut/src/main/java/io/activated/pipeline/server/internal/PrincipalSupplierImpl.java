@@ -1,25 +1,25 @@
 package io.activated.pipeline.server.internal;
 
 import io.activated.pipeline.env.PrincipalSupplier;
-import java.security.Principal;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.runtime.http.scope.RequestScope;
 
-@Component
-@Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+import javax.inject.Inject;
+import java.security.Principal;
+import java.util.Optional;
+
+@RequestScope
 public class PrincipalSupplierImpl implements PrincipalSupplier {
 
-  private final HttpServletRequest request;
+  private final HttpRequest<?> request;
 
-  public PrincipalSupplierImpl(HttpServletRequest request) {
+  @Inject
+  public PrincipalSupplierImpl(HttpRequest request) {
     this.request = request;
   }
 
   @Override
-  public Principal get() {
+  public Optional<Principal> get() {
     return request.getUserPrincipal();
   }
 }

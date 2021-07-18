@@ -1,10 +1,8 @@
 package io.activated.pipeline.server;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import io.micronaut.context.annotation.ConfigurationProperties;
 
-@Configuration
-@ConfigurationProperties(prefix = "pipeline.changelogging")
+@ConfigurationProperties("pipeline.changelogging")
 public class ChangeLoggerRuntimeConfiguration {
 
   private String type;

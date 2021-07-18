@@ -6,17 +6,18 @@ import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DataFetcherFactoryImpl.class);
 
   private final Pipeline pipeline;
 
-  @Autowired
+  @Inject
   public DataFetcherFactoryImpl(Pipeline pipeline) {
     this.pipeline = pipeline;
   }

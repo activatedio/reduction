@@ -32,6 +32,10 @@ public class InitialStateKey<S> implements Serializable {
     return null;
   }
 
+  public Class<S> getStateType() {
+    return stateType;
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) {
