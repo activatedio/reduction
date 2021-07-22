@@ -9,6 +9,7 @@ import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.env.PrincipalSupplier;
 import io.activated.pipeline.env.SessionIdSupplier;
 import java.security.Principal;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,7 +71,7 @@ public class SessionUserUpgradeKeyStrategyTest {
     var sessionId = "test-session-id";
 
     when(sessionIdSupplier.get()).thenReturn(sessionId);
-    when(principalSupplier.get()).thenReturn(null);
+    when(principalSupplier.get()).thenReturn(Optional.empty());
 
     var got = unit.get();
 
@@ -102,7 +103,7 @@ public class SessionUserUpgradeKeyStrategyTest {
         };
 
     when(sessionIdSupplier.get()).thenReturn(sessionId);
-    when(principalSupplier.get()).thenReturn(principal);
+    when(principalSupplier.get()).thenReturn(Optional.of(principal));
 
     var got = unit.get();
 

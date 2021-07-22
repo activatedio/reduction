@@ -1,5 +1,5 @@
 plugins {
-  id 'io.micronaut.library' version "${micronautVersion}"
+  id 'io.micronaut.library' version "2.0.2"
 }
 
 micronaut {
@@ -8,7 +8,8 @@ micronaut {
 
 dependencies {
     api project(":core")
-    api group: 'io.micronaut.graphql', name: 'micronaut-graphql', version: '2.3.1'
+    implementation group: 'com.graphql-java', name: 'graphql-java', version: '16.2'
+    implementation "io.micronaut:micronaut-http-server:${micronautVersion}"
+    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
     testImplementation("io.micronaut.test:micronaut-test-junit5")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

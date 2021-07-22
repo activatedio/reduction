@@ -21,15 +21,16 @@ public class SessionUserUpgradeKeyStrategy implements KeyStrategy {
   public Key get() {
 
     var sessionId = sessionIdSupplier.get();
-    String userId = null;
-
-    var principal = princpalSupplier.get();
-    if (principal != null) {
-      userId = principal.getName();
-    }
 
     if (isEmpty(sessionId)) {
       throw new PipelineException("Could not obtain key from session");
+    }
+
+    String userId = null;
+
+    var principal = princpalSupplier.get();
+    if (principal.isPresent()) {
+      userId = principal.get().getName();
     }
 
     var result = new Key();

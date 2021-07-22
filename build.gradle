@@ -65,8 +65,28 @@ subprojects {
       }
   }
 
+  java {
+      sourceCompatibility = JavaVersion.toVersion("11")
+      targetCompatibility = JavaVersion.toVersion("11")
+  }
+
+/*
   sourceCompatibility = 11
   targetCompatibility = 11
+  */
+
+  dependencies {
+      implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+      implementation 'com.google.guava:guava:30.0-jre'
+      testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.15.0'
+      testImplementation group: 'io.activated.base', name: 'activated-base', version: '0.2.0'
+      testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
+      testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
+      testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.6.0'
+      testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+      testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+      testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  }
 
   release {
       afterReleaseBuild.dependsOn publish

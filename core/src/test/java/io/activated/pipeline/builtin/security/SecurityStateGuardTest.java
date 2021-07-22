@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import io.activated.pipeline.env.PrincipalSupplier;
 import java.security.Principal;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -32,7 +33,7 @@ public class SecurityStateGuardTest {
 
     var unit = new SecurityStateGuard(principalSupplier);
 
-    when(principalSupplier.get()).thenReturn(principal);
+    when(principalSupplier.get()).thenReturn(Optional.of(principal));
 
     unit.guardGlobal();
 
@@ -60,7 +61,7 @@ public class SecurityStateGuardTest {
 
     var unit = new SecurityStateGuard(principalSupplier);
 
-    when(principalSupplier.get()).thenReturn(principal);
+    when(principalSupplier.get()).thenReturn(Optional.of(principal));
 
     unit.guard(new Object());
 
