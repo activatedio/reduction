@@ -3,7 +3,6 @@ package io.activated.pipeline.micronaut.e2e;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.annotations.Operation;
-
 import javax.inject.Singleton;
 
 @Operation

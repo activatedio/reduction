@@ -19,24 +19,21 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.micronaut.e2e.domain.ToDo;
 import io.activated.pipeline.micronaut.e2e.repository.ToDoRepository;
-
 import javax.inject.Singleton;
 
-/**
- * @author Marcel Overdijk
- */
+/** @author Marcel Overdijk */
 @Singleton
 @SuppressWarnings("Duplicates")
 public class ToDosDataFetcher implements DataFetcher<Iterable<ToDo>> {
 
-    private final ToDoRepository toDoRepository;
+  private final ToDoRepository toDoRepository;
 
-    public ToDosDataFetcher(ToDoRepository toDoRepository) {
-        this.toDoRepository = toDoRepository;
-    }
+  public ToDosDataFetcher(ToDoRepository toDoRepository) {
+    this.toDoRepository = toDoRepository;
+  }
 
-    @Override
-    public Iterable<ToDo> get(DataFetchingEnvironment env) {
-        return toDoRepository.findAll();
-    }
+  @Override
+  public Iterable<ToDo> get(DataFetchingEnvironment env) {
+    return toDoRepository.findAll();
+  }
 }

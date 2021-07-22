@@ -2,7 +2,6 @@ package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.runtime.http.scope.RequestScope;
-
 import javax.inject.Named;
 
 @RequestScope

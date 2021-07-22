@@ -3,12 +3,11 @@ package io.activated.pipeline.micronaut;
 import com.google.common.collect.Sets;
 import graphql.Scalars;
 import graphql.schema.*;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.util.Set;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class TypeFactoryImpl implements TypeFactory {

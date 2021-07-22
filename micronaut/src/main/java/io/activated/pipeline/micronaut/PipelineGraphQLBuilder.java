@@ -1,14 +1,12 @@
 package io.activated.pipeline.micronaut;
 
-import graphql.GraphQL;
 import graphql.schema.*;
 import io.activated.pipeline.internal.*;
 import io.activated.pipeline.micronaut.internal.MapTypeCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class PipelineGraphQLBuilder {
@@ -22,24 +20,25 @@ public class PipelineGraphQLBuilder {
   private final DataFetcherFactory dataFetcherFactory;
 
   @Inject
-  public PipelineGraphQLBuilder(final Registry pipelineRegistry, final DataFetcherFactory dataFetcherFactory) {
+  public PipelineGraphQLBuilder(
+      final Registry pipelineRegistry, final DataFetcherFactory dataFetcherFactory) {
     this.pipelineRegistry = pipelineRegistry;
     this.dataFetcherFactory = dataFetcherFactory;
   }
 
   public GraphQLSchema create() {
 
-      var registry = GraphQLCodeRegistry.newCodeRegistry();
-      var qObj = GraphQLObjectType.newObject().name(QUERY_ROOT);
-      var mObj = GraphQLObjectType.newObject().name(MUTATION_ROOT);
+    var registry = GraphQLCodeRegistry.newCodeRegistry();
+    var qObj = GraphQLObjectType.newObject().name(QUERY_ROOT);
+    var mObj = GraphQLObjectType.newObject().name(MUTATION_ROOT);
 
-      doBuild(qObj, mObj, registry);
+    doBuild(qObj, mObj, registry);
 
-      var builder = GraphQLSchema.newSchema();
-      builder = builder.query(qObj);
-      builder = builder.mutation(mObj);
-      builder.codeRegistry(registry.build());
-      return builder.build();
+    var builder = GraphQLSchema.newSchema();
+    builder = builder.query(qObj);
+    builder = builder.mutation(mObj);
+    builder.codeRegistry(registry.build());
+    return builder.build();
   }
 
   public GraphQLSchema build(final GraphQLSchema existingSchema) {
@@ -56,11 +55,14 @@ public class PipelineGraphQLBuilder {
     return builder.build();
   }
 
-  private void doBuild(GraphQLObjectType.Builder qObj, GraphQLObjectType.Builder mObj,
-                               GraphQLCodeRegistry.Builder registry) {
+  private void doBuild(
+      GraphQLObjectType.Builder qObj,
+      GraphQLObjectType.Builder mObj,
+      GraphQLCodeRegistry.Builder registry) {
 
-    var typeFactory = new TypeFactoryImpl(
-        new MapTypeCache<GraphQLInputType>(), new MapTypeCache<GraphQLOutputType>());
+    var typeFactory =
+        new TypeFactoryImpl(
+            new MapTypeCache<GraphQLInputType>(), new MapTypeCache<GraphQLOutputType>());
 
     var stateTypes = pipelineRegistry.getStateTypes();
 
@@ -98,7 +100,6 @@ public class PipelineGraphQLBuilder {
       registry =
           registry.dataFetcher(FieldCoordinates.coordinates(MUTATION_ROOT, mutationName), dFetch);
     }
-
   }
 
   private static GraphQLOutputType makeGetType(final String name, final GraphQLOutputType oType) {
@@ -121,5 +122,4 @@ public class PipelineGraphQLBuilder {
     c[0] = Character.toLowerCase(c[0]);
     return new String(c);
   }
-
 }

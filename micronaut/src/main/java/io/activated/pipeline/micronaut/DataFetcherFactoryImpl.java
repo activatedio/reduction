@@ -4,12 +4,10 @@ import graphql.schema.DataFetcher;
 import io.activated.pipeline.GetResult;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class DataFetcherFactoryImpl implements DataFetcherFactory {

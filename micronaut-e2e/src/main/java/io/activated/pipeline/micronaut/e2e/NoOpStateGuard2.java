@@ -1,10 +1,9 @@
 package io.activated.pipeline.micronaut.e2e;
 
 import io.activated.pipeline.StateGuard;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
 
 @Singleton
 public class NoOpStateGuard2 implements StateGuard<Cart> {

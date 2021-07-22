@@ -2,7 +2,6 @@ package io.activated.pipeline.micronaut.e2e;
 
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.annotations.Initial;
-
 import javax.inject.Singleton;
 
 @Initial
