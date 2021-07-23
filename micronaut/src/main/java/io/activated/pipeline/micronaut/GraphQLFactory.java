@@ -10,15 +10,14 @@ import io.activated.pipeline.repository.RedisStateRepository;
 import io.activated.pipeline.repository.StateRepository;
 import io.lettuce.core.RedisClient;
 import io.micronaut.context.annotation.Factory;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Factory
 public class GraphQLFactory {

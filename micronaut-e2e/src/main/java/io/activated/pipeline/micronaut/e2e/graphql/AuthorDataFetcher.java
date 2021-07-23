@@ -19,22 +19,18 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.micronaut.e2e.domain.Author;
 import io.activated.pipeline.micronaut.e2e.domain.ToDo;
+import java.util.concurrent.CompletionStage;
+import javax.inject.Singleton;
 import org.dataloader.DataLoader;
 
-import javax.inject.Singleton;
-import java.util.concurrent.CompletionStage;
-
-/**
- * @author Alexey Zhokhov
- */
+/** @author Alexey Zhokhov */
 @Singleton
 public class AuthorDataFetcher implements DataFetcher<CompletionStage<Author>> {
 
-    @Override
-    public CompletionStage<Author> get(DataFetchingEnvironment environment) throws Exception {
-        ToDo toDo = environment.getSource();
-        DataLoader<String, Author> authorDataLoader = environment.getDataLoader("author");
-        return authorDataLoader.load(toDo.getAuthorId());
-    }
-
+  @Override
+  public CompletionStage<Author> get(DataFetchingEnvironment environment) throws Exception {
+    ToDo toDo = environment.getSource();
+    DataLoader<String, Author> authorDataLoader = environment.getDataLoader("author");
+    return authorDataLoader.load(toDo.getAuthorId());
+  }
 }

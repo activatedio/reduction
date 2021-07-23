@@ -15,45 +15,41 @@
  */
 package io.activated.pipeline.micronaut.e2e.graphql;
 
+import static java.util.stream.Collectors.toMap;
+
 import io.activated.pipeline.micronaut.e2e.domain.Author;
 import io.activated.pipeline.micronaut.e2e.repository.AuthorRepository;
 import io.micronaut.scheduling.TaskExecutors;
-import org.dataloader.MappedBatchLoader;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.dataloader.MappedBatchLoader;
 
-import static java.util.stream.Collectors.toMap;
-
-/**
- * @author Alexey Zhokhov
- */
+/** @author Alexey Zhokhov */
 @Singleton
 @SuppressWarnings("Duplicates")
 public class AuthorDataLoader implements MappedBatchLoader<String, Author> {
 
-    private final AuthorRepository authorRepository;
-    private final ExecutorService executor;
+  private final AuthorRepository authorRepository;
+  private final ExecutorService executor;
 
-    public AuthorDataLoader(AuthorRepository authorRepository,
-                            @Named(TaskExecutors.IO) ExecutorService executor) {
-        this.authorRepository = authorRepository;
-        this.executor = executor;
-    }
+  public AuthorDataLoader(
+      AuthorRepository authorRepository, @Named(TaskExecutors.IO) ExecutorService executor) {
+    this.authorRepository = authorRepository;
+    this.executor = executor;
+  }
 
-    @Override
-    public CompletionStage<Map<String, Author>> load(Set<String> keys) {
-        return CompletableFuture.supplyAsync(() ->
-                authorRepository
-                        .findAllById(keys)
-                        .stream()
-                        .collect(toMap(Author::getId, Function.identity())), executor);
-    }
-
+  @Override
+  public CompletionStage<Map<String, Author>> load(Set<String> keys) {
+    return CompletableFuture.supplyAsync(
+        () ->
+            authorRepository.findAllById(keys).stream()
+                .collect(toMap(Author::getId, Function.identity())),
+        executor);
+  }
 }

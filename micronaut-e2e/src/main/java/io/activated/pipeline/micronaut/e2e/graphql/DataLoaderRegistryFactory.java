@@ -22,27 +22,24 @@ import org.dataloader.DataLoaderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Alexey Zhokhov
- */
+/** @author Alexey Zhokhov */
 @Factory
 public class DataLoaderRegistryFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DataLoaderRegistryFactory.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DataLoaderRegistryFactory.class);
 
-    private final AuthorDataLoader authorDataLoader;
+  private final AuthorDataLoader authorDataLoader;
 
-    public DataLoaderRegistryFactory(AuthorDataLoader authorDataLoader) {
-        this.authorDataLoader = authorDataLoader;
-    }
+  public DataLoaderRegistryFactory(AuthorDataLoader authorDataLoader) {
+    this.authorDataLoader = authorDataLoader;
+  }
 
-    @SuppressWarnings("unused")
-    @RequestScope
-    public DataLoaderRegistry dataLoaderRegistry() {
-        DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
-        dataLoaderRegistry.register("author", DataLoader.newMappedDataLoader(authorDataLoader));
-        LOG.trace("Created new data loader registry");
-        return dataLoaderRegistry;
-    }
-
+  @SuppressWarnings("unused")
+  @RequestScope
+  public DataLoaderRegistry dataLoaderRegistry() {
+    DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
+    dataLoaderRegistry.register("author", DataLoader.newMappedDataLoader(authorDataLoader));
+    LOG.trace("Created new data loader registry");
+    return dataLoaderRegistry;
+  }
 }

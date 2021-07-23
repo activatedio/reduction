@@ -1,5 +1,7 @@
 package io.activated.pipeline.micronaut.internal;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.google.common.collect.Sets;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.env.SessionIdSupplier;
@@ -11,11 +13,8 @@ import io.activated.pipeline.micronaut.fixtures.*;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import javax.inject.Inject;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.*;
 
 @MicronautTest
 public class MicronautRegistryTest {
@@ -24,7 +23,7 @@ public class MicronautRegistryTest {
 
   @Inject private ApplicationContext applicationContext;
 
-  private SessionIdSupplier  sessionIdSupplier;
+  private SessionIdSupplier sessionIdSupplier;
 
   private final ReducerKey<DummyState, DummyAction> reducerKey =
       ReducerKey.create(DummyState.class, DummyAction.class);
@@ -38,12 +37,13 @@ public class MicronautRegistryTest {
     var config = new MainRuntimeConfiguration();
     config.setScanPackages(new String[] {"io.activated.pipeline.micronaut.fixtures"});
 
-    sessionIdSupplier = new SessionIdSupplier() {
-      @Override
-      public String get() {
-        return "test-session-id";
-      }
-    };
+    sessionIdSupplier =
+        new SessionIdSupplier() {
+          @Override
+          public String get() {
+            return "test-session-id";
+          }
+        };
 
     unit = new MicronautRegistry(applicationContext, sessionIdSupplier, config);
   }
@@ -52,7 +52,7 @@ public class MicronautRegistryTest {
   public void constructor_emptyScanPackages() {
 
     var config = new MainRuntimeConfiguration();
-    config.setScanPackages(new String[]{});
+    config.setScanPackages(new String[] {});
     // Should not throw an exception
     new MicronautRegistry(applicationContext, sessionIdSupplier, config);
   }
@@ -60,18 +60,24 @@ public class MicronautRegistryTest {
   @Test
   public void constructor_nullConfiguration() {
 
-    assertThatThrownBy(() -> {
-      new MicronautRegistry(applicationContext, sessionIdSupplier, null);
-    }).isInstanceOf(NullPointerException.class).hasMessage("Argument [configuration] cannot be null");
+    assertThatThrownBy(
+            () -> {
+              new MicronautRegistry(applicationContext, sessionIdSupplier, null);
+            })
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("Argument [configuration] cannot be null");
   }
 
   @Test
   public void constructor_nullScanPackages() {
 
-    assertThatThrownBy(() -> {
-      var config = new MainRuntimeConfiguration();
-      new MicronautRegistry(applicationContext, sessionIdSupplier, config);
-    }).isInstanceOf(NullPointerException.class).hasMessage("Argument [configuration.scanPackages] cannot be null");
+    assertThatThrownBy(
+            () -> {
+              var config = new MainRuntimeConfiguration();
+              new MicronautRegistry(applicationContext, sessionIdSupplier, config);
+            })
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("Argument [configuration.scanPackages] cannot be null");
   }
 
   @Test

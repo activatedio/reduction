@@ -19,32 +19,29 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.micronaut.e2e.domain.ToDo;
 import io.activated.pipeline.micronaut.e2e.repository.ToDoRepository;
-
 import javax.inject.Singleton;
 
-/**
- * @author Marcel Overdijk
- */
+/** @author Marcel Overdijk */
 @Singleton
 @SuppressWarnings("Duplicates")
 public class CompleteToDoDataFetcher implements DataFetcher<Boolean> {
 
-    private final ToDoRepository toDoRepository;
+  private final ToDoRepository toDoRepository;
 
-    public CompleteToDoDataFetcher(ToDoRepository toDoRepository) {
-        this.toDoRepository = toDoRepository;
-    }
+  public CompleteToDoDataFetcher(ToDoRepository toDoRepository) {
+    this.toDoRepository = toDoRepository;
+  }
 
-    @Override
-    public Boolean get(DataFetchingEnvironment env) {
-        String id = env.getArgument("id");
-        ToDo toDo = toDoRepository.findById(id);
-        if (toDo != null) {
-            toDo.setCompleted(true);
-            toDoRepository.save(toDo);
-            return true;
-        } else {
-            return false;
-        }
+  @Override
+  public Boolean get(DataFetchingEnvironment env) {
+    String id = env.getArgument("id");
+    ToDo toDo = toDoRepository.findById(id);
+    if (toDo != null) {
+      toDo.setCompleted(true);
+      toDoRepository.save(toDo);
+      return true;
+    } else {
+      return false;
     }
+  }
 }

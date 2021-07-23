@@ -1,8 +1,6 @@
 package io.activated.pipeline.micronaut;
 
-
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
 
 @ConfigurationProperties("pipeline.changelogger")
 public class ChangeLoggerRuntimeConfiguration {

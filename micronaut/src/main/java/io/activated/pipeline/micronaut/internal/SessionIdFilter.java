@@ -23,9 +23,10 @@ public class SessionIdFilter implements HttpFilter {
       SESSION_ID_HOLDER.set(sessionId);
     }
 
-    return Flowable.fromPublisher(chain.proceed(request)).doFinally(() -> {
-      SESSION_ID_HOLDER.set(null);
-    });
-
+    return Flowable.fromPublisher(chain.proceed(request))
+        .doFinally(
+            () -> {
+              SESSION_ID_HOLDER.set(null);
+            });
   }
 }

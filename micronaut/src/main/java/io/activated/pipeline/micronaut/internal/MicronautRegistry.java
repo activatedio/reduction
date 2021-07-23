@@ -20,7 +20,6 @@ import io.activated.pipeline.micronaut.MainRuntimeConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.io.scan.ClassPathAnnotationScanner;
 import io.micronaut.core.util.ArgumentUtils;
-
 import java.util.*;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,9 +38,10 @@ public class MicronautRegistry implements Registry {
   private KeyStrategy defaultKeyStrategy;
 
   @Inject
-  public MicronautRegistry(final ApplicationContext applicationContext,
-                           @Named("request") final SessionIdSupplier sessionIdSupplier,
-                           final MainRuntimeConfiguration configuration) {
+  public MicronautRegistry(
+      final ApplicationContext applicationContext,
+      @Named("request") final SessionIdSupplier sessionIdSupplier,
+      final MainRuntimeConfiguration configuration) {
 
     this.defaultKeyStrategy = new SessionKeyStrategy(sessionIdSupplier);
     this.applicationContext = applicationContext;

@@ -1,7 +1,6 @@
 package io.activated.pipeline.micronaut.e2e;
 
 import io.activated.pipeline.annotations.State;
-
 import java.util.Objects;
 
 @State(guards = {NoOpStateGuard1.class, NoOpStateGuard2.class})

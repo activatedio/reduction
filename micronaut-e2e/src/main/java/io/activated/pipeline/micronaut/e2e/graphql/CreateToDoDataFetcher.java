@@ -21,30 +21,27 @@ import io.activated.pipeline.micronaut.e2e.domain.Author;
 import io.activated.pipeline.micronaut.e2e.domain.ToDo;
 import io.activated.pipeline.micronaut.e2e.repository.AuthorRepository;
 import io.activated.pipeline.micronaut.e2e.repository.ToDoRepository;
-
 import javax.inject.Singleton;
 
-/**
- * @author Marcel Overdijk
- */
+/** @author Marcel Overdijk */
 @Singleton
 @SuppressWarnings("Duplicates")
 public class CreateToDoDataFetcher implements DataFetcher<ToDo> {
 
-    private final ToDoRepository toDoRepository;
-    private final AuthorRepository authorRepository;
+  private final ToDoRepository toDoRepository;
+  private final AuthorRepository authorRepository;
 
-    public CreateToDoDataFetcher(ToDoRepository toDoRepository, AuthorRepository authorRepository) {
-        this.toDoRepository = toDoRepository;
-        this.authorRepository = authorRepository;
-    }
+  public CreateToDoDataFetcher(ToDoRepository toDoRepository, AuthorRepository authorRepository) {
+    this.toDoRepository = toDoRepository;
+    this.authorRepository = authorRepository;
+  }
 
-    @Override
-    public ToDo get(DataFetchingEnvironment env) {
-        String title = env.getArgument("title");
-        String username = env.getArgument("author");
-        Author author = authorRepository.findOrCreate(username);
-        ToDo toDo = new ToDo(title, author.getId());
-        return toDoRepository.save(toDo);
-    }
+  @Override
+  public ToDo get(DataFetchingEnvironment env) {
+    String title = env.getArgument("title");
+    String username = env.getArgument("author");
+    Author author = authorRepository.findOrCreate(username);
+    ToDo toDo = new ToDo(title, author.getId());
+    return toDoRepository.save(toDo);
+  }
 }
