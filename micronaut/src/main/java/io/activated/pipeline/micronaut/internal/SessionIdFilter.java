@@ -11,7 +11,8 @@ import org.reactivestreams.Publisher;
 @Filter("/**")
 public class SessionIdFilter implements HttpFilter {
 
-  static ThreadLocal<String> SESSION_ID_HOLDER = new ThreadLocal<>();
+  // TODO - This is bad, we want access via a different way
+  public static ThreadLocal<String> SESSION_ID_HOLDER = new ThreadLocal<>();
 
   @Override
   public Publisher<? extends HttpResponse<?>> doFilter(HttpRequest<?> request, FilterChain chain) {
