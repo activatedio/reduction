@@ -34,10 +34,14 @@ subprojects {
     publications {
        mavenJava(MavenPublication) {
 
-           groupId "io.activated.pipeline"
-           artifactId "pipeline-${project.name}"
+          if (project.name != "micronaut-e2e") {
 
-           from components.java
+              groupId "io.activated.pipeline"
+              artifactId "pipeline-${project.name}"
+
+              from components.java
+          }
+
        }
     }
 
