@@ -1,4 +1,5 @@
 rootProject.name = 'pipeline'
 include('core')
 include('micronaut')
+include('test')
 include('micronaut-e2e')
