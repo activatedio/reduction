@@ -8,7 +8,6 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.researchgate.release' version '2.8.1'
-    id 'com.diffplug.gradle.spotless' version '4.5.1'
 }
 
 subprojects {
@@ -17,16 +16,8 @@ subprojects {
 
   apply plugin: 'maven-publish'
 
-  apply plugin: 'com.diffplug.gradle.spotless'
-
   repositories {
       mavenCentral()
-  }
-
-  spotless {
-      java {
-          googleJavaFormat()
-      }
   }
 
   publishing {

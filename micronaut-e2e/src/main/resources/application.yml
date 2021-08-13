@@ -1,6 +1,0 @@
-graphql:
-  graphiql:
-    enabled: true
-pipeline:
-  scanPackages:
-    - io.activated.pipeline.micronaut.e2e
