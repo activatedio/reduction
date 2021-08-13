@@ -18,7 +18,8 @@ public class GraphQLErrorException extends RuntimeException {
     super(cause);
   }
 
-  protected GraphQLErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+  protected GraphQLErrorException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 }

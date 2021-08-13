@@ -8,15 +8,14 @@ import com.netflix.graphql.dgs.client.HttpResponse;
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.function.Consumer;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.function.Consumer;
 
 public class GraphQLClientSupport {
 
@@ -42,20 +41,22 @@ public class GraphQLClientSupport {
     sessionId = encoder.encodeToString(bytes);
   }
 
-  public <T> void query(GraphQLQuery query, BaseProjectionNode projectionNode,
-                         String path, TypeRef<T> typeRef, Consumer<T> success,
-                         Consumer<GraphQLErrorException> fail) {
+  public <T> void query(
+      GraphQLQuery query,
+      BaseProjectionNode projectionNode,
+      String path,
+      TypeRef<T> typeRef,
+      Consumer<T> success,
+      Consumer<GraphQLErrorException> fail) {
 
     var request = new GraphQLQueryRequest(query, projectionNode);
 
     try {
-      var resp = query(request.serialize(), path,
-          typeRef);
+      var resp = query(request.serialize(), path, typeRef);
       success.accept(resp);
     } catch (GraphQLErrorException e) {
       fail.accept(e);
     }
-
   }
 
   private <T> T query(String query, String path, TypeRef<T> typeRef) {

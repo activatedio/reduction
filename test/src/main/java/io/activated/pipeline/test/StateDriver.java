@@ -4,7 +4,6 @@ import com.jayway.jsonpath.TypeRef;
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery;
 import io.activated.pipeline.GetResult;
-
 import java.util.function.Consumer;
 
 public abstract class StateDriver<S> {
@@ -13,13 +12,15 @@ public abstract class StateDriver<S> {
   private final GraphQLClientSupport client;
   private final BaseProjectionNode projectionNode;
 
-  private final Consumer<GraphQLErrorException> defaultErrorConsumer = (e) -> {
-    lastGraphQLError = e;
-  };
+  private final Consumer<GraphQLErrorException> defaultErrorConsumer =
+      (e) -> {
+        lastGraphQLError = e;
+      };
 
-  private final Consumer<GetResult<S>> defaultSuccessConsumer = (s) -> {
-    lastState = s.getState();
-  };
+  private final Consumer<GetResult<S>> defaultSuccessConsumer =
+      (s) -> {
+        lastState = s.getState();
+      };
 
   private GraphQLErrorException lastGraphQLError;
   private S lastState;
@@ -38,12 +39,7 @@ public abstract class StateDriver<S> {
   }
 
   public void setMutation(GraphQLQuery query, String path) {
-    client.query(query,
-        projectionNode,
-        path,
-        typeRef,
-        defaultSuccessConsumer,
-        defaultErrorConsumer
-    );
+    client.query(
+        query, projectionNode, path, typeRef, defaultSuccessConsumer, defaultErrorConsumer);
   }
 }
