@@ -4,8 +4,10 @@ plugins {
 
 dependencies {
   implementation project(":micronaut-cart")
-  implementation("io.micronaut:micronaut-runtime:${micronautVersion}")
   testImplementation project(":test")
+  // TODO - seprate this out into a model project
+  testImplementation project(":core")
+  implementation("io.micronaut:micronaut-runtime:${micronautVersion}")
 }
 
 generateJava{
@@ -15,3 +17,7 @@ generateJava{
 }
 
 compileJava.dependsOn generateJava
+
+tasks.named('test') {
+  useJUnitPlatform()
+}

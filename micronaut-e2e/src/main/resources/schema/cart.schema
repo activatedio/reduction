@@ -35,20 +35,16 @@ type Cart {
   shippingAddress: Address
 }
 
+type CartState {
+  state: Cart
+}
+
 type Mutation {
-  cartSetAddress(action: SetAddressInput): setCartSetAddress
+  cartSetAddress(action: SetAddressInput): CartState
 }
 
 type Query {
-  cart: getCart
-}
-
-type getCart {
-  state: Cart
-}
-
-type setCartSetAddress {
-  state: Cart
+  cart: CartState
 }
 
 input AddressInput {

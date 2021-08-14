@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut;
 
+import com.google.common.collect.Maps;
 import graphql.schema.*;
 import io.activated.pipeline.internal.*;
 import io.activated.pipeline.micronaut.internal.MapTypeCache;
@@ -7,6 +8,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 @Singleton
 public class PipelineGraphQLBuilder {
@@ -66,12 +69,16 @@ public class PipelineGraphQLBuilder {
 
     var stateTypes = pipelineRegistry.getStateTypes();
 
+    Map<String, GraphQLOutputType> stateOutputTypes = Maps.newHashMap();
+
     for (final var state : stateTypes) {
       final var oType = typeFactory.getOutputType(state);
       final var queryName = lowerCamelCase(state.getSimpleName());
+      var stateOutputType = makeOutputType(state.getSimpleName(), oType);
+      stateOutputTypes.put(state.getSimpleName(), stateOutputType);
       qObj =
           qObj.field(
-              field -> field.name(queryName).type(makeGetType(state.getSimpleName(), oType)));
+              field -> field.name(queryName).type(stateOutputType));
       final var dFetch = dataFetcherFactory.getGetDataFetcher(state);
       registry = registry.dataFetcher(FieldCoordinates.coordinates(QUERY_ROOT, queryName), dFetch);
     }
@@ -83,8 +90,8 @@ public class PipelineGraphQLBuilder {
       // TODO - Scan these interfaces for the candidate - in case there are more than one
       final var stateClass = (Class<?>) reducerKey.getStateType();
       final var actionClass = (Class<?>) reducerKey.getActionType();
-      final var oType = typeFactory.getOutputType(stateClass);
       final var iType = typeFactory.getInputType(actionClass);
+      final var stateOutputType = stateOutputTypes.get(stateClass.getSimpleName());
       final var mutationName =
           lowerCamelCase(stateClass.getSimpleName() + actionClass.getSimpleName());
       mObj =
@@ -93,26 +100,16 @@ public class PipelineGraphQLBuilder {
                   field
                       .name(mutationName)
                       .argument(a -> a.name("action").type(iType))
-                      .type(
-                          makeSetType(
-                              stateClass.getSimpleName(), actionClass.getSimpleName(), oType)));
+                      .type(stateOutputType));
       final var dFetch = dataFetcherFactory.getSetDataFetcher(stateClass, actionClass);
       registry =
           registry.dataFetcher(FieldCoordinates.coordinates(MUTATION_ROOT, mutationName), dFetch);
     }
   }
 
-  private static GraphQLOutputType makeGetType(final String name, final GraphQLOutputType oType) {
+  private static GraphQLOutputType makeOutputType(final String name, final GraphQLOutputType oType) {
     return GraphQLObjectType.newObject()
-        .name("get" + name)
-        .field(f -> f.name("state").type(oType))
-        .build();
-  }
-
-  private static GraphQLOutputType makeSetType(
-      final String stateName, final String actionName, final GraphQLOutputType oType) {
-    return GraphQLObjectType.newObject()
-        .name("set" + stateName + actionName)
+        .name(name + "State")
         .field(f -> f.name("state").type(oType))
         .build();
   }
