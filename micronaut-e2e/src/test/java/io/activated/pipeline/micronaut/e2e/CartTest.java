@@ -48,7 +48,7 @@ public class CartTest {
             .build())
         .build()).build();
 
-    driver.setMutation(query, "cartSetAddress");
+    driver.query(query, "cartSetAddress");
 
     assertThat(driver.getLastGraphQLError()).isNull();
     assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");

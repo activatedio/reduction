@@ -38,7 +38,7 @@ public abstract class StateDriver<S> {
     return lastState != null ? lastState.getState() : null;
   }
 
-  public void setMutation(GraphQLQuery query, String path) {
+  public void query(GraphQLQuery query, String path) {
     client.query(
         query, projectionNode, path, typeRef, defaultSuccessConsumer, defaultErrorConsumer);
   }
