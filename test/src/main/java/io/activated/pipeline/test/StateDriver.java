@@ -34,8 +34,8 @@ public abstract class StateDriver<S> {
     return lastGraphQLError;
   }
 
-  public GetResult<S> getLastState() {
-    return lastState;
+  public S getLastState() {
+    return lastState != null ? lastState.getState() : null;
   }
 
   public void setMutation(GraphQLQuery query, String path) {

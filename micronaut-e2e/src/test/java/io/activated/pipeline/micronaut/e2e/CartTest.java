@@ -51,7 +51,7 @@ public class CartTest {
     driver.setMutation(query, "cartSetAddress");
 
     assertThat(driver.getLastGraphQLError()).isNull();
-    assertThat(driver.getLastState().getState().getShippingAddress().getState()).isEqualTo("WA");
+    assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");
 
   }
 
