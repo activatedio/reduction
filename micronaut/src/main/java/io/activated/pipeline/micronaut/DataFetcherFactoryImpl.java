@@ -24,7 +24,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
   @Override
   public <S> DataFetcher<GetResult<S>> getGetDataFetcher(final Class<S> stateClass) {
 
-    LOGGER.info("Creating get DataFetcher for stateClass: {}", stateClass);
+    LOGGER.debug("Creating get DataFetcher for stateClass: {}", stateClass);
     return new GetDataFetcherImpl<S>(pipeline, stateClass);
   }
 
@@ -32,7 +32,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
   public <S, A> DataFetcher<SetResult<S>> getSetDataFetcher(
       final Class<S> stateClass, final Class<A> actionClass) {
 
-    LOGGER.info(
+    LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
     return new SetDataFetcherImpl<S, A>(pipeline, stateClass, actionClass);
   }

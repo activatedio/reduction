@@ -8,6 +8,7 @@ dependencies {
   // TODO - seprate this out into a model project
   testImplementation project(":core")
   implementation("io.micronaut:micronaut-runtime:${micronautVersion}")
+  runtimeOnly("ch.qos.logback:logback-classic")
 }
 
 generateJava{

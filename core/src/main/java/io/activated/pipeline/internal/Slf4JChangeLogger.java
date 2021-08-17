@@ -10,7 +10,6 @@ public class Slf4JChangeLogger extends AbstractChangeLogger {
 
   @Override
   public void logInternal(Map<String, Object> values) {
-
     LOGGER.info("Change: {}", values);
   }
 }

@@ -12,6 +12,9 @@ import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.function.Consumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 public class GraphQLClientSupport {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(GraphQLClientSupport.class);
 
   private final SecureRandom secureRandom = new SecureRandom();
   private final Base64.Encoder encoder = Base64.getEncoder().withoutPadding();
@@ -40,6 +45,8 @@ public class GraphQLClientSupport {
     secureRandom.nextBytes(bytes);
 
     sessionId = encoder.encodeToString(bytes);
+
+    LOGGER.debug("Setting new session id: {}", sessionId);
   }
 
   public <T> void query(
@@ -62,6 +69,8 @@ public class GraphQLClientSupport {
 
   private <T> T query(String query, String path, TypeRef<T> typeRef) {
     var value = query(query);
+
+    LOGGER.debug("Sending query to path: {}, query:\n {}\n\n, response:\n{}", path, query, value.getJson());
 
     // We only return the first error here.  May need to change
     if (value.hasErrors()) {
