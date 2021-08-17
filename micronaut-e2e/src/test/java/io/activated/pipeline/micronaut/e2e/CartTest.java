@@ -9,6 +9,7 @@ import io.activated.pipeline.micronaut.cart.client.CartSetAddressGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.types.AddressInput;
 import io.activated.pipeline.micronaut.cart.types.SetAddressInput;
 import io.activated.pipeline.test.GraphQLClientSupport;
+import io.activated.pipeline.test.GraphQLConfig;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.server.EmbeddedServer;
@@ -20,14 +21,18 @@ import org.junit.jupiter.api.Test;
 public class CartTest {
 
   private static ApplicationContext APPLICATION_CONTEXT;
-  private static GraphQLClient GRAPHQL_CLIENT;
+  private static GraphQLConfig CONFIG;
 
   @BeforeAll
   public static void setUpAll() {
     APPLICATION_CONTEXT = Micronaut.run(Application.class);
     var server = APPLICATION_CONTEXT.getBean(EmbeddedServer.class);
-    GRAPHQL_CLIENT = new DefaultGraphQLClient(String.format("%s://%s:%d/graphql", server.getScheme(),
-        server.getHost(), server.getPort()));
+    CONFIG = new GraphQLConfig() {
+      @Override
+      public String getURL() {
+        return String.format("%s://%s:%d/graphql", server.getScheme(), server.getHost(), server.getPort());
+      }
+    };
   }
 
   @AfterAll
@@ -38,7 +43,7 @@ public class CartTest {
   @Test
   void scenario() {
 
-    var driver = new CartDriver(new GraphQLClientSupport(GRAPHQL_CLIENT));
+    var driver = new CartDriver(new GraphQLClientSupport(CONFIG));
 
     // Set shipping address
 

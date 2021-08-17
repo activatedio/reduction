@@ -2,6 +2,7 @@ package io.activated.pipeline.test;
 
 import com.google.common.collect.Maps;
 import com.jayway.jsonpath.TypeRef;
+import com.netflix.graphql.dgs.client.DefaultGraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLResponse;
 import com.netflix.graphql.dgs.client.HttpResponse;
@@ -27,8 +28,8 @@ public class GraphQLClientSupport {
 
   private String sessionId;
 
-  public GraphQLClientSupport(GraphQLClient client) {
-    this.client = client;
+  public GraphQLClientSupport(GraphQLConfig config) {
+    this.client = new DefaultGraphQLClient(config.getURL());
     restTemplate = new RestTemplate();
     newSession();
   }
