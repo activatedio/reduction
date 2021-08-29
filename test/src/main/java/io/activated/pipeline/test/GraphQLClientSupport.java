@@ -32,6 +32,7 @@ public class GraphQLClientSupport {
   private final RestTemplate restTemplate;
 
   private String sessionId;
+  private String accessToken;
 
   public GraphQLClientSupport(GraphQLConfig config) {
     this.client = new DefaultGraphQLClient(config.getURL());
@@ -47,6 +48,10 @@ public class GraphQLClientSupport {
     sessionId = encoder.encodeToString(bytes);
 
     LOGGER.debug("Setting new session id: {}", sessionId);
+  }
+
+  public void setAccessToken(String accessToken) {
+    this.accessToken = accessToken;
   }
 
   public <T> void query(
@@ -91,6 +96,9 @@ public class GraphQLClientSupport {
               headers.forEach(requestHeaders::put);
               if (sessionId != null) {
                 requestHeaders.add("pipeline-session-id", sessionId);
+              }
+              if (accessToken != null) {
+                requestHeaders.add("Authorization", "Bearer " + accessToken);
               }
               ResponseEntity<String> exchange =
                   restTemplate.exchange(
