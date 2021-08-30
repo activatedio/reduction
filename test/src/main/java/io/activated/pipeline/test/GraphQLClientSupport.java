@@ -103,6 +103,7 @@ public class GraphQLClientSupport {
               ResponseEntity<String> exchange =
                   restTemplate.exchange(
                       url, HttpMethod.POST, new HttpEntity(body, requestHeaders), String.class);
+              LOGGER.debug("Request headers: {}", requestHeaders);
               return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody());
             });
     return result;
