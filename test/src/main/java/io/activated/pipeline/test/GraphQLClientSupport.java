@@ -100,10 +100,10 @@ public class GraphQLClientSupport {
               if (accessToken != null) {
                 requestHeaders.add("Authorization", "Bearer " + accessToken);
               }
+              LOGGER.debug("Request headers: {}", requestHeaders);
               ResponseEntity<String> exchange =
                   restTemplate.exchange(
                       url, HttpMethod.POST, new HttpEntity(body, requestHeaders), String.class);
-              LOGGER.debug("Request headers: {}", requestHeaders);
               return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody());
             });
     return result;
