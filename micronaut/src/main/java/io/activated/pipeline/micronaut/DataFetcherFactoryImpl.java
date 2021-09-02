@@ -11,6 +11,8 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CompletableFuture;
+
 @Singleton
 public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
@@ -31,7 +33,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
   }
 
   @Override
-  public <S, A> DataFetcher<Publisher<SetResult<S>>> getSetDataFetcher(
+  public <S, A> DataFetcher<CompletableFuture<SetResult<S>>> getSetDataFetcher(
       final Class<S> stateClass, final Class<A> actionClass) {
 
     LOGGER.debug(

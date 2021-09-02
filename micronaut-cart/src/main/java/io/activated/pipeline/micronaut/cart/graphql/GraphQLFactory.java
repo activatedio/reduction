@@ -73,6 +73,6 @@ public class GraphQLFactory {
             graphQLSchema = pipelineGraphQLBuilder.build(graphQLSchema);
     */
     // Return the GraphQL bean.
-    return GraphQL.newGraphQL(graphQLSchema).mutationExecutionStrategy(new AsyncExecutionStrategy()).build();
+    return GraphQL.newGraphQL(graphQLSchema).build();
   }
 }
