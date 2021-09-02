@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 public class SetDataFetcherImplTest {
@@ -51,6 +52,8 @@ public class SetDataFetcherImplTest {
     when(environment.getArgument("action")).thenReturn(argument);
     when(pipeline.set(DummyState.class, action)).thenReturn(pubResult);
 
-    assertThat(unit.get(environment)).isSameAs(pubResult);
+    var got = unit.get(environment);
+
+    assertThat(got.get()).isSameAs(result);
   }
 }
