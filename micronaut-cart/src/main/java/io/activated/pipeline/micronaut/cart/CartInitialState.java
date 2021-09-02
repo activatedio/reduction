@@ -19,4 +19,9 @@ public class CartInitialState implements InitialState<Cart> {
 
     return c;
   }
+
+  @Override
+  public Cart zero() {
+    return new Cart();
+  }
 }

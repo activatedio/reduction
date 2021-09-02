@@ -144,4 +144,16 @@ class GuardedStateAccessTest {
 
     verifyNoMoreInteractions();
   }
+
+  @Test
+  public void zero() {
+
+    when(delegate.zero(DummyState.class)).thenReturn(state);
+
+    assertThat(unit.zero(DummyState.class)).isSameAs(state);
+
+    verify(delegate).zero(DummyState.class);
+
+    verifyNoMoreInteractions();
+  }
 }

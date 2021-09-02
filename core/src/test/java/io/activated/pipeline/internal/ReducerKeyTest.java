@@ -3,6 +3,7 @@ package io.activated.pipeline.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.base.JUnit5ModelTestSupport;
+import io.activated.pipeline.BlockingReducer;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.fixtures.Dummy1;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.reactivestreams.Publisher;
 
 public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
 
@@ -20,9 +22,11 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
         Arguments.of(
             String.class,
             null,
-            new PipelineException("Invalid reducer class: " + String.class.toString())),
-        Arguments.of(DummyReducer1.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
-        Arguments.of(DummyReducer2.class, ReducerKey.create(Dummy1.class, Dummy2.class), null));
+                new PipelineException("Invalid reducer class: " + String.class.toString())),
+            Arguments.of(DummyReducer1.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
+            Arguments.of(DummyReducer2.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
+            Arguments.of(DummyReducer3.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
+            Arguments.of(DummyReducer4.class, ReducerKey.create(Dummy1.class, Dummy2.class), null));
   }
 
   @Override
@@ -54,18 +58,40 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
     }
   }
 
-  public static class DummyReducer1 implements Reducer<Dummy1, Dummy2> {
+  public static class DummyReducer1 implements BlockingReducer<Dummy1, Dummy2> {
     @Override
-    public void reduce(final Dummy1 state, final Dummy2 action) {}
+    public void blockingReduce(final Dummy1 state, final Dummy2 action) {}
   }
 
-  public static class DummyReducer2 implements Reducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
+  public static class DummyReducer2 implements BlockingReducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
     @Override
-    public void reduce(final Dummy1 state, final Dummy2 action) {}
+    public void blockingReduce(final Dummy1 state, final Dummy2 action) {}
 
     @Override
     public int compareTo(final DummyReducer2 o) {
       return 0;
     }
   }
+
+  public static class DummyReducer3 implements Reducer<Dummy1, Dummy2> {
+
+    @Override
+    public Publisher<Dummy1> reduce(Dummy1 state, Dummy2 action) {
+      return null;
+    }
+  }
+
+  public static class DummyReducer4 implements Reducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
+
+    @Override
+    public Publisher<Dummy1> reduce(Dummy1 state, Dummy2 action) {
+      return null;
+    }
+
+    @Override
+    public int compareTo(final DummyReducer2 o) {
+      return 0;
+    }
+  }
+
 }

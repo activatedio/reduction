@@ -10,6 +10,8 @@ import io.activated.pipeline.SetResult;
 import io.activated.pipeline.micronaut.fixtures.DummyAction;
 import io.activated.pipeline.micronaut.fixtures.DummyState;
 import java.util.Map;
+
+import io.reactivex.internal.operators.flowable.FlowableScan;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,9 +46,11 @@ public class SetDataFetcherImplTest {
     var result = new SetResult<DummyState>();
     result.setState(new DummyState());
 
-    when(environment.getArgument("action")).thenReturn(argument);
-    when(pipeline.set(DummyState.class, action)).thenReturn(result);
+    var pubResult = FlowableScan.just(result);
 
-    assertThat(unit.get(environment)).isSameAs(result);
+    when(environment.getArgument("action")).thenReturn(argument);
+    when(pipeline.set(DummyState.class, action)).thenReturn(pubResult);
+
+    assertThat(unit.get(environment)).isSameAs(pubResult);
   }
 }

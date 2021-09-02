@@ -11,6 +11,8 @@ import io.activated.pipeline.fixtures.DummyState2;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.repository.StateRepository;
+import io.reactivex.Flowable;
+import io.reactivex.exceptions.CompositeException;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,11 +30,6 @@ public class PipelineImplTest {
   public static class ClearStateException extends RuntimeException implements ClearState {}
 
   public static class ClearAllStatesException extends RuntimeException implements ClearAllStates {}
-
-  public static class IgnoreException extends RuntimeException implements Ignore {}
-
-  public static class ClearStateAndIgnoreException extends RuntimeException
-      implements ClearState, Ignore {}
 
   @Mock private Registry registry;
   @Mock private StateAccess stateAccess;
@@ -104,11 +101,12 @@ public class PipelineImplTest {
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
     when(keyStrategy.get()).thenReturn(key);
+    when(reducer.reduce(state, action)).thenReturn(Flowable.just(state));
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
     when(afterSnapshot.diff(beforeSnapshot)).thenReturn(diff);
 
-    var got = unit.set(stateType, action);
+    var got = Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
 
     var reference = new SetResult<DummyState>();
 
@@ -141,9 +139,9 @@ public class PipelineImplTest {
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
     when(afterSnapshot.diff(beforeSnapshot)).thenReturn(diff);
 
-    doThrow(new IgnoreException()).when(reducer).reduce(state, action);
+    when(reducer.reduce(state, action)).thenReturn(Flowable.error(new IgnoreException(state)));
 
-    var got = unit.set(stateType, action);
+    var got = Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
 
     var reference = new SetResult<DummyState>();
 
@@ -175,13 +173,13 @@ public class PipelineImplTest {
 
     var expected = new ClearStateException();
 
-    doThrow(expected).when(reducer).reduce(state, action);
+    when(reducer.reduce(state, action)).thenReturn(Flowable.error(expected));
 
     try {
-      unit.set(stateType, action);
+      Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
       fail("Exception should have been thrown");
-    } catch (ClearStateException e) {
-      assertThat(e).isSameAs(expected);
+    } catch (CompositeException e) {
+      assertThat(e.getCause().getCause()).isSameAs(expected);
     }
 
     verify(stateAccess).get(DummyState.class);
@@ -208,13 +206,13 @@ public class PipelineImplTest {
 
     var expected = new ClearAllStatesException();
 
-    doThrow(expected).when(reducer).reduce(state, action);
+    when(reducer.reduce(state, action)).thenReturn(Flowable.error(expected));
 
     try {
-      unit.set(stateType, action);
+      Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
       fail("Exception should have been thrown");
-    } catch (ClearAllStatesException e) {
-      assertThat(e).isSameAs(expected);
+    } catch (CompositeException e) {
+      assertThat(e.getCause().getCause()).isSameAs(expected);
     }
 
     verify(stateAccess).get(DummyState.class);
@@ -240,14 +238,17 @@ public class PipelineImplTest {
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
     when(keyStrategy.get()).thenReturn(key);
+    var expected = new ClearStateAndProceedException(state);
+    when(reducer.reduce(state, action)).thenReturn(Flowable.error(expected));
+    // TODO - Better to zero out the sate for testing here
+    when(stateAccess.zero(stateType)).thenReturn(state);
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
 
-    var expected = new ClearStateAndIgnoreException();
 
-    doThrow(expected).when(reducer).reduce(state, action);
+    var got = Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
 
-    unit.set(stateType, action);
+    assertThat(got.getState()).isSameAs(state);
 
     verify(stateAccess).get(DummyState.class);
     verify(registry).getReducer(ReducerKey.create(stateType, actionType));
@@ -255,6 +256,7 @@ public class PipelineImplTest {
     verify(keyStrategy).get();
     verify(reducer).reduce(state, action);
     verify(stateRepository).clear(key.getValue(), stateName);
+    verify(stateAccess).zero(DummyState.class);
     verify(changeLogger)
         .change(key, stateName, actionType.getCanonicalName(), actionSnapshot, Diff.CLEAR);
 

@@ -58,12 +58,22 @@ public class InitialStateKeyTest extends JUnit5ModelTestSupport<InitialStateKey>
     public Dummy1 initial() {
       return null;
     }
+
+    @Override
+    public Dummy1 zero() {
+      return null;
+    }
   }
 
   public static class DummyInitialState2
       implements InitialState<Dummy1>, Comparable<DummyInitialState2> {
     @Override
     public Dummy1 initial() {
+      return null;
+    }
+
+    @Override
+    public Dummy1 zero() {
       return null;
     }
 

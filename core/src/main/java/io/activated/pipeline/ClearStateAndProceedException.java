@@ -1,6 +1,8 @@
 package io.activated.pipeline;
 
-public class ClearStateAndProceedException extends RuntimeException implements ClearState, Ignore {
+public final class ClearStateAndProceedException extends IgnoreException implements ClearState {
 
-  public ClearStateAndProceedException() {}
+  public ClearStateAndProceedException(Object returnInstead) {
+    super(returnInstead);
+  }
 }

@@ -16,6 +16,8 @@
 package io.activated.pipeline.micronaut.cart.graphql;
 
 import graphql.GraphQL;
+import graphql.execution.AsyncExecutionStrategy;
+import graphql.execution.SubscriptionExecutionStrategy;
 import graphql.schema.GraphQLSchema;
 import io.activated.pipeline.micronaut.PipelineGraphQLBuilder;
 import io.micronaut.context.annotation.Bean;
@@ -71,6 +73,6 @@ public class GraphQLFactory {
             graphQLSchema = pipelineGraphQLBuilder.build(graphQLSchema);
     */
     // Return the GraphQL bean.
-    return GraphQL.newGraphQL(graphQLSchema).build();
+    return GraphQL.newGraphQL(graphQLSchema).mutationExecutionStrategy(new AsyncExecutionStrategy()).build();
   }
 }

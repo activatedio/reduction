@@ -180,4 +180,21 @@ public class StateAccessImplTest {
 
     verifyNoMoreInteractions();
   }
+
+  @Test
+  public void zero() {
+
+    when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
+    when(initialState.zero()).thenReturn(state);
+
+    var got = unit.zero(stateType);
+
+    assertThat(got).isSameAs(state);
+
+    verify(registry).getInitial(InitialStateKey.create(stateType));
+    verify(initialState).zero();
+
+    verifyNoMoreInteractions();
+  }
+
 }

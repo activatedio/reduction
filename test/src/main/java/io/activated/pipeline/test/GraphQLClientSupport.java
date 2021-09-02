@@ -73,6 +73,7 @@ public class GraphQLClientSupport {
   }
 
   private <T> T query(String query, String path, TypeRef<T> typeRef) {
+
     var value = query(query);
 
     LOGGER.debug("Sending query to path: {}, query:\n {}\n\n, response:\n{}", path, query, value.getJson());

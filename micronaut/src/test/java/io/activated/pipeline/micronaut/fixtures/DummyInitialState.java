@@ -11,4 +11,9 @@ public class DummyInitialState implements InitialState<DummyState> {
   public DummyState initial() {
     return null;
   }
+
+  @Override
+  public DummyState zero() {
+    return null;
+  }
 }

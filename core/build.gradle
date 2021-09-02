@@ -5,6 +5,8 @@ dependencies {
       exclude group: 'javax.validation'
     }
     api group: 'com.flipkart.zjsonpatch', name: 'zjsonpatch', version: '0.4.11'
+    api group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.3'
+    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
 }
 

@@ -29,4 +29,10 @@ public class GuardedStateAccess implements StateAccess {
 
     return state;
   }
+
+  @Override
+  // TODO - Do we need go guard the zero state?
+  public <S> S zero(Class<S> stateType) {
+    return delegate.zero(stateType);
+  }
 }

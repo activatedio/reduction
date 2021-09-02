@@ -1,5 +1,6 @@
 package io.activated.pipeline.internal;
 
+import io.activated.pipeline.BlockingReducer;
 import io.activated.pipeline.Reducer;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -34,7 +35,8 @@ public class ReducerKey<S, A> implements Serializable {
     for (final var iface : input.getGenericInterfaces()) {
       if (iface instanceof ParameterizedType) {
         var pType = (ParameterizedType) iface;
-        if (pType.getRawType() == Reducer.class) {
+        var rType = pType.getRawType();
+        if (rType == Reducer.class || rType == BlockingReducer.class) {
           var args = pType.getActualTypeArguments();
           return ReducerKey.create((Class<S>) args[0], (Class<A>) args[1]);
         }

@@ -61,6 +61,12 @@ public class StateAccessImpl implements StateAccess {
     }
   }
 
+  @Override
+  public <S> S zero(Class<S> stateType) {
+    var initial = registry.getInitial(InitialStateKey.create(stateType));
+    return initial.zero();
+  }
+
   private <S> S initial(Class<S> stateType) {
 
     var initial = registry.getInitial(InitialStateKey.create(stateType));

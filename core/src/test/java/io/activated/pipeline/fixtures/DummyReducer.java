@@ -1,9 +1,10 @@
 package io.activated.pipeline.fixtures;
 
+import io.activated.pipeline.BlockingReducer;
 import io.activated.pipeline.Reducer;
 
-public class DummyReducer implements Reducer<DummyState, DummyAction> {
+public class DummyReducer implements BlockingReducer<DummyState, DummyAction> {
 
   @Override
-  public void reduce(DummyState state, DummyAction action) {}
+  public void blockingReduce(DummyState state, DummyAction action) {}
 }

@@ -5,11 +5,15 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
+import io.reactivex.*;
+import io.reactivex.subjects.PublishSubject;
+import org.reactivestreams.Publisher;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class SetDataFetcherImpl<S, A> implements DataFetcher<SetResult<S>> {
+public class SetDataFetcherImpl<S, A> implements DataFetcher<Publisher<SetResult<S>>> {
 
   private final ObjectMapper mapper = new ObjectMapper();
 
@@ -26,9 +30,10 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<SetResult<S>> {
   }
 
   @Override
-  public SetResult<S> get(final DataFetchingEnvironment environment) throws Exception {
+  public Publisher<SetResult<S>> get(final DataFetchingEnvironment environment) throws Exception {
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    return pipeline.set(stateClass, action);
+    var pub = pipeline.set(stateClass, action);
+    return pub;
   }
 }

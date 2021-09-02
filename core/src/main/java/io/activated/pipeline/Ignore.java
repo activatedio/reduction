@@ -1,4 +1,9 @@
 package io.activated.pipeline;
 
-/** Tells BTO to not rethrow the exception */
-public interface Ignore {}
+/**
+ * Instructs pipeline to ignore the exception and return the provided value
+ */
+public interface Ignore {
+
+    <S> S returnInstead();
+}

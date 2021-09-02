@@ -1,7 +1,11 @@
 package io.activated.pipeline.internal;
 
 import io.activated.pipeline.*;
+import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import org.reactivestreams.Publisher;
 
 public class PipelineImpl implements Pipeline {
 
@@ -33,7 +37,7 @@ public class PipelineImpl implements Pipeline {
   }
 
   @Override
-  public <S, A> SetResult<S> set(Class<S> stateType, A action) {
+  public <S, A> Publisher<SetResult<S>> set(Class<S> stateType, A action) {
 
     Class<A> actionType = (Class<A>) action.getClass();
 
@@ -48,59 +52,76 @@ public class PipelineImpl implements Pipeline {
     var before = snapshotter.snapshot(state);
     var actionSnapshot = snapshotter.snapshot(action);
 
-    try {
+    return Flowable.fromPublisher(reducer.reduce(state, action)).doOnEach(n -> {
+      if (n.isOnNext()) {
 
-      reducer.reduce(state, action);
+        var s = n.getValue();
 
-    } catch (RuntimeException e) {
+        storeAndDiff(actionType, state, stateName, key, before, actionSnapshot, s);
+      }
+    }).onErrorReturn(e -> {
 
       if (isClearState(e) || isClearAllStates(e)) {
         if (isClearState(e)) {
           stateRepository.clear(key.getValue(), stateName);
           changeLogger.change(
-              key, stateName, actionType.getCanonicalName(), actionSnapshot, Diff.CLEAR);
+                  key, stateName, actionType.getCanonicalName(), actionSnapshot, Diff.CLEAR);
         } else if (isClearAllStates(e)) {
           for (var _stateType : registry.getStateTypes()) {
             var _stateName = _stateType.getCanonicalName();
             stateRepository.clear(key.getValue(), _stateName);
             changeLogger.change(
-                key, _stateName, actionType.getCanonicalName(), actionSnapshot, Diff.CLEAR);
+                    key, _stateName, actionType.getCanonicalName(), actionSnapshot, Diff.CLEAR);
           }
         }
 
         if (isIgnore(e)) {
-          return new SetResult<S>();
+          return stateAccess.zero(stateType);
         } else {
-          throw e;
+          throw new PipelineException(e);
         }
       }
 
-      if (!(isIgnore(e))) {
-        throw e;
-      }
-    }
+      if (isIgnore(e)) {
 
-    stateRepository.set(key.getValue(), stateName, state);
+        S s = ((Ignore)e).returnInstead();
+
+        storeAndDiff(actionType, state, stateName, key, before, actionSnapshot, s);
+
+        return s;
+      } else {
+        throw new PipelineException(e);
+      }
+
+    }).map(r -> {
+
+      var result = new SetResult<S>();
+      result.setState(r);
+      return result;
+
+    });
+
+  }
+
+  private <S, A> void storeAndDiff(Class<A> actionType, S state, String stateName, Key key, Snapshot before, Snapshot actionSnapshot, S s) {
+
+    stateRepository.set(key.getValue(), stateName, s);
 
     var after = snapshotter.snapshot(state);
     var diff = after.diff(before);
 
     changeLogger.change(key, stateName, actionType.getCanonicalName(), actionSnapshot, diff);
-
-    var result = new SetResult<S>();
-    result.setState(state);
-    return result;
   }
 
-  private static boolean isClearState(RuntimeException e) {
-    return ClearState.class.isAssignableFrom(e.getClass());
+  private static boolean isClearState(Throwable t) {
+    return ClearState.class.isAssignableFrom(t.getClass());
   }
 
-  private static boolean isClearAllStates(RuntimeException e) {
-    return ClearAllStates.class.isAssignableFrom(e.getClass());
+  private static boolean isClearAllStates(Throwable t) {
+    return ClearAllStates.class.isAssignableFrom(t.getClass());
   }
 
-  private static boolean isIgnore(RuntimeException e) {
-    return Ignore.class.isAssignableFrom(e.getClass());
+  private static boolean isIgnore(Throwable t) {
+    return Ignore.class.isAssignableFrom(t.getClass());
   }
 }
