@@ -1,13 +1,34 @@
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+    }
+    test {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+    }
+}
+
 dependencies {
-    api group: 'io.lettuce', name: 'lettuce-core', version: '6.1.0.RELEASE'
+    api (group: 'io.lettuce', name: 'lettuce-core', version: '6.1.0.RELEASE') {
+        exclude group: 'io.netty'
+    }
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+    // TODO - Need to make this optional
     api (group: 'org.apache.pulsar', name: 'pulsar-client', version: '2.7.0') {
       exclude group: 'javax.validation'
     }
     api group: 'com.flipkart.zjsonpatch', name: 'zjsonpatch', version: '0.4.11'
     api group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.3'
+    api 'io.activated.objectdiff:objectdiff:0.0.2'
     implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testImplementation('io.netty:netty-common:4.1.60.Final')
+    testImplementation('io.netty:netty-handler:4.1.60.Final')
 }
 
 tasks.named('test') {

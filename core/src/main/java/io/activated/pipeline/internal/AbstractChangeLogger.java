@@ -1,6 +1,7 @@
 package io.activated.pipeline.internal;
 
 import com.google.common.collect.Maps;
+import io.activated.objectdiff.Renderable;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.key.Key;
 import java.io.IOException;

@@ -1,5 +1,6 @@
 package io.activated.pipeline.internal;
 
+import io.activated.objectdiff.Renderable;
 import io.activated.pipeline.key.Key;
 
 public interface ChangeLogger {

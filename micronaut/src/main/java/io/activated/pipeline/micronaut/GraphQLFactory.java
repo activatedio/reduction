@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut;
 
+import io.activated.objectdiff.SnapshotterImpl;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.StateAccess;

@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
+import io.activated.objectdiff.Diff;
+import io.activated.objectdiff.Snapshot;
+import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.*;
 import io.activated.pipeline.fixtures.DummyAction;
 import io.activated.pipeline.fixtures.DummyState;

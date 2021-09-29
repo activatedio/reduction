@@ -3,6 +3,7 @@ package io.activated.pipeline.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import io.activated.objectdiff.Renderable;
 import io.activated.pipeline.key.Key;
 import java.io.IOException;
 import java.io.Writer;

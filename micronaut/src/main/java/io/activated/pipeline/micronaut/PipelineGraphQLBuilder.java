@@ -65,7 +65,7 @@ public class PipelineGraphQLBuilder {
 
     var typeFactory =
         new TypeFactoryImpl(
-            new MapTypeCache<GraphQLInputType>(), new MapTypeCache<GraphQLOutputType>());
+            new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>());
 
     var stateTypes = pipelineRegistry.getStateTypes();
 

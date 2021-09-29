@@ -1,6 +1,20 @@
 plugins {
   id 'io.micronaut.library' version "2.0.2"
 }
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+    }
+    test {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+    }
+}
 
 micronaut {
   version = "${micronautVersion}"
@@ -8,8 +22,8 @@ micronaut {
 
 dependencies {
     api project(":core")
-    implementation group: 'com.graphql-java', name: 'graphql-java', version: '16.2'
-    implementation "io.micronaut:micronaut-http-server:${micronautVersion}"
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
+    implementation group: 'com.graphql-java', name: 'graphql-java', version: '16.2'
+    provided "io.micronaut:micronaut-http-server:${micronautVersion}"
     testImplementation("io.micronaut.test:micronaut-test-junit5")
 }

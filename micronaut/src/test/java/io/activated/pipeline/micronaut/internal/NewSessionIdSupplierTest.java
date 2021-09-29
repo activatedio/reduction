@@ -13,7 +13,7 @@ public class NewSessionIdSupplierTest {
 
     var unit = new NewSessionIdSupplier();
 
-    var iterations = 10000;
+    var iterations = 500;
     var results = new HashSet<String>();
 
     var pattern = Pattern.compile("[A-Za-z0-9+\\/]{43}");

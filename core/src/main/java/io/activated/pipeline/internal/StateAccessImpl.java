@@ -1,5 +1,6 @@
 package io.activated.pipeline.internal;
 
+import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.repository.StateRepository;
 import org.slf4j.Logger;

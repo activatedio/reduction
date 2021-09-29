@@ -7,7 +7,8 @@ dependencies {
   testImplementation project(":test")
   // TODO - seprate this out into a model project
   testImplementation project(":core")
-  implementation("io.micronaut:micronaut-runtime:${micronautVersion}")
+  testImplementation "io.micronaut:micronaut-http-server:${micronautVersion}"
+  testImplementation "io.micronaut:micronaut-runtime:${micronautVersion}"
   runtimeOnly("ch.qos.logback:logback-classic")
 }
 

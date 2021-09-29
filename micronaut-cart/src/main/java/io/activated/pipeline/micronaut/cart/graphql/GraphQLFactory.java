@@ -35,44 +35,11 @@ public class GraphQLFactory {
   public GraphQLSchema graphQLSchema(PipelineGraphQLBuilder pipelineGraphQLBuilder) {
     return pipelineGraphQLBuilder.create();
   }
+
   @Bean
   @Singleton
   public GraphQL graphQL(
-      GraphQLSchema graphQLSchema,
-      ResourceResolver resourceResolver,
-      ToDosDataFetcher toDosDataFetcher,
-      CreateToDoDataFetcher createToDoDataFetcher,
-      CompleteToDoDataFetcher completeToDoDataFetcher,
-      DeleteToDoDataFetcher deleteToDoDataFetcher,
-      AuthorDataFetcher authorDataFetcher) {
-    /*
-            SchemaParser schemaParser = new SchemaParser();
-            SchemaGenerator schemaGenerator = new SchemaGenerator();
-
-            // Parse the schema.
-            TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
-            typeRegistry.merge(schemaParser.parse(new BufferedReader(new InputStreamReader(
-                    resourceResolver.getResourceAsStream("classpath:schema.graphqls").get()))));
-
-            // Create the runtime wiring.
-            RuntimeWiring runtimeWiring = RuntimeWiring.newRuntimeWiring()
-                    .type("Query", typeWiring -> typeWiring
-                            .dataFetcher("toDos", toDosDataFetcher))
-                    .type("Mutation", typeWiring -> typeWiring
-                            .dataFetcher("createToDo", createToDoDataFetcher)
-                            .dataFetcher("completeToDo", completeToDoDataFetcher)
-                            .dataFetcher("deleteToDo", deleteToDoDataFetcher))
-                    .type("ToDo", typeWiring -> typeWiring
-                            .dataFetcher("author", authorDataFetcher))
-                    .build();
-
-            // Create the executable schema.
-            GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-
-            // Decorate it with the pipeline
-            graphQLSchema = pipelineGraphQLBuilder.build(graphQLSchema);
-    */
-    // Return the GraphQL bean.
+      GraphQLSchema graphQLSchema) {
     return GraphQL.newGraphQL(graphQLSchema).build();
   }
 }

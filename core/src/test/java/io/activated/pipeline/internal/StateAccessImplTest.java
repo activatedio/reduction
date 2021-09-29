@@ -3,6 +3,8 @@ package io.activated.pipeline.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+import io.activated.objectdiff.Snapshot;
+import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.fixtures.DummyAction;
 import io.activated.pipeline.fixtures.DummyState;

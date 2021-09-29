@@ -1,5 +1,8 @@
 package io.activated.pipeline.internal;
 
+import io.activated.objectdiff.Diff;
+import io.activated.objectdiff.Snapshot;
+import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.*;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;

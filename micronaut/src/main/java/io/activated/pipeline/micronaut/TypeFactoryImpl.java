@@ -5,6 +5,9 @@ import graphql.Scalars;
 import graphql.schema.*;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,15 +17,18 @@ public class TypeFactoryImpl implements TypeFactory {
 
   private final TypeCache<GraphQLInputType> inputCache;
   private final TypeCache<GraphQLOutputType> outputCache;
+  private final TypeCache<GraphQLOutputType> outputListCache;
 
   private static final Set<String> EXCLUDED_PROPERTIES = Sets.newHashSet("class", "declaringClass");
 
   @Inject
   public TypeFactoryImpl(
       final TypeCache<GraphQLInputType> inputCache,
-      final TypeCache<GraphQLOutputType> outputCache) {
+      final TypeCache<GraphQLOutputType> outputCache,
+      final TypeCache<GraphQLOutputType> outputListCache) {
     this.inputCache = inputCache;
     this.outputCache = outputCache;
+    this.outputListCache = outputListCache;
     initTypes();
   }
 
@@ -30,9 +36,26 @@ public class TypeFactoryImpl implements TypeFactory {
 
     outputCache.put(String.class, Scalars.GraphQLString);
     outputCache.put(Integer.class, Scalars.GraphQLInt);
+    outputCache.put(int.class, Scalars.GraphQLInt);
+    outputCache.put(Boolean.class, Scalars.GraphQLBoolean);
+    outputCache.put(boolean.class, Scalars.GraphQLBoolean);
+    outputCache.put(Float.class, Scalars.GraphQLFloat);
+    outputCache.put(float.class, Scalars.GraphQLFloat);
+    outputCache.put(Double.class, Scalars.GraphQLFloat);
+    outputCache.put(double.class, Scalars.GraphQLFloat);
+    outputCache.put(BigDecimal.class, Scalars.GraphQLBigDecimal);
 
     inputCache.put(String.class, Scalars.GraphQLString);
     inputCache.put(Integer.class, Scalars.GraphQLInt);
+    inputCache.put(int.class, Scalars.GraphQLInt);
+    inputCache.put(Boolean.class, Scalars.GraphQLBoolean);
+    inputCache.put(boolean.class, Scalars.GraphQLBoolean);
+    inputCache.put(Float.class, Scalars.GraphQLFloat);
+    inputCache.put(float.class, Scalars.GraphQLFloat);
+    inputCache.put(Double.class, Scalars.GraphQLFloat);
+    inputCache.put(double.class, Scalars.GraphQLFloat);
+    inputCache.put(BigDecimal.class, Scalars.GraphQLBigDecimal);
+
   }
 
   @Override
@@ -41,7 +64,18 @@ public class TypeFactoryImpl implements TypeFactory {
     final var type = outputCache.get(input);
 
     if (type == null) {
-      return makeObjectType(input);
+      return makeOutputObjectType(input);
+    } else {
+      return type;
+    }
+  }
+
+  private GraphQLOutputType getOutputListType(final Class<?> element) {
+
+    final var type = outputListCache.get(element);
+
+    if (type == null) {
+      return makeOutputObjectListType(element);
     } else {
       return type;
     }
@@ -59,7 +93,7 @@ public class TypeFactoryImpl implements TypeFactory {
     }
   }
 
-  private GraphQLObjectType makeObjectType(final Class<?> input) {
+  private GraphQLOutputType makeOutputObjectType(final Class<?> input) {
 
     try {
 
@@ -70,9 +104,16 @@ public class TypeFactoryImpl implements TypeFactory {
         if (EXCLUDED_PROPERTIES.contains(pDesc.getName())) {
           continue;
         }
+        GraphQLOutputType fType;
+        if (pDesc.getPropertyType().equals(List.class)) {
+          var elType = ((ParameterizedType) pDesc.getReadMethod().getGenericReturnType()).getActualTypeArguments()[0];
+          fType = getOutputListType((Class<?>) elType);
+        } else {
+          fType = getOutputType(pDesc.getPropertyType());
+        }
         oType =
             oType.field(
-                field -> field.name(pDesc.getName()).type(getOutputType(pDesc.getPropertyType())));
+                field -> field.name(pDesc.getName()).type(fType));
       }
 
       final var result = oType.build();
@@ -82,6 +123,10 @@ public class TypeFactoryImpl implements TypeFactory {
     } catch (final IntrospectionException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private GraphQLOutputType makeOutputObjectListType(final Class<?> input) {
+      return new GraphQLList(getOutputType(input));
   }
 
   private GraphQLInputObjectType makeInputObjectType(final Class<?> input) {
