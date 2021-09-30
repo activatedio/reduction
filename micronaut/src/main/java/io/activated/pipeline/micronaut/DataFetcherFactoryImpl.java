@@ -7,7 +7,6 @@ import io.activated.pipeline.SetResult;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
   }
 
   @Override
-  public <S> DataFetcher<GetResult<S>> getGetDataFetcher(final Class<S> stateClass) {
+  public <S> DataFetcher<CompletableFuture<GetResult<S>>> getGetDataFetcher(final Class<S> stateClass) {
 
     LOGGER.debug("Creating get DataFetcher for stateClass: {}", stateClass);
     return new GetDataFetcherImpl<S>(pipeline, stateClass);

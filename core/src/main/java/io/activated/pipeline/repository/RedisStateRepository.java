@@ -6,12 +6,26 @@ import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.PipelineException;
 import io.lettuce.core.api.StatefulRedisConnection;
 import java.io.IOException;
+import java.util.Optional;
+
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 public class RedisStateRepository implements StateRepository {
 
   private final Logger logger = LoggerFactory.getLogger(RedisStateRepository.class);
+
+  private static class WithKey {
+    private final String key;
+    private final String content;
+
+    private WithKey(String key, String content) {
+      this.key = key;
+      this.content = content;
+    }
+  }
 
   private static final String OK = "OK";
 
@@ -29,68 +43,59 @@ public class RedisStateRepository implements StateRepository {
   }
 
   @Override
-  public boolean exists(String key, String stateName) {
-    return connection.sync().exists(makeKey(key, stateName)) > 0;
+  public Publisher<Boolean> exists(String key, String stateName) {
+    return connection.reactive().exists(makeKey(key, stateName)).map(l -> l > 0);
   }
 
   @Override
-  public void moveKey(String fromKey, String toKey, String stateName) {
+  public Publisher<Void> moveKey(String fromKey, String toKey, String stateName) {
     var from = makeKey(fromKey, stateName);
     var to = makeKey(toKey, stateName);
 
     logger.debug("Moving from key [{}] to key [{}]", from, to);
 
-    checkOk(connection.sync().rename(from, to));
+    return connection.reactive().rename(from, to).doOnNext(this::checkOk).then();
   }
 
   @Override
-  public <S> S get(String key, String stateName, Class<S> targetType) {
+  public <S> Publisher<Optional<S>> get(String key, String stateName, Class<S> targetType) {
 
-    var fullKey = makeKey(key, stateName);
+    return Mono.fromCallable(() -> makeKey(key, stateName)).doOnNext(s ->
+            logger.debug("Getting state for key [{}]", s)
+    ).flatMap(fullKey -> connection.reactive().get(fullKey).map(s -> new WithKey(fullKey, s))).doOnNext(s ->
+            logger.debug(
+                    "Value for key [{}] is not null.  Setting expiry forward {} seconds", s, ttl)
+    ).flatMap(wk -> connection.reactive().expire(wk.key, ttl).map(r -> wk.content)).map(r -> {
+      try {
+        return objectMapper.readValue(r, targetType);
+      } catch (IOException e) {
+        throw new PipelineException(e);
+      }
+    }).map(Optional::of).defaultIfEmpty(Optional.empty());
 
-    logger.debug("Getting state for key [{}]", fullKey);
-
-    var resultRaw = connection.sync().get(fullKey);
-
-    if (resultRaw == null) {
-      logger.debug("Value for key [{}] is null", fullKey);
-      return null;
-    }
-
-    logger.debug(
-        "Value for key [{}] is not null.  Setting expiry forward {} seconds", fullKey, ttl);
-
-    connection.sync().expire(fullKey, ttl);
-
-    try {
-      return objectMapper.readValue(resultRaw, targetType);
-    } catch (IOException e) {
-      throw new PipelineException(e);
-    }
   }
 
   @Override
-  public <S> void set(String key, String stateName, S state) {
-    var fullKey = makeKey(key, stateName);
-    String json = null;
-    try {
-      json = objectMapper.writeValueAsString(state);
-    } catch (JsonProcessingException e) {
-      throw new PipelineException(e);
-    }
+  public <S> Publisher<Void> set(String key, String stateName, S state) {
 
-    logger.debug("Setting value for key [{}] with expiry of [{}]", fullKey, ttl);
+    return Mono.fromCallable(() -> makeKey(key, stateName)).map(k -> {
+      try {
+        var content = objectMapper.writeValueAsString(state);
+        return new WithKey(k, content);
+      } catch (JsonProcessingException e) {
+        throw new PipelineException(e);
+      }
+    }).doOnNext(wk -> logger.debug("Setting content [{}] for key [{}] with expiry of [{}]",
+            wk.content, wk.key , ttl))
+    .flatMap(wk -> connection.reactive().setex(wk.key, ttl, wk.content)).doOnNext(this::checkOk).then();
 
-    checkOk(connection.sync().setex(fullKey, ttl, json));
   }
 
   @Override
-  public void clear(String key, String stateName) {
+  public Publisher<Void> clear(String key, String stateName) {
 
-    var fullKey = makeKey(key, stateName);
-    logger.debug("Clearing value for key [{}]", fullKey);
-
-    connection.sync().del(fullKey);
+    return Mono.fromCallable(() -> makeKey(key, stateName)).flatMap(fullKey -> connection.reactive().del(fullKey))
+            .doOnNext(fullKey -> logger.debug("Clearing value for key [{}]", fullKey)).then();
   }
 
   private String makeKey(String sessionId, String stateName) {

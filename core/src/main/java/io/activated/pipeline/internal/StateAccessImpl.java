@@ -2,11 +2,27 @@ package io.activated.pipeline.internal;
 
 import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.StateAccess;
+import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 public class StateAccessImpl implements StateAccess {
+
+  private static class KeyExists {
+
+    private final Key key;
+    private final boolean exists;
+
+    private KeyExists(Key key, boolean exists) {
+      this.key = key;
+      this.exists = exists;
+    }
+  }
 
   private static final Logger logger = LoggerFactory.getLogger(StateAccessImpl.class);
 
@@ -27,39 +43,52 @@ public class StateAccessImpl implements StateAccess {
   }
 
   @Override
-  public <S> S get(Class<S> stateType) {
+  public <S> Publisher<S> get(Class<S> stateType) {
 
     var stateName = stateType.getCanonicalName();
-    var keyStrategy = registry.getKeyStrategy(stateType);
 
-    var key = keyStrategy.get();
-
-    var keyExists = stateRepository.exists(key.getValue(), stateName);
-
-    if (key.getMoveFrom() != null) {
-      var moveFromExists = stateRepository.exists(key.getMoveFrom(), stateName);
-
-      if (moveFromExists && !keyExists) {
-        logger.info("Upgrading state from [{}] to [{}]", key.getMoveFrom(), key.getValue());
-        stateRepository.moveKey(key.getMoveFrom(), key.getValue(), stateName);
-        changeLogger.moveKey(key);
-        keyExists = true;
-      } else if (moveFromExists) {
-        logger.warn(
-            "State exists at both previous key [{}] and current key [{}]. Previous keyed state hidden by new keyed state.",
-            key.getMoveFrom(),
-            key.getValue());
-      }
-    }
-
-    if (keyExists) {
-      return stateRepository.get(key.getValue(), stateName, stateType);
-    } else {
-      var state = initial(stateType);
-      stateRepository.set(key.getValue(), stateName, state);
-      changeLogger.initial(key, stateName, snapshotter.snapshot(state));
-      return state;
-    }
+    return Mono.fromCallable(() -> {
+      var keyStrategy = registry.getKeyStrategy(stateType);
+      return keyStrategy.get();
+    }).flatMap(key ->
+            Mono.from(stateRepository.exists(key.getValue(), stateName))
+                    .map(exists -> {
+                      return new KeyExists(key, exists);
+                    }))
+            .flatMap(keyExists -> {
+              var key = keyExists.key;
+              if (key.getMoveFrom() == null) {
+                return Mono.just(keyExists);
+              } else {
+                return Mono.from(stateRepository.exists(key.getMoveFrom(), stateName))
+                        .flatMap(moveFromExists -> {
+                          if (moveFromExists && !keyExists.exists) {
+                            var pub = stateRepository.moveKey(key.getMoveFrom(), key.getValue(), stateName);
+                            return Mono.from(pub).doOnSuccess(v -> {
+                              changeLogger.moveKey(key);
+                            }).map(v -> keyExists).switchIfEmpty(Mono.just(true).map(b -> new KeyExists(keyExists.key, b)));
+                          } else if (moveFromExists) {
+                            logger.warn(
+                                    "State exists at both previous key [{}] and current key [{}]. Previous keyed state hidden by new keyed state.",
+                                    key.getMoveFrom(),
+                                    key.getValue());
+                            return Mono.just(keyExists);
+                          } else {
+                            return Mono.just(keyExists);
+                          }
+                        });
+              }
+            }).flatMap(keyExists -> {
+              if (keyExists.exists) {
+                return Mono.from(stateRepository.get(keyExists.key.getValue(), stateName, stateType)).map(Optional::get);
+              } else {
+                var state = initial(stateType);
+                var pub = stateRepository.set(keyExists.key.getValue(), stateName, state);
+                return Mono.from(pub).doOnSuccess(v -> {
+                  changeLogger.initial(keyExists.key, stateName, snapshotter.snapshot(state));
+                }).map(v -> state).defaultIfEmpty(state);
+              }
+            }).log();
   }
 
   @Override

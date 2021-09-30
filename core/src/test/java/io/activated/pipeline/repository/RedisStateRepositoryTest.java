@@ -8,6 +8,9 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 public class RedisStateRepositoryTest {
 
@@ -31,9 +34,9 @@ public class RedisStateRepositoryTest {
     var sessionId = randomString.nextString();
     var key = randomString.nextString();
 
-    Dummy got = unit.get(sessionId, key, Dummy.class);
+    var got = Mono.from(unit.get(sessionId, key, Dummy.class)).block();
 
-    assertThat(got).isNull();
+    assertThat(got).isEqualTo(Optional.empty());
   }
 
   @Test
@@ -46,27 +49,27 @@ public class RedisStateRepositoryTest {
     value.setValue1("value1");
     value.setValue2("value2");
 
-    assertThat(unit.exists(key, name)).isFalse();
-    unit.set(key, name, value);
-    assertThat(unit.exists(key, name)).isTrue();
+    assertThat(Mono.from(unit.exists(key, name)).block()).isFalse();
+    Mono.from(unit.set(key, name, value)).block();
+    assertThat(Mono.from(unit.exists(key, name)).block()).isTrue();
 
-    var result = unit.get(key, name, Dummy.class);
-    assertThat(result).isEqualTo(value);
+    var result = Mono.from(unit.get(key, name, Dummy.class)).block();
+    assertThat(result).isEqualTo(Optional.of(value));
 
     var newKey = key + "-2";
 
-    assertThat(unit.exists(newKey, name)).isFalse();
+    assertThat(Mono.from(unit.exists(newKey, name)).block()).isFalse();
 
-    unit.moveKey(key, newKey, name);
+    Mono.from(unit.moveKey(key, newKey, name)).block();
 
-    assertThat(unit.exists(key, name)).isFalse();
-    assertThat(unit.exists(newKey, name)).isTrue();
+    assertThat(Mono.from(unit.exists(key, name)).block()).isFalse();
+    assertThat(Mono.from(unit.exists(newKey, name)).block()).isTrue();
 
-    result = unit.get(newKey, name, Dummy.class);
-    assertThat(result).isEqualTo(value);
+    result = Mono.from(unit.get(newKey, name, Dummy.class)).block();
+    assertThat(result).isEqualTo(Optional.of(value));
 
-    unit.clear(newKey, name);
+    Mono.from(unit.clear(newKey, name)).block();
 
-    assertThat(unit.exists(newKey, name)).isFalse();
+    assertThat(Mono.from(unit.exists(newKey, name)).block()).isFalse();
   }
 }

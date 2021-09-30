@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 public class GetDataFetcherImplTest {
@@ -28,7 +29,7 @@ public class GetDataFetcherImplTest {
   @Test
   public void get() throws Exception {
     final var result = new GetResult<DummyState>();
-    when(pipeline.get(DummyState.class)).thenReturn(result);
-    assertThat(unit.get(null)).isEqualTo(result);
+    when(pipeline.get(DummyState.class)).thenReturn(Mono.just(result));
+    assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
   }
 }

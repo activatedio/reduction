@@ -1,6 +1,8 @@
 package io.activated.pipeline.internal;
 
 import io.activated.pipeline.StateAccess;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 public class GuardedStateAccess implements StateAccess {
 
@@ -13,7 +15,7 @@ public class GuardedStateAccess implements StateAccess {
   }
 
   @Override
-  public <S> S get(Class<S> stateType) {
+  public <S> Publisher<S> get(Class<S> stateType) {
 
     var stateGuards = registry.getStateGuards(stateType);
 
@@ -21,13 +23,11 @@ public class GuardedStateAccess implements StateAccess {
       stateGuard.guardGlobal();
     }
 
-    var state = delegate.get(stateType);
-
-    for (var stateGuard : stateGuards) {
-      stateGuard.guard(state);
-    }
-
-    return state;
+    return Mono.from(delegate.get(stateType)).doOnNext(state -> {
+      for (var stateGuard : stateGuards) {
+        stateGuard.guard(state);
+      }
+    });
   }
 
   @Override

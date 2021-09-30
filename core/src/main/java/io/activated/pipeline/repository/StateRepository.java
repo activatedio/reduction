@@ -1,14 +1,18 @@
 package io.activated.pipeline.repository;
 
+import org.reactivestreams.Publisher;
+
+import java.util.Optional;
+
 public interface StateRepository {
 
-  boolean exists(String key, String stateName);
+  Publisher<Boolean> exists(String key, String stateName);
 
-  void moveKey(String fromKey, String toKey, String stateName);
+  Publisher<Void> moveKey(String fromKey, String toKey, String stateName);
 
-  <S> S get(String key, String stateName, Class<S> targetType);
+  <S> Publisher<Optional<S>> get(String key, String stateName, Class<S> targetType);
 
-  <S> void set(String key, String stateName, S state);
+  <S> Publisher<Void> set(String key, String stateName, S state);
 
-  void clear(String key, String stateName);
+  Publisher<Void> clear(String key, String stateName);
 }

@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
@@ -47,9 +48,9 @@ class GuardedStateAccessTest {
   public void get_noStateGuards() {
 
     when(registry.getStateGuards(DummyState.class)).thenReturn(Lists.emptyList());
-    when(delegate.get(DummyState.class)).thenReturn(state);
+    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
 
-    assertThat(unit.get(DummyState.class)).isSameAs(state);
+    assertThat(Mono.from(unit.get(DummyState.class)).block()).isSameAs(state);
 
     verify(registry).getStateGuards(DummyState.class);
     verify(delegate).get(DummyState.class);
@@ -62,9 +63,9 @@ class GuardedStateAccessTest {
 
     when(registry.getStateGuards(DummyState.class))
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
-    when(delegate.get(DummyState.class)).thenReturn(state);
+    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
 
-    assertThat(unit.get(DummyState.class)).isSameAs(state);
+    assertThat(Mono.from(unit.get(DummyState.class)).block()).isSameAs(state);
 
     verify(registry).getStateGuards(DummyState.class);
     verify(delegate).get(DummyState.class);
@@ -111,10 +112,10 @@ class GuardedStateAccessTest {
 
     when(registry.getStateGuards(DummyState.class))
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
-    when(delegate.get(DummyState.class)).thenReturn(state);
+    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
     doThrow(e).when(stateGuard1).guard(state);
 
-    assertThatThrownBy(() -> unit.get(DummyState.class)).isSameAs(e);
+    assertThatThrownBy(() -> Mono.from(unit.get(DummyState.class)).block()).isSameAs(e);
 
     verify(registry).getStateGuards(DummyState.class);
     verify(delegate).get(DummyState.class);
@@ -130,10 +131,10 @@ class GuardedStateAccessTest {
 
     when(registry.getStateGuards(DummyState.class))
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
-    when(delegate.get(DummyState.class)).thenReturn(state);
+    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
     doThrow(e).when(stateGuard2).guard(state);
 
-    assertThatThrownBy(() -> unit.get(DummyState.class)).isSameAs(e);
+    assertThatThrownBy(() -> Mono.from(unit.get(DummyState.class)).block()).isSameAs(e);
 
     verify(registry).getStateGuards(DummyState.class);
     verify(delegate).get(DummyState.class);
