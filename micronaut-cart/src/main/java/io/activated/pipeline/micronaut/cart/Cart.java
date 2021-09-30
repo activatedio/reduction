@@ -9,11 +9,24 @@ import java.util.Objects;
 @State(guards = {NoOpStateGuard1.class, NoOpStateGuard2.class})
 public class Cart {
 
+  private int count = 1;
   private Address shippingAddress;
   private Address billingAddress;
   private List<CartItem> cartItems = Lists.newArrayList();
 
   public Cart() {}
+
+  public int getCount() {
+    return count;
+  }
+
+  public void setCount(int count) {
+    this.count = count;
+  }
+
+  public void incrementCount() {
+    count++;
+  }
 
   public Address getShippingAddress() {
     return shippingAddress;
@@ -42,20 +55,21 @@ public class Cart {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (!(o instanceof Cart)) return false;
     Cart cart = (Cart) o;
-    return Objects.equals(shippingAddress, cart.shippingAddress) && Objects.equals(billingAddress, cart.billingAddress) && Objects.equals(cartItems, cart.cartItems);
+    return count == cart.count && Objects.equals(shippingAddress, cart.shippingAddress) && Objects.equals(billingAddress, cart.billingAddress) && Objects.equals(cartItems, cart.cartItems);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(shippingAddress, billingAddress, cartItems);
+    return Objects.hash(count, shippingAddress, billingAddress, cartItems);
   }
 
   @Override
   public String toString() {
     return "Cart{" +
-            "shippingAddress=" + shippingAddress +
+            "count=" + count +
+            ", shippingAddress=" + shippingAddress +
             ", billingAddress=" + billingAddress +
             ", cartItems=" + cartItems +
             '}';
