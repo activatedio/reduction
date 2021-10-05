@@ -6,12 +6,8 @@ import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.*;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import java.sql.Ref;
 
 public class PipelineImpl implements Pipeline {
 
@@ -60,23 +56,22 @@ public class PipelineImpl implements Pipeline {
 
     Class<A> actionType = (Class<A>) action.getClass();
 
-    return Flowable.fromPublisher(stateAccess.get(stateType)).flatMap(state -> {
+    return Mono.fromCallable(() -> registry.getKeyStrategy(stateType)).flatMap(ks -> Mono.from(ks.get()))
+            .flatMap(key ->  Mono.from(stateAccess.get(stateType)).flatMap(state -> {
+
       var stateName = stateType.getCanonicalName();
 
       var reducer = registry.getReducer(ReducerKey.create(stateType, actionType));
-      var keyStrategy = registry.getKeyStrategy(stateType);
-
-      var key = keyStrategy.get();
 
       var before = snapshotter.snapshot(state);
       var actionSnapshot = snapshotter.snapshot(action);
 
-      return Flowable.fromPublisher(reducer.reduce(state, action))
+      return Mono.from(reducer.reduce(state, action))
               .flatMap(v ->
                      Mono.from(storeAndDiff(actionType, state, stateName, key, before, actionSnapshot, v))
                              .map(_v -> v)
                              .defaultIfEmpty(v))
-      .onErrorResumeNext(e -> {
+      .onErrorResume(e -> {
         if (isClearState(e) || isClearAllStates(e)) {
           if (isClearState(e)) {
             // TODO - The clear actually isn't working here
@@ -128,7 +123,7 @@ public class PipelineImpl implements Pipeline {
         return result;
 
       });
-    });
+    }));
   }
 
   private <S, A> Publisher<Void> storeAndDiff(Class<A> actionType, S state, String stateName, Key key, Snapshot before, Snapshot actionSnapshot, S s) {

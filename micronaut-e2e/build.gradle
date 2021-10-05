@@ -16,6 +16,7 @@ generateJava{
   schemaPaths = ["${projectDir}/src/main/resources/schema"]
   packageName = 'io.activated.pipeline.micronaut.cart'
   generateClient = true
+  typeMapping = ["BigDecimal": "java.math.BigDecimal"]
 }
 
 compileJava.dependsOn generateJava

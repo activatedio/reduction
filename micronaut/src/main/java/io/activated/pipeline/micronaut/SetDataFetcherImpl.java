@@ -3,11 +3,10 @@ package io.activated.pipeline.micronaut;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import io.activated.pipeline.Constants;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
-import io.reactivex.*;
-import io.reactivex.subjects.PublishSubject;
-import org.reactivestreams.Publisher;
+import io.activated.pipeline.env.SessionIdSupplier;
 import reactor.core.publisher.Mono;
 
 import javax.inject.Inject;
@@ -20,13 +19,15 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
   private final ObjectMapper mapper = new ObjectMapper();
 
   private final Pipeline pipeline;
+  private final SessionIdSupplier sessionIdSupplier;
   private final Class<S> stateClass;
   private final Class<A> actionClass;
 
   @Inject
   public SetDataFetcherImpl(
-      final Pipeline pipeline, final Class<S> stateClass, final Class<A> actionClass) {
+          final Pipeline pipeline, SessionIdSupplier sessionIdSupplier, final Class<S> stateClass, final Class<A> actionClass) {
     this.pipeline = pipeline;
+    this.sessionIdSupplier = sessionIdSupplier;
     this.stateClass = stateClass;
     this.actionClass = actionClass;
   }
@@ -36,6 +37,7 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
     var pub = pipeline.set(stateClass, action);
-    return Mono.from(pub).toFuture();
+    return Mono.from(pub).contextWrite(ctx -> ctx.put(Constants.SESSION_ID_CONTEXT_KEY,
+            sessionIdSupplier.get())).toFuture();
   }
 }

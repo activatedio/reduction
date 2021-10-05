@@ -43,7 +43,7 @@ public class MicronautRegistry implements Registry {
       @Named("request") final SessionIdSupplier sessionIdSupplier,
       final MainRuntimeConfiguration configuration) {
 
-    this.defaultKeyStrategy = new SessionKeyStrategy(sessionIdSupplier);
+    this.defaultKeyStrategy = new SessionKeyStrategy();
     this.applicationContext = applicationContext;
     var scanner = new ClassPathAnnotationScanner();
 

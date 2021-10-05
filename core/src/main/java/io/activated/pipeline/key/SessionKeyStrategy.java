@@ -1,31 +1,23 @@
 package io.activated.pipeline.key;
 
-import static io.activated.pipeline.Util.isEmpty;
-
+import io.activated.pipeline.Constants;
 import io.activated.pipeline.PipelineException;
-import io.activated.pipeline.env.SessionIdSupplier;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 public class SessionKeyStrategy implements KeyStrategy {
 
-  private final SessionIdSupplier sessionIdSupplier;
-
-  public SessionKeyStrategy(SessionIdSupplier sessionIdSupplier) {
-    this.sessionIdSupplier = sessionIdSupplier;
-  }
-
   @Override
-  public Key get() {
+  public Publisher<Key> get() {
 
-    var key = sessionIdSupplier.get();
+    return Mono.deferWithContext(ctx -> {
+      String keyValue = ctx.get(Constants.SESSION_ID_CONTEXT_KEY);
+      return Mono.just(keyValue);
+    }).map(s -> {
+      var key = new Key();
+      key.setValue(s);
+      return key;
+    }).switchIfEmpty(Mono.error(new PipelineException("Could not obtain key from session")));
 
-    // TODO - Is empty method somewhere?
-    if (isEmpty(key)) {
-      throw new PipelineException("Could not obtain key from session");
-    }
-
-    var result = new Key();
-    result.setValue(key);
-
-    return result;
   }
 }

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 public class SetDataFetcherImplTest {
@@ -32,7 +31,7 @@ public class SetDataFetcherImplTest {
   @BeforeEach
   public void setUp() {
 
-    unit = new SetDataFetcherImpl<DummyState, DummyAction>(pipeline, stateClass, actionClass);
+    unit = new SetDataFetcherImpl<DummyState, DummyAction>(pipeline, sessionIdSupplier, stateClass, actionClass);
   }
 
   @Test

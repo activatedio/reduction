@@ -32,7 +32,22 @@ type Address {
 
 type Cart {
   billingAddress: Address
+  cartItems: [CartItem]
+  count: Int
   shippingAddress: Address
+}
+
+type CartItem {
+  amount: Float
+  doubleAmount: Float
+  otherAmount: Float
+  otherDoubleAmount: Float
+  otherDoubleBigAmount: BigDecimal
+  product: Product
+  quantity: Int
+  rating: Int
+  someFlag: Boolean
+  someOtherFlag: Boolean
 }
 
 type CartState {
@@ -40,12 +55,22 @@ type CartState {
 }
 
 type Mutation {
+  cartExceptionAction(action: ExceptionActionInput): CartState
+  cartRefreshAction(action: RefreshActionInput): CartState
   cartSetAddress(action: SetAddressInput): CartState
+}
+
+type Product {
+  name: String
+  sku: String
 }
 
 type Query {
   cart: CartState
 }
+
+"Built-in java.math.BigDecimal"
+scalar BigDecimal
 
 input AddressInput {
   city: String
@@ -53,6 +78,14 @@ input AddressInput {
   state: String
   street: String
   zip: String
+}
+
+input ExceptionActionInput {
+  dummy: String
+}
+
+input RefreshActionInput {
+  ignore: String
 }
 
 input SetAddressInput {

@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.netflix.graphql.dgs.client.DefaultGraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLClient;
 import io.activated.pipeline.micronaut.cart.Application;
+import io.activated.pipeline.micronaut.cart.client.CartExceptionActionGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.client.CartGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.client.CartSetAddressGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.types.AddressInput;
+import io.activated.pipeline.micronaut.cart.types.ExceptionActionInput;
 import io.activated.pipeline.micronaut.cart.types.SetAddressInput;
 import io.activated.pipeline.test.GraphQLClientSupport;
 import io.activated.pipeline.test.GraphQLConfig;
@@ -66,6 +68,12 @@ public class CartTest {
     assertThat(driver.getLastGraphQLError()).isNull();
     assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");
 
+    var query3 = new CartExceptionActionGraphQLQuery.Builder()
+            .action(ExceptionActionInput.newBuilder().build()).build();
+
+    driver.query(query3, "cartExceptionAction");
+
+    assertThat(driver.getLastGraphQLError()).isNotNull();
   }
 
 }

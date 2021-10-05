@@ -23,7 +23,7 @@ class DataFetcherFactoryImplTest {
 
   @BeforeEach
   public void setUp() {
-    unit = new DataFetcherFactoryImpl(pipeline);
+    unit = new DataFetcherFactoryImpl(pipeline, sessionIdSupplier);
   }
 
   @Test
