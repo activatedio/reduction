@@ -19,15 +19,13 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
   private final ObjectMapper mapper = new ObjectMapper();
 
   private final Pipeline pipeline;
-  private final SessionIdSupplier sessionIdSupplier;
   private final Class<S> stateClass;
   private final Class<A> actionClass;
 
   @Inject
   public SetDataFetcherImpl(
-          final Pipeline pipeline, SessionIdSupplier sessionIdSupplier, final Class<S> stateClass, final Class<A> actionClass) {
+          final Pipeline pipeline, final Class<S> stateClass, final Class<A> actionClass) {
     this.pipeline = pipeline;
-    this.sessionIdSupplier = sessionIdSupplier;
     this.stateClass = stateClass;
     this.actionClass = actionClass;
   }
@@ -36,8 +34,6 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
   public CompletableFuture<SetResult<S>> get(final DataFetchingEnvironment environment) throws Exception {
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    var pub = pipeline.set(stateClass, action);
-    return Mono.from(pub).contextWrite(ctx -> ctx.put(Constants.SESSION_ID_CONTEXT_KEY,
-            sessionIdSupplier.get())).toFuture();
+    return Mono.from(pipeline.set(stateClass, action)).toFuture();
   }
 }

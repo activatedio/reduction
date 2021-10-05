@@ -1,7 +1,5 @@
 package io.activated.pipeline;
 
-import io.reactivex.internal.operators.flowable.FlowableScan;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

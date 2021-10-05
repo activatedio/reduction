@@ -6,12 +6,15 @@ import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.builtin.security.SecurityStateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
+import io.activated.pipeline.env.SessionIdSupplier;
 import io.activated.pipeline.internal.*;
+import io.activated.pipeline.micronaut.internal.ContextPipelineImpl;
 import io.activated.pipeline.repository.RedisStateRepository;
 import io.activated.pipeline.repository.StateRepository;
 import io.lettuce.core.RedisClient;
 import io.micronaut.context.annotation.Factory;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
@@ -53,12 +56,13 @@ public class GraphQLFactory {
   @Singleton
   @Inject
   public Pipeline pipeline(
+      @Named("request") SessionIdSupplier sessionIdSupplier,
       Registry registry,
       StateAccess stateAccess,
       StateRepository stateRepository,
       ChangeLogger changeLogger) {
-    return new PipelineImpl(
-        registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger);
+    return new ContextPipelineImpl(new PipelineImpl(
+        registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger), sessionIdSupplier);
   }
 
   @Singleton

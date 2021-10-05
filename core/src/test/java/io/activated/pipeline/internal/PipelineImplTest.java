@@ -14,8 +14,6 @@ import io.activated.pipeline.fixtures.DummyState2;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.repository.StateRepository;
-import io.reactivex.Flowable;
-import io.reactivex.exceptions.CompositeException;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
