@@ -48,7 +48,6 @@ public class CartTest {
   // TODO - Restore this
   void scenario() {
 
-      /*
     var driver = new CartDriver(new GraphQLClientSupport(CONFIG));
 
     // Set shipping address
@@ -63,6 +62,7 @@ public class CartTest {
 
     assertThat(driver.getLastGraphQLError()).isNull();
     assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");
+      /*
 
     var query2 = new CartGraphQLQuery.Builder().build();
 
