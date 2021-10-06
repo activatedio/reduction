@@ -20,13 +20,23 @@ public class ContextPipelineImpl implements Pipeline {
 
     @Override
     public <S> Publisher<GetResult<S>> get(Class<S> stateType) {
-        return Mono.from(delegate.get(stateType)).contextWrite(ctx ->
-                ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionIdSupplier.get()));
+        return Mono.from(delegate.get(stateType)).contextWrite(ctx -> {
+            if (ctx.get(Constants.SESSION_ID_CONTEXT_KEY) == null) {
+                return ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionIdSupplier.get());
+            } else {
+                return ctx;
+            }
+        });
     }
 
     @Override
     public <S, A> Publisher<SetResult<S>> set(Class<S> stateType, A action) {
-        return Mono.from(delegate.set(stateType, action)).contextWrite(ctx ->
-                ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionIdSupplier.get()));
+        return Mono.from(delegate.set(stateType, action)).contextWrite(ctx -> {
+            if (ctx.get(Constants.SESSION_ID_CONTEXT_KEY) == null) {
+                return ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionIdSupplier.get());
+            } else {
+                return ctx;
+            }
+        });
     }
 }
