@@ -30,9 +30,7 @@ public class SetDataFetcherImplTest {
   @BeforeEach
   public void setUp() {
 
-    unit =
-        new SetDataFetcherImpl<DummyState, DummyAction>(
-            pipeline, sessionIdSupplier, stateClass, actionClass);
+    unit = new SetDataFetcherImpl<DummyState, DummyAction>(pipeline, stateClass, actionClass);
   }
 
   @Test

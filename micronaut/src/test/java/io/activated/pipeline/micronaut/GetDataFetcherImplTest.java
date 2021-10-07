@@ -23,7 +23,7 @@ public class GetDataFetcherImplTest {
 
   @BeforeEach
   public void setUp() {
-    unit = new GetDataFetcherImpl<DummyState>(pipeline, sessionIdSupplier, DummyState.class);
+    unit = new GetDataFetcherImpl<DummyState>(pipeline, DummyState.class);
   }
 
   @Test
