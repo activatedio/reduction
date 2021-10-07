@@ -22,11 +22,11 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
         Arguments.of(
             String.class,
             null,
-                new PipelineException("Invalid reducer class: " + String.class.toString())),
-            Arguments.of(DummyReducer1.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
-            Arguments.of(DummyReducer2.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
-            Arguments.of(DummyReducer3.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
-            Arguments.of(DummyReducer4.class, ReducerKey.create(Dummy1.class, Dummy2.class), null));
+            new PipelineException("Invalid reducer class: " + String.class.toString())),
+        Arguments.of(DummyReducer1.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
+        Arguments.of(DummyReducer2.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
+        Arguments.of(DummyReducer3.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
+        Arguments.of(DummyReducer4.class, ReducerKey.create(Dummy1.class, Dummy2.class), null));
   }
 
   @Override
@@ -63,7 +63,8 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
     public void blockingReduce(final Dummy1 state, final Dummy2 action) {}
   }
 
-  public static class DummyReducer2 implements BlockingReducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
+  public static class DummyReducer2
+      implements BlockingReducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
     @Override
     public void blockingReduce(final Dummy1 state, final Dummy2 action) {}
 
@@ -93,5 +94,4 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
       return 0;
     }
   }
-
 }

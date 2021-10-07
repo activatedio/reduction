@@ -55,7 +55,6 @@ public class TypeFactoryImpl implements TypeFactory {
     inputCache.put(Double.class, Scalars.GraphQLFloat);
     inputCache.put(double.class, Scalars.GraphQLFloat);
     inputCache.put(BigDecimal.class, Scalars.GraphQLBigDecimal);
-
   }
 
   @Override
@@ -106,14 +105,14 @@ public class TypeFactoryImpl implements TypeFactory {
         }
         GraphQLOutputType fType;
         if (pDesc.getPropertyType().equals(List.class)) {
-          var elType = ((ParameterizedType) pDesc.getReadMethod().getGenericReturnType()).getActualTypeArguments()[0];
+          var elType =
+              ((ParameterizedType) pDesc.getReadMethod().getGenericReturnType())
+                  .getActualTypeArguments()[0];
           fType = getOutputListType((Class<?>) elType);
         } else {
           fType = getOutputType(pDesc.getPropertyType());
         }
-        oType =
-            oType.field(
-                field -> field.name(pDesc.getName()).type(fType));
+        oType = oType.field(field -> field.name(pDesc.getName()).type(fType));
       }
 
       final var result = oType.build();
@@ -126,7 +125,7 @@ public class TypeFactoryImpl implements TypeFactory {
   }
 
   private GraphQLOutputType makeOutputObjectListType(final Class<?> input) {
-      return new GraphQLList(getOutputType(input));
+    return new GraphQLList(getOutputType(input));
   }
 
   private GraphQLInputObjectType makeInputObjectType(final Class<?> input) {

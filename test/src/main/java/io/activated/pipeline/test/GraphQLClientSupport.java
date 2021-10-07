@@ -3,7 +3,6 @@ package io.activated.pipeline.test;
 import com.google.common.collect.Maps;
 import com.jayway.jsonpath.TypeRef;
 import com.netflix.graphql.dgs.client.DefaultGraphQLClient;
-import com.netflix.graphql.dgs.client.GraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLResponse;
 import com.netflix.graphql.dgs.client.HttpResponse;
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode;
@@ -12,7 +11,6 @@ import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.function.Consumer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -76,7 +74,8 @@ public class GraphQLClientSupport {
 
     var value = query(query);
 
-    LOGGER.debug("Sending query to path: {}, query:\n {}\n\n, response:\n{}", path, query, value.getJson());
+    LOGGER.debug(
+        "Sending query to path: {}, query:\n {}\n\n, response:\n{}", path, query, value.getJson());
 
     // We only return the first error here.  May need to change
     if (value.hasErrors()) {

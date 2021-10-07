@@ -2,8 +2,6 @@ package io.activated.pipeline.micronaut.e2e;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.netflix.graphql.dgs.client.DefaultGraphQLClient;
-import com.netflix.graphql.dgs.client.GraphQLClient;
 import io.activated.pipeline.micronaut.cart.Application;
 import io.activated.pipeline.micronaut.cart.client.CartExceptionActionGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.client.CartGraphQLQuery;
@@ -16,10 +14,8 @@ import io.activated.pipeline.test.GraphQLConfig;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.server.EmbeddedServer;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CartTest {
@@ -31,12 +27,14 @@ public class CartTest {
   public static void setUpAll() {
     APPLICATION_CONTEXT = Micronaut.run(Application.class);
     var server = APPLICATION_CONTEXT.getBean(EmbeddedServer.class);
-    CONFIG = new GraphQLConfig() {
-      @Override
-      public String getURL() {
-        return String.format("%s://%s:%d/graphql", server.getScheme(), server.getHost(), server.getPort());
-      }
-    };
+    CONFIG =
+        new GraphQLConfig() {
+          @Override
+          public String getURL() {
+            return String.format(
+                "%s://%s:%d/graphql", server.getScheme(), server.getHost(), server.getPort());
+          }
+        };
   }
 
   @AfterAll
@@ -52,17 +50,19 @@ public class CartTest {
 
     // Set shipping address
 
-    var query = new CartSetAddressGraphQLQuery.Builder().action(SetAddressInput.newBuilder()
-        .addressType("S").address(AddressInput.newBuilder()
-            .state("WA")
-            .build())
-        .build()).build();
+    var query =
+        new CartSetAddressGraphQLQuery.Builder()
+            .action(
+                SetAddressInput.newBuilder()
+                    .addressType("S")
+                    .address(AddressInput.newBuilder().state("WA").build())
+                    .build())
+            .build();
 
     driver.query(query, "cartSetAddress");
 
     assertThat(driver.getLastGraphQLError()).isNull();
     assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");
-      /*
 
     var query2 = new CartGraphQLQuery.Builder().build();
 
@@ -72,14 +72,13 @@ public class CartTest {
     assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");
 
     // TODO - This causes and error
-    var query3 = new CartExceptionActionGraphQLQuery.Builder()
-            .action(ExceptionActionInput.newBuilder().build()).build();
+    var query3 =
+        new CartExceptionActionGraphQLQuery.Builder()
+            .action(ExceptionActionInput.newBuilder().build())
+            .build();
 
     driver.query(query3, "cartExceptionAction");
 
     assertThat(driver.getLastGraphQLError()).isNotNull();
-
-     */
   }
-
 }

@@ -1,49 +1,49 @@
 package io.activated.pipeline;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import reactor.core.publisher.Mono;
 
 public class BlockingReducerTest {
 
-    private static class State {
-        private String to;
+  private static class State {
+    private String to;
+  }
+
+  private static class Action {
+    private String from;
+  }
+
+  private static class TestableBlockingReducer implements BlockingReducer<State, Action> {
+
+    @Override
+    public void blockingReduce(State state, Action action) {
+      state.to = action.from;
     }
+  }
 
-    private static class Action {
-        private String from;
-    }
+  private static final String payload = "test-payload";
 
-    private static class TestableBlockingReducer implements BlockingReducer<State, Action> {
+  private TestableBlockingReducer unit;
 
-        @Override
-        public void blockingReduce(State state, Action action) {
-            state.to = action.from;
-        }
-    }
+  @BeforeEach
+  public void setUp() {
+    unit = new TestableBlockingReducer();
+  }
 
-    private static final String payload = "test-payload";
+  @Test
+  public void reduce() {
 
-    private TestableBlockingReducer unit;
+    var state = new State();
+    var action = new Action();
 
-    @BeforeEach
-    public void setUp() {
-        unit = new TestableBlockingReducer();
-    }
+    action.from = payload;
 
-    @Test
-    public void reduce() {
+    var got = Mono.from(unit.reduce(state, action)).block();
 
-        var state = new State();
-        var action = new Action();
-
-        action.from = payload;
-
-        var got = FlowableScan.fromPublisher(unit.reduce(state, action)).blockingSingle();
-
-        assertThat(got).isSameAs(state);
-        assertThat(got.to).isSameAs(payload);
-    }
-
+    assertThat(got).isSameAs(state);
+    assertThat(got.to).isSameAs(payload);
+  }
 }

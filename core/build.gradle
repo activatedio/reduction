@@ -25,6 +25,7 @@ dependencies {
     api group: 'com.flipkart.zjsonpatch', name: 'zjsonpatch', version: '0.4.11'
     api group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.3'
     api 'io.activated.objectdiff:objectdiff:0.0.2'
+    testImplementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.10'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testImplementation('io.netty:netty-common:4.1.60.Final')
     testImplementation('io.netty:netty-handler:4.1.60.Final')

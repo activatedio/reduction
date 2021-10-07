@@ -4,9 +4,8 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.GetResult;
 import io.activated.pipeline.Pipeline;
-import reactor.core.publisher.Mono;
-
 import java.util.concurrent.CompletableFuture;
+import reactor.core.publisher.Mono;
 
 public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetResult<S>>> {
 
@@ -19,7 +18,8 @@ public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetR
   }
 
   @Override
-  public CompletableFuture<GetResult<S>> get(final DataFetchingEnvironment environment) throws Exception {
+  public CompletableFuture<GetResult<S>> get(final DataFetchingEnvironment environment)
+      throws Exception {
     return Mono.from(pipeline.get(stateClass)).toFuture();
   }
 }

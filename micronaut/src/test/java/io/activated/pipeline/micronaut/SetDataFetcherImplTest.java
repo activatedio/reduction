@@ -9,9 +9,8 @@ import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
 import io.activated.pipeline.micronaut.fixtures.DummyAction;
 import io.activated.pipeline.micronaut.fixtures.DummyState;
-import java.util.Map;
-
 import io.reactivex.internal.operators.flowable.FlowableScan;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +30,9 @@ public class SetDataFetcherImplTest {
   @BeforeEach
   public void setUp() {
 
-    unit = new SetDataFetcherImpl<DummyState, DummyAction>(pipeline, sessionIdSupplier, stateClass, actionClass);
+    unit =
+        new SetDataFetcherImpl<DummyState, DummyAction>(
+            pipeline, sessionIdSupplier, stateClass, actionClass);
   }
 
   @Test

@@ -7,7 +7,6 @@ import io.activated.pipeline.PipelineException;
 import io.lettuce.core.api.StatefulRedisConnection;
 import java.io.IOException;
 import java.util.Optional;
-
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,42 +59,58 @@ public class RedisStateRepository implements StateRepository {
   @Override
   public <S> Publisher<Optional<S>> get(String key, String stateName, Class<S> targetType) {
 
-    return Mono.fromCallable(() -> makeKey(key, stateName)).doOnNext(s ->
-            logger.debug("Getting state for key [{}]", s)
-    ).flatMap(fullKey -> connection.reactive().get(fullKey).map(s -> new WithKey(fullKey, s))).doOnNext(s ->
-            logger.debug(
-                    "Value for key [{}] is not null.  Setting expiry forward {} seconds", s, ttl)
-    ).flatMap(wk -> connection.reactive().expire(wk.key, ttl).map(r -> wk.content)).map(r -> {
-      try {
-        return objectMapper.readValue(r, targetType);
-      } catch (IOException e) {
-        throw new PipelineException(e);
-      }
-    }).map(Optional::of).defaultIfEmpty(Optional.empty());
-
+    return Mono.fromCallable(() -> makeKey(key, stateName))
+        .doOnNext(s -> logger.debug("Getting state for key [{}]", s))
+        .flatMap(fullKey -> connection.reactive().get(fullKey).map(s -> new WithKey(fullKey, s)))
+        .doOnNext(
+            s ->
+                logger.debug(
+                    "Value for key [{}] is not null.  Setting expiry forward {} seconds", s, ttl))
+        .flatMap(wk -> connection.reactive().expire(wk.key, ttl).map(r -> wk.content))
+        .map(
+            r -> {
+              try {
+                return objectMapper.readValue(r, targetType);
+              } catch (IOException e) {
+                throw new PipelineException(e);
+              }
+            })
+        .map(Optional::of)
+        .defaultIfEmpty(Optional.empty());
   }
 
   @Override
   public <S> Publisher<Void> set(String key, String stateName, S state) {
 
-    return Mono.fromCallable(() -> makeKey(key, stateName)).map(k -> {
-      try {
-        var content = objectMapper.writeValueAsString(state);
-        return new WithKey(k, content);
-      } catch (JsonProcessingException e) {
-        throw new PipelineException(e);
-      }
-    }).doOnNext(wk -> logger.debug("Setting content [{}] for key [{}] with expiry of [{}]",
-            wk.content, wk.key , ttl))
-    .flatMap(wk -> connection.reactive().setex(wk.key, ttl, wk.content)).doOnNext(this::checkOk).then();
-
+    return Mono.fromCallable(() -> makeKey(key, stateName))
+        .map(
+            k -> {
+              try {
+                var content = objectMapper.writeValueAsString(state);
+                return new WithKey(k, content);
+              } catch (JsonProcessingException e) {
+                throw new PipelineException(e);
+              }
+            })
+        .doOnNext(
+            wk ->
+                logger.debug(
+                    "Setting content [{}] for key [{}] with expiry of [{}]",
+                    wk.content,
+                    wk.key,
+                    ttl))
+        .flatMap(wk -> connection.reactive().setex(wk.key, ttl, wk.content))
+        .doOnNext(this::checkOk)
+        .then();
   }
 
   @Override
   public Publisher<Void> clear(String key, String stateName) {
 
-    return Mono.fromCallable(() -> makeKey(key, stateName)).flatMap(fullKey -> connection.reactive().del(fullKey))
-            .doOnNext(fullKey -> logger.debug("Clearing value for key [{}]", fullKey)).then();
+    return Mono.fromCallable(() -> makeKey(key, stateName))
+        .flatMap(fullKey -> connection.reactive().del(fullKey))
+        .doOnNext(fullKey -> logger.debug("Clearing value for key [{}]", fullKey))
+        .then();
   }
 
   private String makeKey(String sessionId, String stateName) {

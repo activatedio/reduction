@@ -61,8 +61,10 @@ public class GraphQLFactory {
       StateAccess stateAccess,
       StateRepository stateRepository,
       ChangeLogger changeLogger) {
-    return new ContextPipelineImpl(new PipelineImpl(
-        registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger), sessionIdSupplier);
+    return new ContextPipelineImpl(
+        new PipelineImpl(
+            registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger),
+        sessionIdSupplier);
   }
 
   @Singleton

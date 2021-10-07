@@ -4,12 +4,11 @@ import com.google.common.collect.Maps;
 import graphql.schema.*;
 import io.activated.pipeline.internal.*;
 import io.activated.pipeline.micronaut.internal.MapTypeCache;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 @Singleton
 public class PipelineGraphQLBuilder {
@@ -64,8 +63,7 @@ public class PipelineGraphQLBuilder {
       GraphQLCodeRegistry.Builder registry) {
 
     var typeFactory =
-        new TypeFactoryImpl(
-            new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>());
+        new TypeFactoryImpl(new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>());
 
     var stateTypes = pipelineRegistry.getStateTypes();
 
@@ -76,9 +74,7 @@ public class PipelineGraphQLBuilder {
       final var queryName = lowerCamelCase(state.getSimpleName());
       var stateOutputType = makeOutputType(state.getSimpleName(), oType);
       stateOutputTypes.put(state.getSimpleName(), stateOutputType);
-      qObj =
-          qObj.field(
-              field -> field.name(queryName).type(stateOutputType));
+      qObj = qObj.field(field -> field.name(queryName).type(stateOutputType));
       final var dFetch = dataFetcherFactory.getGetDataFetcher(state);
       registry = registry.dataFetcher(FieldCoordinates.coordinates(QUERY_ROOT, queryName), dFetch);
     }
@@ -107,7 +103,8 @@ public class PipelineGraphQLBuilder {
     }
   }
 
-  private static GraphQLOutputType makeOutputType(final String name, final GraphQLOutputType oType) {
+  private static GraphQLOutputType makeOutputType(
+      final String name, final GraphQLOutputType oType) {
     return GraphQLObjectType.newObject()
         .name(name + "State")
         .field(f -> f.name("state").type(oType))

@@ -16,13 +16,10 @@
 package io.activated.pipeline.micronaut.cart.graphql;
 
 import graphql.GraphQL;
-import graphql.execution.AsyncExecutionStrategy;
-import graphql.execution.SubscriptionExecutionStrategy;
 import graphql.schema.GraphQLSchema;
 import io.activated.pipeline.micronaut.PipelineGraphQLBuilder;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.core.io.ResourceResolver;
 import javax.inject.Singleton;
 
 /** @author Marcel Overdijk */
@@ -38,8 +35,7 @@ public class GraphQLFactory {
 
   @Bean
   @Singleton
-  public GraphQL graphQL(
-      GraphQLSchema graphQLSchema) {
+  public GraphQL graphQL(GraphQLSchema graphQLSchema) {
     return GraphQL.newGraphQL(graphQLSchema).build();
   }
 }

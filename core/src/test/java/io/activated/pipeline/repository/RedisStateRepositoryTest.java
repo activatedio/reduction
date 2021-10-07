@@ -6,11 +6,10 @@ import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.RandomString;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 public class RedisStateRepositoryTest {
 

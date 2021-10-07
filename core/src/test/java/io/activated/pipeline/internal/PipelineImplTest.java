@@ -61,7 +61,8 @@ public class PipelineImplTest {
   {
     state = new DummyState();
     state.setValue("2");
-  };
+  }
+  ;
 
   private final DummyAction action = new DummyAction();
 
@@ -85,8 +86,8 @@ public class PipelineImplTest {
 
   @Test
   @Disabled
-  // TODO - restore this test
   public void get() {
+
     when(stateAccess.get(stateType)).thenReturn(Mono.just(state));
 
     var got = Mono.from(unit.get(stateType)).block();
@@ -105,14 +106,14 @@ public class PipelineImplTest {
     when(stateAccess.get(DummyState.class)).thenReturn(Mono.just(state));
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(key);
-    when(reducer.reduce(state, action)).thenReturn(Flowable.just(state));
+    when(keyStrategy.get()).thenReturn(Mono.just(key));
+    when(reducer.reduce(state, action)).thenReturn(Mono.just(state));
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
     when(afterSnapshot.diff(beforeSnapshot)).thenReturn(diff);
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
 
-    var got = Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
+    var got = Mono.from(unit.set(stateType, action)).block();
 
     var reference = new SetResult<DummyState>();
 
@@ -140,15 +141,15 @@ public class PipelineImplTest {
     when(stateAccess.get(DummyState.class)).thenReturn(Mono.just(state));
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(key);
+    when(keyStrategy.get()).thenReturn(Mono.just(key));
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
     when(afterSnapshot.diff(beforeSnapshot)).thenReturn(diff);
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
 
-    when(reducer.reduce(state, action)).thenReturn(Flowable.error(new IgnoreException(state)));
+    when(reducer.reduce(state, action)).thenReturn(Mono.error(new IgnoreException(state)));
 
-    var got = Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
+    var got = Mono.from(unit.set(stateType, action)).block();
 
     var reference = new SetResult<DummyState>();
 
@@ -174,17 +175,17 @@ public class PipelineImplTest {
     when(stateAccess.get(DummyState.class)).thenReturn(Mono.just(state));
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(key);
+    when(keyStrategy.get()).thenReturn(Mono.just(key));
     when(stateRepository.clear(key.getValue(), stateName)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
 
     var expected = new ClearStateException();
 
-    when(reducer.reduce(state, action)).thenReturn(Flowable.error(expected));
+    when(reducer.reduce(state, action)).thenReturn(Mono.error(expected));
 
     try {
-      Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
+      Mono.from(unit.set(stateType, action)).block();
       fail("Exception should have been thrown");
     } catch (PipelineException e) {
       assertThat(e.getCause()).isSameAs(expected);
@@ -209,7 +210,7 @@ public class PipelineImplTest {
     when(stateAccess.get(DummyState.class)).thenReturn(Mono.just(state));
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(key);
+    when(keyStrategy.get()).thenReturn(Mono.just(key));
     when(stateRepository.clear(key.getValue(), stateName)).thenReturn(Mono.empty());
     when(stateRepository.clear(key.getValue(), stateName2)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
@@ -218,13 +219,13 @@ public class PipelineImplTest {
 
     var expected = new ClearAllStatesException();
 
-    when(reducer.reduce(state, action)).thenReturn(Flowable.error(expected));
+    when(reducer.reduce(state, action)).thenReturn(Mono.error(expected));
 
     try {
-      Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
+      Mono.from(unit.set(stateType, action)).block();
       fail("Exception should have been thrown");
-    } catch (CompositeException e) {
-      assertThat(e.getCause().getCause()).isSameAs(expected);
+    } catch (Exception e) {
+      assertThat(e.getCause()).isSameAs(expected);
     }
 
     verify(stateAccess).get(DummyState.class);
@@ -249,17 +250,16 @@ public class PipelineImplTest {
     when(stateAccess.get(DummyState.class)).thenReturn(Mono.just(state));
     when(registry.getReducer(ReducerKey.create(stateType, actionType))).thenReturn(reducer);
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(key);
+    when(keyStrategy.get()).thenReturn(Mono.just(key));
     var expected = new ClearStateAndProceedException(state);
-    when(reducer.reduce(state, action)).thenReturn(Flowable.error(expected));
+    when(reducer.reduce(state, action)).thenReturn(Mono.error(expected));
     when(stateRepository.clear(key.getValue(), stateName)).thenReturn(Mono.empty());
     // TODO - Better to zero out the sate for testing here
     when(stateAccess.zero(stateType)).thenReturn(state);
     when(snapshotter.snapshot(state)).thenReturn(beforeSnapshot, afterSnapshot);
     when(snapshotter.snapshot(action)).thenReturn(actionSnapshot);
 
-
-    var got = Flowable.fromPublisher(unit.set(stateType, action)).blockingSingle();
+    var got = Mono.from(unit.set(stateType, action)).block();
 
     assertThat(got.getState()).isSameAs(state);
 

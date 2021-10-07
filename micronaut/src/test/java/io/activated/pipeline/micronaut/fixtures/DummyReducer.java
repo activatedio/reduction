@@ -1,7 +1,6 @@
 package io.activated.pipeline.micronaut.fixtures;
 
 import io.activated.pipeline.BlockingReducer;
-import io.activated.pipeline.Reducer;
 import io.activated.pipeline.annotations.Operation;
 import javax.inject.Singleton;
 
@@ -10,7 +9,5 @@ import javax.inject.Singleton;
 public class DummyReducer implements BlockingReducer<DummyState, DummyAction> {
 
   @Override
-  public void blockingReduce(DummyState state, DummyAction action) {
-
-  }
+  public void blockingReduce(DummyState state, DummyAction action) {}
 }

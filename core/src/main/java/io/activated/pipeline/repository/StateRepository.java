@@ -1,8 +1,7 @@
 package io.activated.pipeline.repository;
 
-import org.reactivestreams.Publisher;
-
 import java.util.Optional;
+import org.reactivestreams.Publisher;
 
 public interface StateRepository {
 

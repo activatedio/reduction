@@ -9,7 +9,6 @@ import io.activated.pipeline.test.StateDriver;
 public class CartDriver extends StateDriver<Cart> {
 
   protected CartDriver(GraphQLClientSupport support) {
-    super(support, new TypeRef<>() {},
-        new CartProjectionRoot().state().shippingAddress().state());
+    super(support, new TypeRef<>() {}, new CartProjectionRoot().state().shippingAddress().state());
   }
 }

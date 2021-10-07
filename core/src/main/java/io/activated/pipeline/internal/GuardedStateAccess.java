@@ -23,11 +23,13 @@ public class GuardedStateAccess implements StateAccess {
       stateGuard.guardGlobal();
     }
 
-    return Mono.from(delegate.get(stateType)).doOnNext(state -> {
-      for (var stateGuard : stateGuards) {
-        stateGuard.guard(state);
-      }
-    });
+    return Mono.from(delegate.get(stateType))
+        .doOnNext(
+            state -> {
+              for (var stateGuard : stateGuards) {
+                stateGuard.guard(state);
+              }
+            });
   }
 
   @Override

@@ -24,7 +24,10 @@ public abstract class StateDriver<S> {
   private GraphQLErrorException lastGraphQLError;
   private GetResult<S> lastState;
 
-  protected StateDriver(GraphQLClientSupport client, TypeRef<GetResult<S>> typeRef, BaseProjectionNode projectionNode) {
+  protected StateDriver(
+      GraphQLClientSupport client,
+      TypeRef<GetResult<S>> typeRef,
+      BaseProjectionNode projectionNode) {
     this.client = client;
     this.typeRef = typeRef;
     this.projectionNode = projectionNode;
@@ -42,5 +45,4 @@ public abstract class StateDriver<S> {
     client.query(
         query, projectionNode, path, typeRef, defaultSuccessConsumer, defaultErrorConsumer);
   }
-
 }

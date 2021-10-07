@@ -2,7 +2,6 @@ package io.activated.pipeline.micronaut.cart;
 
 import com.google.common.collect.Lists;
 import io.activated.pipeline.annotations.State;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -57,7 +56,10 @@ public class Cart {
     if (this == o) return true;
     if (!(o instanceof Cart)) return false;
     Cart cart = (Cart) o;
-    return count == cart.count && Objects.equals(shippingAddress, cart.shippingAddress) && Objects.equals(billingAddress, cart.billingAddress) && Objects.equals(cartItems, cart.cartItems);
+    return count == cart.count
+        && Objects.equals(shippingAddress, cart.shippingAddress)
+        && Objects.equals(billingAddress, cart.billingAddress)
+        && Objects.equals(cartItems, cart.cartItems);
   }
 
   @Override
@@ -67,11 +69,15 @@ public class Cart {
 
   @Override
   public String toString() {
-    return "Cart{" +
-            "count=" + count +
-            ", shippingAddress=" + shippingAddress +
-            ", billingAddress=" + billingAddress +
-            ", cartItems=" + cartItems +
-            '}';
+    return "Cart{"
+        + "count="
+        + count
+        + ", shippingAddress="
+        + shippingAddress
+        + ", billingAddress="
+        + billingAddress
+        + ", cartItems="
+        + cartItems
+        + '}';
   }
 }
