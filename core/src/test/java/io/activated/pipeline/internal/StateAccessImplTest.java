@@ -12,12 +12,9 @@ import io.activated.pipeline.fixtures.DummyState;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.repository.StateRepository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

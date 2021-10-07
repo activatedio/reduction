@@ -8,7 +8,6 @@ import io.activated.pipeline.env.PrincipalSupplier;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

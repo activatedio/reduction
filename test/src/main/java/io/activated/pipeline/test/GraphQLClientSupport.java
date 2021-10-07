@@ -49,7 +49,7 @@ public class GraphQLClientSupport {
   }
 
   public String getSessionIdCreateIfNeeded() {
-    if (sessionId == null)  {
+    if (sessionId == null) {
       newSession();
     }
     return sessionId;

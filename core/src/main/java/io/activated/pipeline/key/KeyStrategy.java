@@ -1,9 +1,7 @@
 package io.activated.pipeline.key;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import io.activated.pipeline.Context;
+import java.util.function.Function;
 import org.reactivestreams.Publisher;
 
 // TODO - Replace with Guava extends Source<Key>

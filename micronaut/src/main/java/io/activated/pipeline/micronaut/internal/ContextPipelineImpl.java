@@ -1,7 +1,6 @@
 package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.*;
-import io.activated.pipeline.Constants;
 import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.http.context.ServerRequestContext;
 import org.reactivestreams.Publisher;

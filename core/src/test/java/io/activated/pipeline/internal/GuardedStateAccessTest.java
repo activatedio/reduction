@@ -9,6 +9,8 @@ import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.StateGuard;
 import io.activated.pipeline.fixtures.DummyState;
+import java.util.List;
+import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,9 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
