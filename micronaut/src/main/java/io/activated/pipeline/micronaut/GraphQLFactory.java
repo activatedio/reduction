@@ -55,16 +55,22 @@ public class GraphQLFactory {
 
   @Singleton
   @Inject
+  @Named("internal")
   public Pipeline pipeline(
-      @Named("request") SessionIdSupplier sessionIdSupplier,
       Registry registry,
       StateAccess stateAccess,
       StateRepository stateRepository,
       ChangeLogger changeLogger) {
-    return new ContextPipelineImpl(
-        new PipelineImpl(
-            registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger),
-        sessionIdSupplier);
+    return new PipelineImpl(
+        registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger);
+  }
+
+  @Singleton
+  @Inject
+  @Named("context")
+  public Pipeline pipeline(
+      @Named("internal") Pipeline pipeline, @Named("request") SessionIdSupplier sessionIdSupplier) {
+    return new ContextPipelineImpl(pipeline, sessionIdSupplier);
   }
 
   @Singleton

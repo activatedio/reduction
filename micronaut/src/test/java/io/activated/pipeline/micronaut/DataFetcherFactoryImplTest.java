@@ -3,7 +3,6 @@ package io.activated.pipeline.micronaut;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.pipeline.Pipeline;
-import io.activated.pipeline.env.SessionIdSupplier;
 import io.activated.pipeline.micronaut.fixtures.DummyReducer;
 import io.activated.pipeline.micronaut.fixtures.DummyState;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,13 +21,12 @@ class DataFetcherFactoryImplTest {
   private final Class<DummyReducer> actionClass = DummyReducer.class;
 
   @Mock private Pipeline pipeline;
-  @Mock private SessionIdSupplier sessionIdSupplier;
 
   private DataFetcherFactoryImpl unit;
 
   @BeforeEach
   public void setUp() {
-    unit = new DataFetcherFactoryImpl(pipeline, sessionIdSupplier);
+    unit = new DataFetcherFactoryImpl(pipeline);
   }
 
   @Test

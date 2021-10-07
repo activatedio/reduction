@@ -4,7 +4,6 @@ import graphql.schema.DataFetcher;
 import io.activated.pipeline.GetResult;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
-import io.activated.pipeline.env.SessionIdSupplier;
 import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,8 +19,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
   private final Pipeline pipeline;
 
   @Inject
-  public DataFetcherFactoryImpl(
-      Pipeline pipeline, @Named("request") SessionIdSupplier sessionIdSupplier) {
+  public DataFetcherFactoryImpl(@Named("context") Pipeline pipeline) {
     this.pipeline = pipeline;
   }
 
