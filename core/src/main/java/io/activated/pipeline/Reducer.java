@@ -4,5 +4,5 @@ import org.reactivestreams.Publisher;
 
 public interface Reducer<S, A> {
 
-  Publisher<S> reduce(S state, A action);
+  Publisher<S> reduce(Context context, S state, A action);
 }

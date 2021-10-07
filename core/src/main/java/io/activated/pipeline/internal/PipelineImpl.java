@@ -31,12 +31,12 @@ public class PipelineImpl implements Pipeline {
   }
 
   @Override
-  public <S> Publisher<GetResult<S>> get(Class<S> stateType) {
+  public <S> Publisher<GetResult<S>> get(Context context, Class<S> stateType) {
 
     // TODO - this is an untested hack. Please fix
     try {
       var reducer = registry.getReducer(ReducerKey.create(stateType, RefreshAction.class));
-      return Mono.from(set(stateType, new RefreshAction()))
+      return Mono.from(set(context, stateType, new RefreshAction()))
           .map(
               r -> {
                 var result = new GetResult<S>();
@@ -44,7 +44,7 @@ public class PipelineImpl implements Pipeline {
                 return result;
               });
     } catch (RuntimeException e) {
-      return Mono.from(stateAccess.get(stateType))
+      return Mono.from(stateAccess.get(context, stateType))
           .map(
               s -> {
                 var result = new GetResult<S>();
@@ -55,15 +55,15 @@ public class PipelineImpl implements Pipeline {
   }
 
   @Override
-  public <S, A> Publisher<SetResult<S>> set(Class<S> stateType, A action) {
+  public <S, A> Publisher<SetResult<S>> set(Context context, Class<S> stateType, A action) {
 
     Class<A> actionType = (Class<A>) action.getClass();
 
     return Mono.fromCallable(() -> registry.getKeyStrategy(stateType))
-        .flatMap(ks -> Mono.from(ks.get()))
+        .flatMap(ks -> Mono.from(ks.apply(context)))
         .flatMap(
             key ->
-                Mono.from(stateAccess.get(stateType))
+                Mono.from(stateAccess.get(context, stateType))
                     .flatMap(
                         state -> {
                           var stateName = stateType.getCanonicalName();
@@ -74,7 +74,7 @@ public class PipelineImpl implements Pipeline {
                           var before = snapshotter.snapshot(state);
                           var actionSnapshot = snapshotter.snapshot(action);
 
-                          return Mono.from(reducer.reduce(state, action))
+                          return Mono.from(reducer.reduce(context, state, action))
                               .flatMap(
                                   v ->
                                       Mono.from(

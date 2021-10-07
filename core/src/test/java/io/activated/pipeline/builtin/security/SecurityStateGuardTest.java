@@ -3,9 +3,13 @@ package io.activated.pipeline.builtin.security;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.env.PrincipalSupplier;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,6 +23,8 @@ public class SecurityStateGuardTest {
 
   @Mock PrincipalSupplier principalSupplier;
 
+  private Context context;
+
   private final Principal principal =
       new Principal() {
 
@@ -27,6 +33,12 @@ public class SecurityStateGuardTest {
           return null;
         }
       };
+
+  @BeforeEach
+  public void setUp() {
+    var context = new Context();
+    context.getHeaders().put("header1", List.of("value1"));
+  }
 
   @Test
   public void guard_global_principalSet() {
@@ -63,7 +75,7 @@ public class SecurityStateGuardTest {
 
     when(principalSupplier.get()).thenReturn(Optional.of(principal));
 
-    unit.guard(new Object());
+    unit.guard(context, new Object());
 
     verify(principalSupplier).get();
     verifyNoMoreInteractions(principalSupplier);
@@ -76,7 +88,7 @@ public class SecurityStateGuardTest {
 
     when(principalSupplier.get()).thenReturn(null);
 
-    assertThatThrownBy(() -> unit.guard(new Object()))
+    assertThatThrownBy(() -> unit.guard(context, new Object()))
         .isInstanceOf(SecurityException.class)
         .hasMessage("Unauthenticated");
 

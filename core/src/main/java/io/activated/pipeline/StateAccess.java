@@ -10,7 +10,7 @@ public interface StateAccess {
    * @param stateType
    * @return state of object
    */
-  <S> Publisher<S> get(Class<S> stateType);
+  <S> Publisher<S> get(Context context, Class<S> stateType);
 
   /**
    * Gets the zero representation of the object

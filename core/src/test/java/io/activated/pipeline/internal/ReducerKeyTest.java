@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.base.JUnit5ModelTestSupport;
 import io.activated.pipeline.BlockingReducer;
+import io.activated.pipeline.Context;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.fixtures.Dummy1;
@@ -60,13 +61,13 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
 
   public static class DummyReducer1 implements BlockingReducer<Dummy1, Dummy2> {
     @Override
-    public void blockingReduce(final Dummy1 state, final Dummy2 action) {}
+    public void blockingReduce(Context context, final Dummy1 state, final Dummy2 action) {}
   }
 
   public static class DummyReducer2
       implements BlockingReducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
     @Override
-    public void blockingReduce(final Dummy1 state, final Dummy2 action) {}
+    public void blockingReduce(Context context, final Dummy1 state, final Dummy2 action) {}
 
     @Override
     public int compareTo(final DummyReducer2 o) {
@@ -77,7 +78,7 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
   public static class DummyReducer3 implements Reducer<Dummy1, Dummy2> {
 
     @Override
-    public Publisher<Dummy1> reduce(Dummy1 state, Dummy2 action) {
+    public Publisher<Dummy1> reduce(Context context, Dummy1 state, Dummy2 action) {
       return null;
     }
   }
@@ -85,7 +86,7 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
   public static class DummyReducer4 implements Reducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
 
     @Override
-    public Publisher<Dummy1> reduce(Dummy1 state, Dummy2 action) {
+    public Publisher<Dummy1> reduce(Context context, Dummy1 state, Dummy2 action) {
       return null;
     }
 

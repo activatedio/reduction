@@ -1,10 +1,9 @@
 package io.activated.pipeline.micronaut.internal;
 
+import io.activated.pipeline.*;
 import io.activated.pipeline.Constants;
-import io.activated.pipeline.GetResult;
-import io.activated.pipeline.Pipeline;
-import io.activated.pipeline.SetResult;
 import io.activated.pipeline.env.SessionIdSupplier;
+import io.micronaut.http.context.ServerRequestContext;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
@@ -19,14 +18,30 @@ public class ContextPipelineImpl implements Pipeline {
   }
 
   @Override
-  public <S> Publisher<GetResult<S>> get(Class<S> stateType) {
-    return Mono.from(delegate.get(stateType))
-        .contextWrite(ctx -> ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionIdSupplier.get()));
+  public <S> Publisher<GetResult<S>> get(Context context, Class<S> stateType) {
+
+    if (context != null) {
+      throw new IllegalArgumentException("cannot pass in existing context");
+    }
+
+    return Mono.from(delegate.get(getContext(), stateType));
   }
 
   @Override
-  public <S, A> Publisher<SetResult<S>> set(Class<S> stateType, A action) {
-    return Mono.from(delegate.set(stateType, action))
-        .contextWrite(ctx -> ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionIdSupplier.get()));
+  public <S, A> Publisher<SetResult<S>> set(Context context, Class<S> stateType, A action) {
+
+    if (context != null) {
+      throw new IllegalArgumentException("cannot pass in existing context");
+    }
+
+    return Mono.from(delegate.set(getContext(), stateType, action));
+  }
+
+  private Context getContext() {
+
+    var request = ServerRequestContext.currentRequest().get();
+    var context = new Context();
+    context.setHeaders(request.getHeaders().asMap());
+    return context;
   }
 }

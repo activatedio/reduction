@@ -48,7 +48,7 @@ public class SetDataFetcherImplTest {
     var pubResult = FlowableScan.just(result);
 
     when(environment.getArgument("action")).thenReturn(argument);
-    when(pipeline.set(DummyState.class, action)).thenReturn(pubResult);
+    when(pipeline.set(null, DummyState.class, action)).thenReturn(pubResult);
 
     var got = unit.get(environment);
 

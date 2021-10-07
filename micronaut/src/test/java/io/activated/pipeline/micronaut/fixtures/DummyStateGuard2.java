@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut.fixtures;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.StateGuard;
 import javax.inject.Singleton;
 
@@ -10,5 +11,5 @@ public class DummyStateGuard2 implements StateGuard<DummyState> {
   public void guardGlobal() {}
 
   @Override
-  public void guard(DummyState state) {}
+  public void guard(Context context, DummyState state) {}
 }

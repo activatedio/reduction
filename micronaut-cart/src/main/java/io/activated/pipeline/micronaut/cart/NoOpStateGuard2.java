@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut.cart;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.StateGuard;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class NoOpStateGuard2 implements StateGuard<Cart> {
   }
 
   @Override
-  public void guard(Cart state) {
+  public void guard(Context context, Cart state) {
 
     LOGGER.info("Do nothing with state: {}", state);
   }

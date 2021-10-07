@@ -5,13 +5,19 @@ import static org.mockito.Mockito.*;
 
 import io.activated.objectdiff.Snapshot;
 import io.activated.objectdiff.Snapshotter;
+import io.activated.pipeline.Context;
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.fixtures.DummyAction;
 import io.activated.pipeline.fixtures.DummyState;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.repository.StateRepository;
+
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +37,7 @@ public class StateAccessImplTest {
   private final String keyValue = "test-key-value";
   private final String keyMoveFrom = "test-key-move-from";
   private final Key key;
+  private Context context;
 
   {
     key = new Key();
@@ -58,6 +65,10 @@ public class StateAccessImplTest {
 
   @BeforeEach
   public void setUp() {
+
+    context = new Context();
+    context.setHeaders(Map.of("header1", List.of("value1")));
+
     unit = new StateAccessImpl(registry, stateRepository, snapshotter, changeLogger);
   }
 
@@ -70,19 +81,19 @@ public class StateAccessImplTest {
   public void get_noMoveFrom_currentNotExisting() {
 
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(Mono.just(key));
+    when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
     when(initialState.initial()).thenReturn(state);
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(snapshot);
 
-    var got = Mono.from(unit.get(stateType)).block();
+    var got = Mono.from(unit.get(context, stateType)).block();
 
     assertThat(got).isSameAs(state);
 
     verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).get();
+    verify(keyStrategy).apply(context);
     verify(stateRepository).exists(key.getValue(), stateName);
     verify(registry).getInitial(InitialStateKey.create(stateType));
     verify(initialState).initial();
@@ -95,17 +106,17 @@ public class StateAccessImplTest {
   @Test
   public void get_noMoveFrom_currentExisting() {
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(Mono.just(key));
+    when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(true));
     when(stateRepository.get(key.getValue(), stateName, stateType))
         .thenReturn(Mono.just(Optional.of(state)));
 
-    var got = Mono.from(unit.get(stateType)).block();
+    var got = Mono.from(unit.get(context, stateType)).block();
 
     assertThat(got).isEqualTo(state);
 
     verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).get();
+    verify(keyStrategy).apply(context);
     verify(stateRepository).exists(key.getValue(), stateName);
     verify(stateRepository).get(key.getValue(), stateName, stateType);
 
@@ -117,7 +128,7 @@ public class StateAccessImplTest {
     key.setMoveFrom(keyMoveFrom);
 
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(Mono.just(key));
+    when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getMoveFrom(), stateName)).thenReturn(Mono.just(false));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
@@ -125,11 +136,11 @@ public class StateAccessImplTest {
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(snapshot);
 
-    var got = Mono.from(unit.get(stateType)).block();
+    var got = Mono.from(unit.get(context, stateType)).block();
     assertThat(got).isSameAs(state);
 
     verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).get();
+    verify(keyStrategy).apply(context);
     verify(stateRepository).exists(key.getMoveFrom(), stateName);
     verify(stateRepository).exists(key.getValue(), stateName);
     verify(registry).getInitial(InitialStateKey.create(stateType));
@@ -146,17 +157,17 @@ public class StateAccessImplTest {
     key.setMoveFrom(keyMoveFrom);
 
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(Mono.just(key));
+    when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getMoveFrom(), stateName)).thenReturn(Mono.just(false));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(true));
     when(stateRepository.get(key.getValue(), stateName, stateType))
         .thenReturn(Mono.just(Optional.of(state)));
 
-    var got = Mono.from(unit.get(stateType)).block();
+    var got = Mono.from(unit.get(context, stateType)).block();
     assertThat(got).isSameAs(state);
 
     verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).get();
+    verify(keyStrategy).apply(context);
     verify(stateRepository).exists(key.getMoveFrom(), stateName);
     verify(stateRepository).exists(key.getValue(), stateName);
     verify(stateRepository).get(key.getValue(), stateName, stateType);
@@ -170,7 +181,7 @@ public class StateAccessImplTest {
     key.setMoveFrom(keyMoveFrom);
 
     when(registry.getKeyStrategy(stateType)).thenReturn(keyStrategy);
-    when(keyStrategy.get()).thenReturn(Mono.just(key));
+    when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getMoveFrom(), stateName)).thenReturn(Mono.just(true));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(stateRepository.moveKey(key.getMoveFrom(), key.getValue(), stateName))
@@ -178,11 +189,11 @@ public class StateAccessImplTest {
     when(stateRepository.get(key.getValue(), stateName, stateType))
         .thenReturn(Mono.just(Optional.of(state)));
 
-    var got = Mono.from(unit.get(stateType)).block();
+    var got = Mono.from(unit.get(context, stateType)).block();
     assertThat(got).isSameAs(state);
 
     verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).get();
+    verify(keyStrategy).apply(context);
     verify(stateRepository).exists(key.getMoveFrom(), stateName);
     verify(stateRepository).exists(key.getValue(), stateName);
     verify(stateRepository).moveKey(key.getMoveFrom(), key.getValue(), stateName);

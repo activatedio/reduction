@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut.cart;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.annotations.Operation;
@@ -12,7 +13,7 @@ import org.reactivestreams.Publisher;
 public class SetAddressReducer implements Reducer<Cart, SetAddress> {
 
   @Override
-  public Publisher<Cart> reduce(Cart state, SetAddress action) {
+  public Publisher<Cart> reduce(Context context, Cart state, SetAddress action) {
 
     switch (action.getAddressType()) {
       case "B":

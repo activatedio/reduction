@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.StateGuard;
@@ -18,6 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
@@ -34,8 +38,13 @@ class GuardedStateAccessTest {
 
   private final PipelineException e = new PipelineException();
 
+  private Context context;
+
   @BeforeEach
   public void setup() {
+
+    context = new Context();
+    context.setHeaders(Map.of("header1", List.of("value1")));
 
     unit = new GuardedStateAccess(registry, delegate);
   }
@@ -48,12 +57,12 @@ class GuardedStateAccessTest {
   public void get_noStateGuards() {
 
     when(registry.getStateGuards(DummyState.class)).thenReturn(Lists.emptyList());
-    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
+    when(delegate.get(context, DummyState.class)).thenReturn(Mono.just(state));
 
-    assertThat(Mono.from(unit.get(DummyState.class)).block()).isSameAs(state);
+    assertThat(Mono.from(unit.get(context, DummyState.class)).block()).isSameAs(state);
 
     verify(registry).getStateGuards(DummyState.class);
-    verify(delegate).get(DummyState.class);
+    verify(delegate).get(context, DummyState.class);
 
     verifyNoMoreInteractions();
   }
@@ -63,16 +72,16 @@ class GuardedStateAccessTest {
 
     when(registry.getStateGuards(DummyState.class))
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
-    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
+    when(delegate.get(context, DummyState.class)).thenReturn(Mono.just(state));
 
-    assertThat(Mono.from(unit.get(DummyState.class)).block()).isSameAs(state);
+    assertThat(Mono.from(unit.get(context, DummyState.class)).block()).isSameAs(state);
 
     verify(registry).getStateGuards(DummyState.class);
-    verify(delegate).get(DummyState.class);
+    verify(delegate).get(context, DummyState.class);
     verify(stateGuard1).guardGlobal();
     verify(stateGuard2).guardGlobal();
-    verify(stateGuard1).guard(state);
-    verify(stateGuard2).guard(state);
+    verify(stateGuard1).guard(context, state);
+    verify(stateGuard2).guard(context, state);
     verifyNoMoreInteractions();
   }
 
@@ -83,7 +92,7 @@ class GuardedStateAccessTest {
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
     doThrow(e).when(stateGuard1).guardGlobal();
 
-    assertThatThrownBy(() -> unit.get(DummyState.class)).isSameAs(e);
+    assertThatThrownBy(() -> unit.get(context, DummyState.class)).isSameAs(e);
 
     verify(registry).getStateGuards(DummyState.class);
     verify(stateGuard1).guardGlobal();
@@ -98,7 +107,7 @@ class GuardedStateAccessTest {
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
     doThrow(e).when(stateGuard2).guardGlobal();
 
-    assertThatThrownBy(() -> unit.get(DummyState.class)).isSameAs(e);
+    assertThatThrownBy(() -> unit.get(context, DummyState.class)).isSameAs(e);
 
     verify(registry).getStateGuards(DummyState.class);
     verify(stateGuard1).guardGlobal();
@@ -112,16 +121,16 @@ class GuardedStateAccessTest {
 
     when(registry.getStateGuards(DummyState.class))
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
-    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
-    doThrow(e).when(stateGuard1).guard(state);
+    when(delegate.get(context, DummyState.class)).thenReturn(Mono.just(state));
+    doThrow(e).when(stateGuard1).guard(context, state);
 
-    assertThatThrownBy(() -> Mono.from(unit.get(DummyState.class)).block()).isSameAs(e);
+    assertThatThrownBy(() -> Mono.from(unit.get(context, DummyState.class)).block()).isSameAs(e);
 
     verify(registry).getStateGuards(DummyState.class);
-    verify(delegate).get(DummyState.class);
+    verify(delegate).get(context, DummyState.class);
     verify(stateGuard1).guardGlobal();
     verify(stateGuard2).guardGlobal();
-    verify(stateGuard1).guard(state);
+    verify(stateGuard1).guard(context, state);
 
     verifyNoMoreInteractions();
   }
@@ -131,17 +140,17 @@ class GuardedStateAccessTest {
 
     when(registry.getStateGuards(DummyState.class))
         .thenReturn(Lists.newArrayList(stateGuard1, stateGuard2));
-    when(delegate.get(DummyState.class)).thenReturn(Mono.just(state));
-    doThrow(e).when(stateGuard2).guard(state);
+    when(delegate.get(context, DummyState.class)).thenReturn(Mono.just(state));
+    doThrow(e).when(stateGuard2).guard(context, state);
 
-    assertThatThrownBy(() -> Mono.from(unit.get(DummyState.class)).block()).isSameAs(e);
+    assertThatThrownBy(() -> Mono.from(unit.get(context, DummyState.class)).block()).isSameAs(e);
 
     verify(registry).getStateGuards(DummyState.class);
-    verify(delegate).get(DummyState.class);
+    verify(delegate).get(context, DummyState.class);
     verify(stateGuard1).guardGlobal();
     verify(stateGuard2).guardGlobal();
-    verify(stateGuard1).guard(state);
-    verify(stateGuard2).guard(state);
+    verify(stateGuard1).guard(context, state);
+    verify(stateGuard2).guard(context, state);
 
     verifyNoMoreInteractions();
   }

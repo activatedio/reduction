@@ -2,10 +2,12 @@ package io.activated.pipeline.key;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
 import io.activated.pipeline.Constants;
-import java.util.NoSuchElementException;
+
+import java.util.List;
+
+import io.activated.pipeline.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
@@ -14,25 +16,31 @@ public class SessionKeyStrategyTest {
 
   private SessionKeyStrategy unit;
 
+  private final String sessionId = "test-session-id";
+
   @BeforeEach
   public void setUp() {
     unit = new SessionKeyStrategy();
   }
 
   @Test
-  public void get_notInContext() {
-    assertThatThrownBy(() -> Mono.from(unit.get()).block())
-        .isInstanceOf(NoSuchElementException.class)
-        .hasMessage("Context is empty");
+  public void get_noHeader() {
+
+    var context = new Context();
+
+    assertThatThrownBy(() -> Mono.from(unit.apply(context)).block())
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("pipeline-session-id not provided in header");
   }
 
   @Test
   public void get() {
 
-    var sessionId = "test-session-id";
+    var context = new Context();
+    context.getHeaders().put(Constants.SESSION_ID_CONTEXT_KEY, List.of(sessionId));
 
     var got =
-        Mono.from(unit.get())
+        Mono.from(unit.apply(context))
             .contextWrite(ctx -> ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionId))
             .block();
 

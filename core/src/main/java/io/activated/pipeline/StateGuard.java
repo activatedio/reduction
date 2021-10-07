@@ -15,5 +15,5 @@ public interface StateGuard<S> {
    *
    * @param state
    */
-  void guard(S state);
+  void guard(Context context, S state);
 }

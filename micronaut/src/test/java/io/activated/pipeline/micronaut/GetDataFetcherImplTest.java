@@ -29,7 +29,7 @@ public class GetDataFetcherImplTest {
   @Test
   public void get() throws Exception {
     final var result = new GetResult<DummyState>();
-    when(pipeline.get(DummyState.class)).thenReturn(Mono.just(result));
+    when(pipeline.get(null, DummyState.class)).thenReturn(Mono.just(result));
     assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
   }
 }

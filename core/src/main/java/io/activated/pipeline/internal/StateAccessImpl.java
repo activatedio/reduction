@@ -1,6 +1,7 @@
 package io.activated.pipeline.internal;
 
 import io.activated.objectdiff.Snapshotter;
+import io.activated.pipeline.Context;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
@@ -42,12 +43,12 @@ public class StateAccessImpl implements StateAccess {
   }
 
   @Override
-  public <S> Publisher<S> get(Class<S> stateType) {
+  public <S> Publisher<S> get(Context context, Class<S> stateType) {
 
     var stateName = stateType.getCanonicalName();
 
     return Mono.fromCallable(() -> registry.getKeyStrategy(stateType))
-        .flatMap(ks -> Mono.from(ks.get()))
+        .flatMap(ks -> Mono.from(ks.apply(context)))
         .flatMap(
             key ->
                 Mono.from(stateRepository.exists(key.getValue(), stateName))

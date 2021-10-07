@@ -1,5 +1,6 @@
 package io.activated.pipeline.builtin.security;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.StateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
 
@@ -24,7 +25,7 @@ public class SecurityStateGuard implements StateGuard<Object> {
   }
 
   @Override
-  public void guard(Object state) {
+  public void guard(Context context, Object state) {
     guardGlobal();
   }
 }

@@ -18,8 +18,11 @@ public class BlockingReducerTest {
 
   private static class TestableBlockingReducer implements BlockingReducer<State, Action> {
 
+    public Context lastContext;
+
     @Override
-    public void blockingReduce(State state, Action action) {
+    public void blockingReduce(Context context, State state, Action action) {
+      lastContext = context;
       state.to = action.from;
     }
   }
@@ -38,11 +41,13 @@ public class BlockingReducerTest {
 
     var state = new State();
     var action = new Action();
+    var context = new Context();
 
     action.from = payload;
 
-    var got = Mono.from(unit.reduce(state, action)).block();
+    var got = Mono.from(unit.reduce(context, state, action)).block();
 
+    assertThat(unit.lastContext).isSameAs(context);
     assertThat(got).isSameAs(state);
     assertThat(got.to).isSameAs(payload);
   }
