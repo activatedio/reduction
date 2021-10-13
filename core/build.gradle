@@ -17,7 +17,7 @@ dependencies {
     api (group: 'io.lettuce', name: 'lettuce-core', version: '6.1.0.RELEASE') {
         exclude group: 'io.netty'
     }
-    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.2'
     // TODO - Need to make this optional
     api (group: 'org.apache.pulsar', name: 'pulsar-client', version: '2.7.0') {
       exclude group: 'javax.validation'
