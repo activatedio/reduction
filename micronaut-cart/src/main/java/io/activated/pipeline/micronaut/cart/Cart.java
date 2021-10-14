@@ -12,6 +12,7 @@ public class Cart {
   private Address shippingAddress;
   private Address billingAddress;
   private List<CartItem> cartItems = Lists.newArrayList();
+  private String threadName;
 
   public Cart() {}
 
@@ -51,6 +52,10 @@ public class Cart {
     this.cartItems = cartItems;
   }
 
+  public String getThreadName() {
+    return threadName;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -59,25 +64,16 @@ public class Cart {
     return count == cart.count
         && Objects.equals(shippingAddress, cart.shippingAddress)
         && Objects.equals(billingAddress, cart.billingAddress)
-        && Objects.equals(cartItems, cart.cartItems);
+        && Objects.equals(cartItems, cart.cartItems)
+        && Objects.equals(threadName, cart.threadName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(count, shippingAddress, billingAddress, cartItems);
+    return Objects.hash(count, shippingAddress, billingAddress, cartItems, threadName);
   }
 
-  @Override
-  public String toString() {
-    return "Cart{"
-        + "count="
-        + count
-        + ", shippingAddress="
-        + shippingAddress
-        + ", billingAddress="
-        + billingAddress
-        + ", cartItems="
-        + cartItems
-        + '}';
+  public void setThreadName(String threadName) {
+    this.threadName = threadName;
   }
 }

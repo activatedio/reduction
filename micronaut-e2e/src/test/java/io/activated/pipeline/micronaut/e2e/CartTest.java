@@ -3,10 +3,12 @@ package io.activated.pipeline.micronaut.e2e;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.pipeline.micronaut.cart.Application;
+import io.activated.pipeline.micronaut.cart.client.CartDiagnosticActionGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.client.CartExceptionActionGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.client.CartGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.client.CartSetAddressGraphQLQuery;
 import io.activated.pipeline.micronaut.cart.types.AddressInput;
+import io.activated.pipeline.micronaut.cart.types.DiagnosticActionInput;
 import io.activated.pipeline.micronaut.cart.types.ExceptionActionInput;
 import io.activated.pipeline.micronaut.cart.types.SetAddressInput;
 import io.activated.pipeline.test.GraphQLClientSupport;
@@ -80,5 +82,16 @@ public class CartTest {
     driver.query(query3, "cartExceptionAction");
 
     assertThat(driver.getLastGraphQLError()).isNotNull();
+
+    var diagQuery =
+        CartDiagnosticActionGraphQLQuery.newRequest()
+            .action(DiagnosticActionInput.newBuilder().dummy("test").build())
+            .build();
+
+    driver.query(diagQuery, "cartDiagnosticAction");
+
+    assertThat(driver.getLastGraphQLError()).isNotNull();
+
+    assertThat(driver.getLastState().getThreadName()).contains("parallel");
   }
 }

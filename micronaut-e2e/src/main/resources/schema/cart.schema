@@ -35,6 +35,7 @@ type Cart {
   cartItems: [CartItem]
   count: Int
   shippingAddress: Address
+  threadName: String
 }
 
 type CartItem {
@@ -55,6 +56,7 @@ type CartState {
 }
 
 type Mutation {
+  cartDiagnosticAction(action: DiagnosticActionInput): CartState
   cartExceptionAction(action: ExceptionActionInput): CartState
   cartRefreshAction(action: RefreshActionInput): CartState
   cartSetAddress(action: SetAddressInput): CartState
@@ -78,6 +80,10 @@ input AddressInput {
   state: String
   street: String
   zip: String
+}
+
+input DiagnosticActionInput {
+  dummy: String
 }
 
 input ExceptionActionInput {

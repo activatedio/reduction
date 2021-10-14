@@ -8,6 +8,7 @@ import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 public class PipelineImpl implements Pipeline {
 
@@ -45,6 +46,7 @@ public class PipelineImpl implements Pipeline {
               });
     } catch (RuntimeException e) {
       return Mono.from(stateAccess.get(context, stateType))
+          .publishOn(Schedulers.parallel())
           .map(
               s -> {
                 var result = new GetResult<S>();
@@ -64,6 +66,7 @@ public class PipelineImpl implements Pipeline {
         .flatMap(
             key ->
                 Mono.from(stateAccess.get(context, stateType))
+                    .publishOn(Schedulers.parallel())
                     .flatMap(
                         state -> {
                           var stateName = stateType.getCanonicalName();
