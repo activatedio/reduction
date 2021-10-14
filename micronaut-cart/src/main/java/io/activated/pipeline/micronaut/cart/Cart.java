@@ -13,6 +13,8 @@ public class Cart {
   private Address billingAddress;
   private List<CartItem> cartItems = Lists.newArrayList();
   private String threadName;
+  private String pipelineSessionIdUppercase;
+  private String pipelineSessionIdLowercase;
 
   public Cart() {}
 
@@ -56,6 +58,26 @@ public class Cart {
     return threadName;
   }
 
+  public void setThreadName(String threadName) {
+    this.threadName = threadName;
+  }
+
+  public String getPipelineSessionIdUppercase() {
+    return pipelineSessionIdUppercase;
+  }
+
+  public void setPipelineSessionIdUppercase(String pipelineSessionIdUppercase) {
+    this.pipelineSessionIdUppercase = pipelineSessionIdUppercase;
+  }
+
+  public String getPipelineSessionIdLowercase() {
+    return pipelineSessionIdLowercase;
+  }
+
+  public void setPipelineSessionIdLowercase(String pipelineSessionIdLowercase) {
+    this.pipelineSessionIdLowercase = pipelineSessionIdLowercase;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -65,15 +87,43 @@ public class Cart {
         && Objects.equals(shippingAddress, cart.shippingAddress)
         && Objects.equals(billingAddress, cart.billingAddress)
         && Objects.equals(cartItems, cart.cartItems)
-        && Objects.equals(threadName, cart.threadName);
+        && Objects.equals(threadName, cart.threadName)
+        && Objects.equals(pipelineSessionIdUppercase, cart.pipelineSessionIdUppercase)
+        && Objects.equals(pipelineSessionIdLowercase, cart.pipelineSessionIdLowercase);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(count, shippingAddress, billingAddress, cartItems, threadName);
+    return Objects.hash(
+        count,
+        shippingAddress,
+        billingAddress,
+        cartItems,
+        threadName,
+        pipelineSessionIdUppercase,
+        pipelineSessionIdLowercase);
   }
 
-  public void setThreadName(String threadName) {
-    this.threadName = threadName;
+  @Override
+  public String toString() {
+    return "Cart{"
+        + "count="
+        + count
+        + ", shippingAddress="
+        + shippingAddress
+        + ", billingAddress="
+        + billingAddress
+        + ", cartItems="
+        + cartItems
+        + ", threadName='"
+        + threadName
+        + '\''
+        + ", pipelineSessionIdUppercase='"
+        + pipelineSessionIdUppercase
+        + '\''
+        + ", pipelineSessionIdLowercase='"
+        + pipelineSessionIdLowercase
+        + '\''
+        + '}';
   }
 }

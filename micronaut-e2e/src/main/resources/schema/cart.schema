@@ -34,6 +34,8 @@ type Cart {
   billingAddress: Address
   cartItems: [CartItem]
   count: Int
+  pipelineSessionIdLowercase: String
+  pipelineSessionIdUppercase: String
   shippingAddress: Address
   threadName: String
 }

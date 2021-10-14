@@ -3,6 +3,8 @@ package io.activated.pipeline.micronaut.internal;
 import io.activated.pipeline.*;
 import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.http.context.ServerRequestContext;
+import java.util.List;
+import java.util.TreeMap;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
@@ -40,7 +42,10 @@ public class ContextPipelineImpl implements Pipeline {
 
     var request = ServerRequestContext.currentRequest().get();
     var context = new Context();
-    context.setHeaders(request.getHeaders().asMap());
+    var headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+    // TODO - How to test both types of headers
+    headers.putAll(request.getHeaders().asMap());
+    context.setHeaders(headers);
     return context;
   }
 }

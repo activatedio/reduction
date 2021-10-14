@@ -12,6 +12,12 @@ public class CartDriver extends StateDriver<Cart> {
     super(
         support,
         new TypeRef<>() {},
-        new CartProjectionRoot().state().threadName().shippingAddress().state());
+        new CartProjectionRoot()
+            .state()
+            .threadName()
+            .pipelineSessionIdLowercase()
+            .pipelineSessionIdUppercase()
+            .shippingAddress()
+            .state());
   }
 }

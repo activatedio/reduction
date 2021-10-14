@@ -93,5 +93,8 @@ public class CartTest {
     assertThat(driver.getLastGraphQLError()).isNotNull();
 
     assertThat(driver.getLastState().getThreadName()).contains("parallel");
+    assertThat(driver.getLastState().getPipelineSessionIdLowercase()).isNotEmpty();
+    assertThat(driver.getLastState().getPipelineSessionIdLowercase())
+        .isEqualTo(driver.getLastState().getPipelineSessionIdUppercase());
   }
 }
