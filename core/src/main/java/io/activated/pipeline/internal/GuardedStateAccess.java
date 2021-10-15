@@ -4,6 +4,7 @@ import io.activated.pipeline.Context;
 import io.activated.pipeline.StateAccess;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 public class GuardedStateAccess implements StateAccess {
 
@@ -25,6 +26,7 @@ public class GuardedStateAccess implements StateAccess {
     }
 
     return Mono.from(delegate.get(context, stateType))
+        .publishOn(Schedulers.parallel())
         .doOnNext(
             state -> {
               for (var stateGuard : stateGuards) {

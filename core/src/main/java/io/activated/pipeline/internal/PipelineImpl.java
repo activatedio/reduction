@@ -101,6 +101,7 @@ public class PipelineImpl implements Pipeline {
                                         // used to signal
                                         return Mono.from(
                                                 stateRepository.clear(key.getValue(), stateName))
+                                            .publishOn(Schedulers.parallel())
                                             .map(v -> state)
                                             .doOnSuccess(
                                                 s -> {
@@ -176,6 +177,7 @@ public class PipelineImpl implements Pipeline {
       S s) {
 
     return Mono.from(stateRepository.set(key.getValue(), stateName, s))
+        .publishOn(Schedulers.parallel())
         .doOnSuccess(
             v -> {
               var after = snapshotter.snapshot(state);
