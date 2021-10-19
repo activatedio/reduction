@@ -6,16 +6,18 @@ import io.micronaut.http.context.ServerRequestContext;
 import java.util.List;
 import java.util.TreeMap;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 public class ContextPipelineImpl implements Pipeline {
 
-  private final Pipeline delegate;
-  private final SessionIdSupplier sessionIdSupplier;
+  private static final Logger LOGGER = LoggerFactory.getLogger(ContextPipelineImpl.class);
 
-  public ContextPipelineImpl(Pipeline delegate, SessionIdSupplier sessionIdSupplier) {
+  private final Pipeline delegate;
+
+  public ContextPipelineImpl(Pipeline delegate) {
     this.delegate = delegate;
-    this.sessionIdSupplier = sessionIdSupplier;
   }
 
   @Override
@@ -46,6 +48,7 @@ public class ContextPipelineImpl implements Pipeline {
     // TODO - How to test both types of headers
     headers.putAll(request.getHeaders().asMap());
     context.setHeaders(headers);
+    LOGGER.info("using context: " + context);
     return context;
   }
 }

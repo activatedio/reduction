@@ -69,8 +69,8 @@ public class GraphQLFactory {
   @Inject
   @Named("context")
   public Pipeline pipeline(
-      @Named("internal") Pipeline pipeline, @Named("request") SessionIdSupplier sessionIdSupplier) {
-    return new ContextPipelineImpl(pipeline, sessionIdSupplier);
+      @Named("internal") Pipeline pipeline) {
+    return new ContextPipelineImpl(pipeline);
   }
 
   @Singleton
