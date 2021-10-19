@@ -6,7 +6,6 @@ import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.builtin.security.SecurityStateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
-import io.activated.pipeline.env.SessionIdSupplier;
 import io.activated.pipeline.internal.*;
 import io.activated.pipeline.micronaut.internal.ContextPipelineImpl;
 import io.activated.pipeline.repository.RedisStateRepository;
@@ -68,8 +67,7 @@ public class GraphQLFactory {
   @Singleton
   @Inject
   @Named("context")
-  public Pipeline pipeline(
-      @Named("internal") Pipeline pipeline) {
+  public Pipeline pipeline(@Named("internal") Pipeline pipeline) {
     return new ContextPipelineImpl(pipeline);
   }
 

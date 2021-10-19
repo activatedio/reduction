@@ -1,7 +1,6 @@
 package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.*;
-import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.http.context.ServerRequestContext;
 import java.util.List;
 import java.util.TreeMap;
