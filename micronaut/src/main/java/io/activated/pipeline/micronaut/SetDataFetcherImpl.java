@@ -32,6 +32,7 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
       throws Exception {
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    return Mono.from(pipeline.set(null, stateClass, action)).toFuture();
+    final var ctx = ContextUtils.getContext();
+    return Mono.from(pipeline.set(ctx, stateClass, action)).toFuture();
   }
 }

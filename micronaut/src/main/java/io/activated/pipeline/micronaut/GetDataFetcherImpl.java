@@ -20,6 +20,8 @@ public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetR
   @Override
   public CompletableFuture<GetResult<S>> get(final DataFetchingEnvironment environment)
       throws Exception {
-    return Mono.from(pipeline.get(null, stateClass)).toFuture();
+
+    final var ctx = ContextUtils.getContext();
+    return Mono.from(pipeline.get(ctx, stateClass)).toFuture();
   }
 }

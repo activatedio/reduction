@@ -6,7 +6,6 @@ import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
 import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
   private final Pipeline pipeline;
 
   @Inject
-  public DataFetcherFactoryImpl(@Named("context") Pipeline pipeline) {
+  public DataFetcherFactoryImpl(Pipeline pipeline) {
     this.pipeline = pipeline;
   }
 
