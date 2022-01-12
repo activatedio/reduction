@@ -2,7 +2,7 @@ package io.activated.pipeline.micronaut.cart;
 
 import io.activated.pipeline.Context;
 import io.activated.pipeline.StateGuard;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

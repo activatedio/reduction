@@ -2,8 +2,8 @@ package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.http.context.ServerRequestContext;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 @Singleton
 @Named("request")

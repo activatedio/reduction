@@ -1,10 +1,10 @@
 package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.env.SessionIdSupplier;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.security.SecureRandom;
 import java.util.Base64;
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 @Singleton
 @Named("new")

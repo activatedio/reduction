@@ -5,7 +5,7 @@ import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.annotations.Operation;
 import io.micronaut.core.async.publisher.Publishers;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
 @Operation

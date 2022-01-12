@@ -2,7 +2,7 @@ package io.activated.pipeline.micronaut.cart;
 
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.annotations.Initial;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Initial
 @Singleton

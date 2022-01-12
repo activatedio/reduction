@@ -9,7 +9,6 @@ import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
 import io.activated.pipeline.micronaut.fixtures.DummyAction;
 import io.activated.pipeline.micronaut.fixtures.DummyState;
-import io.reactivex.internal.operators.flowable.FlowableScan;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 // TODO - Restore this
@@ -48,7 +48,7 @@ public class SetDataFetcherImplTest {
     var result = new SetResult<DummyState>();
     result.setState(new DummyState());
 
-    var pubResult = FlowableScan.just(result);
+    var pubResult = Mono.just(result);
 
     when(environment.getArgument("action")).thenReturn(argument);
     when(pipeline.set(null, DummyState.class, action)).thenReturn(pubResult);

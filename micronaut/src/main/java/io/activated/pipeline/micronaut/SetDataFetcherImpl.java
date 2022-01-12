@@ -5,9 +5,9 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.concurrent.CompletableFuture;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import reactor.core.publisher.Mono;
 
 @Singleton
