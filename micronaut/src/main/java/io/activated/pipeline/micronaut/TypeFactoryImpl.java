@@ -37,6 +37,8 @@ public class TypeFactoryImpl implements TypeFactory {
     outputCache.put(String.class, Scalars.GraphQLString);
     outputCache.put(Integer.class, Scalars.GraphQLInt);
     outputCache.put(int.class, Scalars.GraphQLInt);
+    outputCache.put(Long.class, Scalars.GraphQLLong);
+    outputCache.put(long.class, Scalars.GraphQLLong);
     outputCache.put(Boolean.class, Scalars.GraphQLBoolean);
     outputCache.put(boolean.class, Scalars.GraphQLBoolean);
     outputCache.put(Float.class, Scalars.GraphQLFloat);
@@ -48,6 +50,8 @@ public class TypeFactoryImpl implements TypeFactory {
     inputCache.put(String.class, Scalars.GraphQLString);
     inputCache.put(Integer.class, Scalars.GraphQLInt);
     inputCache.put(int.class, Scalars.GraphQLInt);
+    inputCache.put(Long.class, Scalars.GraphQLLong);
+    inputCache.put(long.class, Scalars.GraphQLLong);
     inputCache.put(Boolean.class, Scalars.GraphQLBoolean);
     inputCache.put(boolean.class, Scalars.GraphQLBoolean);
     inputCache.put(Float.class, Scalars.GraphQLFloat);

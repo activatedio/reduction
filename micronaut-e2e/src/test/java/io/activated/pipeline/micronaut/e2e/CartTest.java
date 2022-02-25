@@ -65,6 +65,7 @@ public class CartTest {
 
     assertThat(driver.getLastGraphQLError()).isNull();
     assertThat(driver.getLastState().getShippingAddress().getState()).isEqualTo("WA");
+    assertThat(driver.getLastState().getLongValue()).isEqualTo(9999l);
 
     var query2 = new CartGraphQLQuery.Builder().build();
 

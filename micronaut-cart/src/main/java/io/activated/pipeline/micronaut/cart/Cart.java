@@ -15,6 +15,7 @@ public class Cart {
   private String threadName;
   private String pipelineSessionIdUppercase;
   private String pipelineSessionIdLowercase;
+  private Long longValue = 9999l;
 
   public Cart() {}
 
@@ -78,6 +79,14 @@ public class Cart {
     this.pipelineSessionIdLowercase = pipelineSessionIdLowercase;
   }
 
+  public Long getLongValue() {
+    return longValue;
+  }
+
+  public void setLongValue(Long longValue) {
+    this.longValue = longValue;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -89,7 +98,8 @@ public class Cart {
         && Objects.equals(cartItems, cart.cartItems)
         && Objects.equals(threadName, cart.threadName)
         && Objects.equals(pipelineSessionIdUppercase, cart.pipelineSessionIdUppercase)
-        && Objects.equals(pipelineSessionIdLowercase, cart.pipelineSessionIdLowercase);
+        && Objects.equals(pipelineSessionIdLowercase, cart.pipelineSessionIdLowercase)
+        && Objects.equals(longValue, cart.longValue);
   }
 
   @Override
@@ -101,7 +111,8 @@ public class Cart {
         cartItems,
         threadName,
         pipelineSessionIdUppercase,
-        pipelineSessionIdLowercase);
+        pipelineSessionIdLowercase,
+        longValue);
   }
 
   @Override
@@ -124,6 +135,8 @@ public class Cart {
         + ", pipelineSessionIdLowercase='"
         + pipelineSessionIdLowercase
         + '\''
+        + ", longValue="
+        + longValue
         + '}';
   }
 }

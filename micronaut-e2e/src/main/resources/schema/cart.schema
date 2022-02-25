@@ -34,6 +34,7 @@ type Cart {
   billingAddress: Address
   cartItems: [CartItem]
   count: Int
+  longValue: Long
   pipelineSessionIdLowercase: String
   pipelineSessionIdUppercase: String
   shippingAddress: Address
@@ -75,6 +76,9 @@ type Query {
 
 "Built-in java.math.BigDecimal"
 scalar BigDecimal
+
+"Long type"
+scalar Long
 
 input AddressInput {
   city: String
