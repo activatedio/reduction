@@ -59,6 +59,10 @@ public class GraphQLClientSupport {
     this.accessToken = accessToken;
   }
 
+  public void setSessionId(String sessionId) {
+    this.sessionId = sessionId;
+  }
+
   public <T> void query(
       GraphQLQuery query,
       BaseProjectionNode projectionNode,
