@@ -92,9 +92,9 @@ subprojects {
   }
 
   release {
-      requireBranch ''
       afterReleaseBuild.dependsOn publish
       git {
+          requireBranch = ''
           pushToRemote = false
       }
   }
