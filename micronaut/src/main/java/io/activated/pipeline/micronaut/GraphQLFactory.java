@@ -13,6 +13,7 @@ import io.lettuce.core.RedisClient;
 import io.micronaut.context.annotation.Factory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.ValidatorFactory;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -53,12 +54,15 @@ public class GraphQLFactory {
   @Singleton
   @Inject
   public Pipeline pipeline(
+      ValidatorFactory validatorFactory,
       Registry registry,
       StateAccess stateAccess,
       StateRepository stateRepository,
       ChangeLogger changeLogger) {
-    return new PipelineImpl(
-        registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger);
+    return new ValidatingPipeline(
+        validatorFactory,
+        new PipelineImpl(
+            registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger));
   }
 
   @Singleton

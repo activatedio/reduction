@@ -1,10 +1,15 @@
 package io.activated.pipeline.micronaut.cart;
 
+import io.micronaut.core.annotation.Introspected;
 import java.util.Objects;
+import javax.validation.constraints.Size;
 
+@Introspected
 public class SetAddress {
 
+  @Size(max = 1)
   private String addressType;
+
   private Address address;
 
   public String getAddressType() {

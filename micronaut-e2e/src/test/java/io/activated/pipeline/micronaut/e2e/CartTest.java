@@ -45,7 +45,31 @@ public class CartTest {
   }
 
   @Test
-  // TODO - Restore this
+  void scenario_invalid() {
+
+    var driver = new CartDriver(new GraphQLClientSupport(CONFIG));
+
+    // Set shipping address
+
+    var query =
+        new CartSetAddressGraphQLQuery.Builder()
+            .action(
+                SetAddressInput.newBuilder()
+                    .addressType("SS")
+                    .address(AddressInput.newBuilder().state("WA").build())
+                    .build())
+            .build();
+
+    driver.query(query, "cartSetAddress");
+
+    assertThat(driver.getLastGraphQLError()).isNotNull();
+    assertThat(driver.getLastGraphQLError().getMessage())
+        .isEqualTo(
+            "Exception while fetching data (/cartSetAddress) : Validation failed: addressType: size must be between 0 and 1");
+    assertThat(driver.getLastState()).isNull();
+  }
+
+  @Test
   void scenario() {
 
     var driver = new CartDriver(new GraphQLClientSupport(CONFIG));
