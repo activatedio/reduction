@@ -12,7 +12,7 @@ import io.activated.pipeline.micronaut.MainRuntimeConfiguration;
 import io.activated.pipeline.micronaut.fixtures.*;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -48,11 +48,21 @@ public class GraphQLClientSupport {
     LOGGER.debug("Setting new session id: {}", sessionId);
   }
 
+  /** @return current session id, generating if not yet created */
   public String getSessionIdCreateIfNeeded() {
     if (sessionId == null) {
       newSession();
     }
     return sessionId;
+  }
+
+  /**
+   * Set session id to use
+   *
+   * @param sessionId
+   */
+  public void setSessionId(String sessionId) {
+    this.sessionId = sessionId;
   }
 
   public void setAccessToken(String accessToken) {

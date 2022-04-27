@@ -3,14 +3,14 @@ package io.activated.pipeline.micronaut;
 import com.google.common.collect.Sets;
 import graphql.Scalars;
 import graphql.schema.*;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class TypeFactoryImpl implements TypeFactory {
@@ -45,7 +45,7 @@ public class TypeFactoryImpl implements TypeFactory {
     outputCache.put(float.class, Scalars.GraphQLFloat);
     outputCache.put(Double.class, Scalars.GraphQLFloat);
     outputCache.put(double.class, Scalars.GraphQLFloat);
-    outputCache.put(BigDecimal.class, Scalars.GraphQLBigDecimal);
+    outputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
 
     inputCache.put(String.class, Scalars.GraphQLString);
     inputCache.put(Integer.class, Scalars.GraphQLInt);
@@ -58,7 +58,7 @@ public class TypeFactoryImpl implements TypeFactory {
     inputCache.put(float.class, Scalars.GraphQLFloat);
     inputCache.put(Double.class, Scalars.GraphQLFloat);
     inputCache.put(double.class, Scalars.GraphQLFloat);
-    inputCache.put(BigDecimal.class, Scalars.GraphQLBigDecimal);
+    inputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
   }
 
   @Override

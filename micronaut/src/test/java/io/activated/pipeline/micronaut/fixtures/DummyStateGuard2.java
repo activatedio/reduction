@@ -2,7 +2,7 @@ package io.activated.pipeline.micronaut.fixtures;
 
 import io.activated.pipeline.Context;
 import io.activated.pipeline.StateGuard;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class DummyStateGuard2 implements StateGuard<DummyState> {

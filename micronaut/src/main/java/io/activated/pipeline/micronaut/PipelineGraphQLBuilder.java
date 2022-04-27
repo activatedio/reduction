@@ -4,9 +4,9 @@ import com.google.common.collect.Maps;
 import graphql.schema.*;
 import io.activated.pipeline.internal.*;
 import io.activated.pipeline.micronaut.internal.MapTypeCache;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Map;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

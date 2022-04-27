@@ -1,5 +1,7 @@
 package io.activated.pipeline.micronaut.internal;
 
+import static org.reflections.scanners.Scanners.*;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -18,12 +20,13 @@ import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.key.SessionKeyStrategy;
 import io.activated.pipeline.micronaut.MainRuntimeConfiguration;
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.core.io.scan.ClassPathAnnotationScanner;
 import io.micronaut.core.util.ArgumentUtils;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.*;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 
 @Singleton
 public class MicronautRegistry implements Registry {
@@ -45,15 +48,18 @@ public class MicronautRegistry implements Registry {
 
     this.defaultKeyStrategy = new SessionKeyStrategy();
     this.applicationContext = applicationContext;
-    var scanner = new ClassPathAnnotationScanner();
 
     ArgumentUtils.requireNonNull("configuration", configuration);
     ArgumentUtils.requireNonNull("configuration.scanPackages", configuration.getScanPackages());
 
     Set<Class<?>> stateTypes = Sets.newHashSet();
     Map<Class<?>, List<Class<? extends StateGuard>>> stateGuardClasses = Maps.newHashMap();
+
+    Reflections scanner =
+        new Reflections(new ConfigurationBuilder().forPackages(configuration.getScanPackages()));
+
     scanner
-        .scan(State.class, configuration.getScanPackages())
+        .get(TypesAnnotated.with(State.class).asClass())
         .forEach(
             (c) -> {
               stateTypes.add(c);
@@ -67,24 +73,28 @@ public class MicronautRegistry implements Registry {
     this.stateGuardClasses.values().forEach(guards::addAll);
 
     final Map<ReducerKey<?, ?>, Class<? extends Reducer>> reducers = Maps.newHashMap();
+
     scanner
-        .scan(Operation.class, configuration.getScanPackages())
+        .get(TypesAnnotated.with(Operation.class).asClass())
         .forEach(
             (c) -> {
               var key = ReducerKey.fromReducerClass(c);
-              reducers.put(key, c);
+              reducers.put(key, (Class<? extends Reducer>) c);
             });
+
     this.reducers = Collections.unmodifiableMap(reducers);
 
     final Map<InitialStateKey<?>, Class<? extends InitialState<?>>> initialStates =
         Maps.newHashMap();
+
     scanner
-        .scan(Initial.class, configuration.getScanPackages())
+        .get(TypesAnnotated.with(Initial.class).asClass())
         .forEach(
             (c) -> {
               var key = InitialStateKey.fromInitialStateClass(c);
-              initialStates.put(key, c);
+              initialStates.put(key, (Class<? extends InitialState<?>>) c);
             });
+
     this.initialStates = Collections.unmodifiableMap(initialStates);
   }
 
