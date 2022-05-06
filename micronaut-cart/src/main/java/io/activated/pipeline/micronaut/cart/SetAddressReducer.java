@@ -4,16 +4,15 @@ import io.activated.pipeline.Context;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.annotations.Operation;
-import io.micronaut.core.async.publisher.Publishers;
 import jakarta.inject.Singleton;
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 @Operation
 @Singleton
 public class SetAddressReducer implements Reducer<Cart, SetAddress> {
 
   @Override
-  public Publisher<Cart> reduce(Context context, Cart state, SetAddress action) {
+  public Mono<Cart> reduce(Context context, Cart state, SetAddress action) {
 
     switch (action.getAddressType()) {
       case "B":
@@ -25,6 +24,6 @@ public class SetAddressReducer implements Reducer<Cart, SetAddress> {
       default:
         throw new PipelineException("Invalid address type");
     }
-    return Publishers.just(state);
+    return Mono.just(state);
   }
 }

@@ -14,27 +14,27 @@ sourceSets {
 }
 
 dependencies {
-    api (group: 'io.lettuce', name: 'lettuce-core', version: '6.1.0.RELEASE') {
+    api (group: 'io.lettuce', name: 'lettuce-core', version: '6.1.8.RELEASE') {
         exclude group: 'io.netty'
     }
-    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.2'
+    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
     // TODO - Need to make this optional
-    api (group: 'org.apache.pulsar', name: 'pulsar-client', version: '2.7.0') {
+    api (group: 'org.apache.pulsar', name: 'pulsar-client', version: '2.10.0') {
       exclude group: 'javax.validation'
     }
-    api group: 'com.flipkart.zjsonpatch', name: 'zjsonpatch', version: '0.4.11'
-    api group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.3'
+    api group: 'com.flipkart.zjsonpatch', name: 'zjsonpatch', version: '0.4.12'
     api 'io.activated.objectdiff:objectdiff:0.0.2'
 
     api group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
+    implementation platform('io.projectreactor:reactor-bom:2020.0.18')
+    implementation 'io.projectreactor:reactor-core' 
+
     testImplementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.23.Final'
     testImplementation group: 'org.glassfish', name: 'javax.el', version: '3.0.0'
 
-    testImplementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.10'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-    testImplementation('io.netty:netty-common:4.1.60.Final')
-    testImplementation('io.netty:netty-handler:4.1.60.Final')
+    testImplementation('io.netty:netty-common:4.1.76.Final')
+    testImplementation('io.netty:netty-handler:4.1.76.Final')
 }
 
 tasks.named('test') {

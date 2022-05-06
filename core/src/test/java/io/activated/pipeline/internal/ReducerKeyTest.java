@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
 
@@ -78,7 +78,7 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
   public static class DummyReducer3 implements Reducer<Dummy1, Dummy2> {
 
     @Override
-    public Publisher<Dummy1> reduce(Context context, Dummy1 state, Dummy2 action) {
+    public Mono<Dummy1> reduce(Context context, Dummy1 state, Dummy2 action) {
       return null;
     }
   }
@@ -86,7 +86,7 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
   public static class DummyReducer4 implements Reducer<Dummy1, Dummy2>, Comparable<DummyReducer2> {
 
     @Override
-    public Publisher<Dummy1> reduce(Context context, Dummy1 state, Dummy2 action) {
+    public Mono<Dummy1> reduce(Context context, Dummy1 state, Dummy2 action) {
       return null;
     }
 

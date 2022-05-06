@@ -11,9 +11,9 @@ public abstract class StateDriver<S> {
   private final GraphQLClientSupport client;
   private final BaseProjectionNode projectionNode;
 
-  private final Consumer<GraphQLErrorException> defaultErrorConsumer =
-      (e) -> {
-        lastGraphQLError = e;
+  private final Consumer<Throwable> defaultErrorConsumer =
+      (t) -> {
+        lastGraphQLError = t;
       };
 
   private final Consumer<GetResult<S>> defaultSuccessConsumer =
@@ -21,7 +21,7 @@ public abstract class StateDriver<S> {
         lastState = s;
       };
 
-  private GraphQLErrorException lastGraphQLError;
+  private Throwable lastGraphQLError;
   private GetResult<S> lastState;
 
   protected StateDriver(
@@ -33,7 +33,7 @@ public abstract class StateDriver<S> {
     this.projectionNode = projectionNode;
   }
 
-  public GraphQLErrorException getLastGraphQLError() {
+  public Throwable getLastGraphQLError() {
     return lastGraphQLError;
   }
 
@@ -42,7 +42,10 @@ public abstract class StateDriver<S> {
   }
 
   public void query(GraphQLQuery query, String path) {
-    client.query(
-        query, projectionNode, path, typeRef, defaultSuccessConsumer, defaultErrorConsumer);
+    client
+        .query(query, projectionNode, path, typeRef)
+        .doOnNext(defaultSuccessConsumer)
+        .doOnError(defaultErrorConsumer)
+        .block();
   }
 }

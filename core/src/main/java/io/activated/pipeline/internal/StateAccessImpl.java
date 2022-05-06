@@ -6,7 +6,6 @@ import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
 import java.util.Optional;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -43,15 +42,16 @@ public class StateAccessImpl implements StateAccess {
   }
 
   @Override
-  public <S> Publisher<S> get(Context context, Class<S> stateType) {
+  public <S> Mono<S> get(Context context, Class<S> stateType) {
 
     var stateName = stateType.getCanonicalName();
 
     return Mono.fromCallable(() -> registry.getKeyStrategy(stateType))
-        .flatMap(ks -> Mono.from(ks.apply(context)))
+        .flatMap(ks -> ks.apply(context))
         .flatMap(
             key ->
-                Mono.from(stateRepository.exists(key.getValue(), stateName))
+                stateRepository
+                    .exists(key.getValue(), stateName)
                     .map(
                         exists -> {
                           return new KeyExists(key, exists);
@@ -62,14 +62,13 @@ public class StateAccessImpl implements StateAccess {
               if (key.getMoveFrom() == null) {
                 return Mono.just(keyExists);
               } else {
-                return Mono.from(stateRepository.exists(key.getMoveFrom(), stateName))
+                return stateRepository
+                    .exists(key.getMoveFrom(), stateName)
                     .flatMap(
                         moveFromExists -> {
                           if (moveFromExists && !keyExists.exists) {
-                            var pub =
-                                stateRepository.moveKey(
-                                    key.getMoveFrom(), key.getValue(), stateName);
-                            return Mono.from(pub)
+                            return stateRepository
+                                .moveKey(key.getMoveFrom(), key.getValue(), stateName)
                                 .doOnSuccess(
                                     v -> {
                                       changeLogger.moveKey(key);
@@ -92,13 +91,13 @@ public class StateAccessImpl implements StateAccess {
         .flatMap(
             keyExists -> {
               if (keyExists.exists) {
-                return Mono.from(
-                        stateRepository.get(keyExists.key.getValue(), stateName, stateType))
+                return stateRepository
+                    .get(keyExists.key.getValue(), stateName, stateType)
                     .map(Optional::get);
               } else {
                 var state = initial(stateType);
-                var pub = stateRepository.set(keyExists.key.getValue(), stateName, state);
-                return Mono.from(pub)
+                return stateRepository
+                    .set(keyExists.key.getValue(), stateName, state)
                     .doOnSuccess(
                         v -> {
                           changeLogger.initial(

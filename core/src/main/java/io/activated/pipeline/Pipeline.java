@@ -1,10 +1,10 @@
 package io.activated.pipeline;
 
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 public interface Pipeline {
 
-  <S> Publisher<GetResult<S>> get(Context context, Class<S> stateType);
+  <S> Mono<GetResult<S>> get(Context context, Class<S> stateType);
 
-  <S, A> Publisher<SetResult<S>> set(Context context, Class<S> stateType, A action);
+  <S, A> Mono<SetResult<S>> set(Context context, Class<S> stateType, A action);
 }

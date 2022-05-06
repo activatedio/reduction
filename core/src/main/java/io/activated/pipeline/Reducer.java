@@ -1,8 +1,8 @@
 package io.activated.pipeline;
 
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 public interface Reducer<S, A> {
 
-  Publisher<S> reduce(Context context, S state, A action);
+  Mono<S> reduce(Context context, S state, A action);
 }

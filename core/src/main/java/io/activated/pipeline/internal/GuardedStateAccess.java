@@ -2,7 +2,6 @@ package io.activated.pipeline.internal;
 
 import io.activated.pipeline.Context;
 import io.activated.pipeline.StateAccess;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -17,7 +16,7 @@ public class GuardedStateAccess implements StateAccess {
   }
 
   @Override
-  public <S> Publisher<S> get(Context context, Class<S> stateType) {
+  public <S> Mono<S> get(Context context, Class<S> stateType) {
 
     var stateGuards = registry.getStateGuards(stateType);
 

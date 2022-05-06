@@ -2,7 +2,7 @@ package io.activated.pipeline.key;
 
 import io.activated.pipeline.Context;
 import java.util.function.Function;
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 // TODO - Replace with Guava extends Source<Key>
-public interface KeyStrategy extends Function<Context, Publisher<Key>> {}
+public interface KeyStrategy extends Function<Context, Mono<Key>> {}

@@ -1,6 +1,6 @@
 package io.activated.pipeline;
 
-import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 public interface StateAccess {
   /**
@@ -10,7 +10,7 @@ public interface StateAccess {
    * @param stateType
    * @return state of object
    */
-  <S> Publisher<S> get(Context context, Class<S> stateType);
+  <S> Mono<S> get(Context context, Class<S> stateType);
 
   /**
    * Gets the zero representation of the object

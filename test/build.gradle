@@ -1,10 +1,13 @@
 
 dependencies {
 
-  api "com.netflix.graphql.dgs:graphql-dgs-client:4.4.0"
-  api "org.springframework:spring-web:5.3.9"
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.15.0'
+  api "com.netflix.graphql.dgs:graphql-dgs-client:4.9.25"
+  api group: 'com.netflix.graphql.dgs.codegen', name: 'graphql-dgs-codegen-core', version: '5.1.17'
+  api group: 'com.netflix.graphql.dgs.codegen', name: 'graphql-dgs-codegen-client-core', version: '5.1.17'
+  api group: 'org.springframework', name: 'spring-webflux', version: '5.3.19'
+  api group: 'io.projectreactor.netty', name: 'reactor-netty-http', version: '1.0.18'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 
 }
 

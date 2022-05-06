@@ -6,7 +6,6 @@ import io.activated.objectdiff.Snapshotter;
 import io.activated.pipeline.*;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.repository.StateRepository;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -32,12 +31,12 @@ public class PipelineImpl implements Pipeline {
   }
 
   @Override
-  public <S> Publisher<GetResult<S>> get(Context context, Class<S> stateType) {
+  public <S> Mono<GetResult<S>> get(Context context, Class<S> stateType) {
 
     // TODO - this is an untested hack. Please fix
     try {
       var reducer = registry.getReducer(ReducerKey.create(stateType, RefreshAction.class));
-      return Mono.from(set(context, stateType, new RefreshAction()))
+      return set(context, stateType, new RefreshAction())
           .map(
               r -> {
                 var result = new GetResult<S>();
@@ -45,7 +44,8 @@ public class PipelineImpl implements Pipeline {
                 return result;
               });
     } catch (RuntimeException e) {
-      return Mono.from(stateAccess.get(context, stateType))
+      return stateAccess
+          .get(context, stateType)
           .publishOn(Schedulers.parallel())
           .map(
               s -> {
@@ -57,15 +57,16 @@ public class PipelineImpl implements Pipeline {
   }
 
   @Override
-  public <S, A> Publisher<SetResult<S>> set(Context context, Class<S> stateType, A action) {
+  public <S, A> Mono<SetResult<S>> set(Context context, Class<S> stateType, A action) {
 
     Class<A> actionType = (Class<A>) action.getClass();
 
     return Mono.fromCallable(() -> registry.getKeyStrategy(stateType))
-        .flatMap(ks -> Mono.from(ks.apply(context)))
+        .flatMap(ks -> ks.apply(context))
         .flatMap(
             key ->
-                Mono.from(stateAccess.get(context, stateType))
+                stateAccess
+                    .get(context, stateType)
                     .publishOn(Schedulers.parallel())
                     .flatMap(
                         state -> {
@@ -77,18 +78,18 @@ public class PipelineImpl implements Pipeline {
                           var before = snapshotter.snapshot(state);
                           var actionSnapshot = snapshotter.snapshot(action);
 
-                          return Mono.from(reducer.reduce(context, state, action))
+                          return reducer
+                              .reduce(context, state, action)
                               .flatMap(
                                   v ->
-                                      Mono.from(
-                                              storeAndDiff(
-                                                  actionType,
-                                                  state,
-                                                  stateName,
-                                                  key,
-                                                  before,
-                                                  actionSnapshot,
-                                                  v))
+                                      storeAndDiff(
+                                              actionType,
+                                              state,
+                                              stateName,
+                                              key,
+                                              before,
+                                              actionSnapshot,
+                                              v)
                                           .map(_v -> v)
                                           .defaultIfEmpty(v))
                               .onErrorResume(
@@ -99,8 +100,8 @@ public class PipelineImpl implements Pipeline {
                                         // TODO - Change this in the future to not block
                                         // The map to state is never called since it is empty - just
                                         // used to signal
-                                        return Mono.from(
-                                                stateRepository.clear(key.getValue(), stateName))
+                                        return stateRepository
+                                            .clear(key.getValue(), stateName)
                                             .publishOn(Schedulers.parallel())
                                             .map(v -> state)
                                             .doOnSuccess(
@@ -167,7 +168,7 @@ public class PipelineImpl implements Pipeline {
                         }));
   }
 
-  private <S, A> Publisher<Void> storeAndDiff(
+  private <S, A> Mono<Void> storeAndDiff(
       Class<A> actionType,
       S state,
       String stateName,
@@ -176,7 +177,8 @@ public class PipelineImpl implements Pipeline {
       Snapshot actionSnapshot,
       S s) {
 
-    return Mono.from(stateRepository.set(key.getValue(), stateName, s))
+    return stateRepository
+        .set(key.getValue(), stateName, s)
         .publishOn(Schedulers.parallel())
         .doOnSuccess(
             v -> {

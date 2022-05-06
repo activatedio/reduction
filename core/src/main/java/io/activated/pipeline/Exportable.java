@@ -6,5 +6,5 @@ package io.activated.pipeline;
  * @param <E> type to export
  */
 public interface Exportable<E> {
-  E Export();
+  E export();
 }

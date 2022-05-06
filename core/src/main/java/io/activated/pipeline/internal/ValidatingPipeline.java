@@ -4,7 +4,6 @@ import io.activated.pipeline.*;
 import java.util.stream.Collectors;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 public class ValidatingPipeline implements Pipeline {
@@ -18,12 +17,12 @@ public class ValidatingPipeline implements Pipeline {
   }
 
   @Override
-  public <S> Publisher<GetResult<S>> get(Context context, Class<S> stateType) {
+  public <S> Mono<GetResult<S>> get(Context context, Class<S> stateType) {
     return delegate.get(context, stateType);
   }
 
   @Override
-  public <S, A> Publisher<SetResult<S>> set(Context context, Class<S> stateType, A action) {
+  public <S, A> Mono<SetResult<S>> set(Context context, Class<S> stateType, A action) {
     return Mono.fromCallable(
             () -> {
               var violations = validator.validate(action);

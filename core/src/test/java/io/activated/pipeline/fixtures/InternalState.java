@@ -25,7 +25,7 @@ public class InternalState implements Exportable<ExternalState> {
   }
 
   @Override
-  public ExternalState Export() {
+  public ExternalState export() {
     return null;
   }
 

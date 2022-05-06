@@ -13,6 +13,7 @@ import io.lettuce.core.RedisClient;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import javax.validation.ValidatorFactory;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;

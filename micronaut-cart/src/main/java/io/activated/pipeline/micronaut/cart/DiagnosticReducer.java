@@ -5,7 +5,6 @@ import io.activated.pipeline.Context;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.annotations.Operation;
 import jakarta.inject.Singleton;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 @Singleton
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class DiagnosticReducer implements Reducer<Cart, DiagnosticAction> {
 
   @Override
-  public Publisher<Cart> reduce(Context context, Cart state, DiagnosticAction action) {
+  public Mono<Cart> reduce(Context context, Cart state, DiagnosticAction action) {
 
     state.setPipelineSessionIdLowercase(
         context.getHeaders().get(Constants.SESSION_ID_CONTEXT_KEY.toLowerCase()).get(0));

@@ -2,22 +2,17 @@ package io.activated.pipeline.test;
 
 import com.google.common.collect.Maps;
 import com.jayway.jsonpath.TypeRef;
-import com.netflix.graphql.dgs.client.DefaultGraphQLClient;
-import com.netflix.graphql.dgs.client.GraphQLResponse;
-import com.netflix.graphql.dgs.client.HttpResponse;
+import com.netflix.graphql.dgs.client.*;
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.function.Consumer;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 public class GraphQLClientSupport {
 
@@ -25,16 +20,25 @@ public class GraphQLClientSupport {
 
   private final SecureRandom secureRandom = new SecureRandom();
   private final Base64.Encoder encoder = Base64.getEncoder().withoutPadding();
-
-  private final com.netflix.graphql.dgs.client.GraphQLClient client;
-  private final RestTemplate restTemplate;
+  private final WebClient webClient;
+  private final WebClientGraphQLClient client;
 
   private String sessionId;
   private String accessToken;
 
   public GraphQLClientSupport(GraphQLConfig config) {
-    this.client = new DefaultGraphQLClient(config.getURL());
-    restTemplate = new RestTemplate();
+    this.webClient = WebClient.create(config.getURL());
+    this.client =
+        MonoGraphQLClient.createWithWebClient(
+            webClient,
+            headers -> {
+              if (sessionId != null) {
+                headers.put("pipeline-session-id", List.of(sessionId));
+              }
+              if (accessToken != null) {
+                headers.put("Authorization", List.of("Bearer " + accessToken));
+              }
+            });
     newSession();
   }
 
@@ -69,64 +73,36 @@ public class GraphQLClientSupport {
     this.accessToken = accessToken;
   }
 
-  public void setSessionId(String sessionId) {
-    this.sessionId = sessionId;
-  }
-
-  public <T> void query(
-      GraphQLQuery query,
-      BaseProjectionNode projectionNode,
-      String path,
-      TypeRef<T> typeRef,
-      Consumer<T> success,
-      Consumer<GraphQLErrorException> fail) {
+  public <T> Mono<T> query(
+      GraphQLQuery query, BaseProjectionNode projectionNode, String path, TypeRef<T> typeRef) {
 
     var request = new GraphQLQueryRequest(query, projectionNode);
-
-    try {
-      var resp = query(request.serialize(), path, typeRef);
-      success.accept(resp);
-    } catch (GraphQLErrorException e) {
-      fail.accept(e);
-    }
+    return query(request.serialize(), path, typeRef);
   }
 
-  private <T> T query(String query, String path, TypeRef<T> typeRef) {
+  private <T> Mono<T> query(String query, String path, TypeRef<T> typeRef) {
 
-    var value = query(query);
-
-    LOGGER.debug(
-        "Sending query to path: {}, query:\n {}\n\n, response:\n{}", path, query, value.getJson());
-
-    // We only return the first error here.  May need to change
-    if (value.hasErrors()) {
-      throw new GraphQLErrorException(value.getErrors().get(0).getMessage());
-    }
-
-    return value.extractValueAsObject(path, typeRef);
-  }
-
-  private <T> GraphQLResponse query(String query) {
-
-    var result =
-        client.executeQuery(
-            query,
-            Maps.newHashMap(),
-            (url, headers, body) -> {
-              HttpHeaders requestHeaders = new HttpHeaders();
-              headers.forEach(requestHeaders::put);
-              if (sessionId != null) {
-                requestHeaders.add("pipeline-session-id", sessionId);
+    return query(query)
+        .doOnNext(
+            _v -> {
+              LOGGER.debug(
+                  "Sending query to path: {}, query:\n {}\n\n, response:\n{}",
+                  path,
+                  query,
+                  _v.getJson());
+            })
+        .map(
+            _v -> {
+              if (_v.hasErrors()) {
+                throw new GraphQLErrorException(_v.getErrors().get(0).getMessage());
               }
-              if (accessToken != null) {
-                requestHeaders.add("Authorization", "Bearer " + accessToken);
-              }
-              LOGGER.debug("Request headers: {}", requestHeaders);
-              ResponseEntity<String> exchange =
-                  restTemplate.exchange(
-                      url, HttpMethod.POST, new HttpEntity(body, requestHeaders), String.class);
-              return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody());
+
+              return _v.extractValueAsObject(path, typeRef);
             });
-    return result;
+  }
+
+  private <T> Mono<GraphQLResponse> query(String query) {
+
+    return client.reactiveExecuteQuery(query, Maps.newHashMap());
   }
 }

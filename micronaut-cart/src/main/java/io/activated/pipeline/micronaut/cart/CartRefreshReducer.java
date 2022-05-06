@@ -5,7 +5,6 @@ import io.activated.pipeline.Reducer;
 import io.activated.pipeline.RefreshAction;
 import io.activated.pipeline.annotations.Operation;
 import jakarta.inject.Singleton;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 @Operation
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class CartRefreshReducer implements Reducer<Cart, RefreshAction> {
 
   @Override
-  public Publisher<Cart> reduce(Context context, Cart state, RefreshAction action) {
+  public Mono<Cart> reduce(Context context, Cart state, RefreshAction action) {
 
     state.incrementCount();
     return Mono.just(state);

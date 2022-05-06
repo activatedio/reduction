@@ -7,7 +7,6 @@ import io.activated.pipeline.PipelineException;
 import io.lettuce.core.api.StatefulRedisConnection;
 import java.io.IOException;
 import java.util.Optional;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -42,12 +41,12 @@ public class RedisStateRepository implements StateRepository {
   }
 
   @Override
-  public Publisher<Boolean> exists(String key, String stateName) {
+  public Mono<Boolean> exists(String key, String stateName) {
     return connection.reactive().exists(makeKey(key, stateName)).map(l -> l > 0);
   }
 
   @Override
-  public Publisher<Void> moveKey(String fromKey, String toKey, String stateName) {
+  public Mono<Void> moveKey(String fromKey, String toKey, String stateName) {
     var from = makeKey(fromKey, stateName);
     var to = makeKey(toKey, stateName);
 
@@ -57,7 +56,7 @@ public class RedisStateRepository implements StateRepository {
   }
 
   @Override
-  public <S> Publisher<Optional<S>> get(String key, String stateName, Class<S> targetType) {
+  public <S> Mono<Optional<S>> get(String key, String stateName, Class<S> targetType) {
 
     return Mono.fromCallable(() -> makeKey(key, stateName))
         .doOnNext(s -> logger.debug("Getting state for key [{}]", s))
@@ -80,7 +79,7 @@ public class RedisStateRepository implements StateRepository {
   }
 
   @Override
-  public <S> Publisher<Void> set(String key, String stateName, S state) {
+  public <S> Mono<Void> set(String key, String stateName, S state) {
 
     return Mono.fromCallable(() -> makeKey(key, stateName))
         .map(
@@ -105,7 +104,7 @@ public class RedisStateRepository implements StateRepository {
   }
 
   @Override
-  public Publisher<Void> clear(String key, String stateName) {
+  public Mono<Void> clear(String key, String stateName) {
 
     return Mono.fromCallable(() -> makeKey(key, stateName))
         .flatMap(fullKey -> connection.reactive().del(fullKey))

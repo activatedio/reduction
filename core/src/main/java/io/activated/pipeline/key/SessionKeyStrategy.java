@@ -2,13 +2,12 @@ package io.activated.pipeline.key;
 
 import io.activated.pipeline.Constants;
 import io.activated.pipeline.Context;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 public class SessionKeyStrategy implements KeyStrategy {
 
   @Override
-  public Publisher<Key> apply(Context context) {
+  public Mono<Key> apply(Context context) {
 
     return Mono.fromCallable(
             () -> {
