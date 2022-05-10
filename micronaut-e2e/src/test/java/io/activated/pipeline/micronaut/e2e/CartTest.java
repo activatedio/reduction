@@ -18,6 +18,7 @@ import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.server.EmbeddedServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CartTest {
@@ -45,6 +46,7 @@ public class CartTest {
   }
 
   @Test
+  @Disabled
   void scenario_invalid() {
 
     var driver = new CartDriver(new GraphQLClientSupport(CONFIG));
@@ -70,6 +72,7 @@ public class CartTest {
   }
 
   @Test
+  @Disabled
   void scenario() {
 
     var driver = new CartDriver(new GraphQLClientSupport(CONFIG));
