@@ -1,13 +1,13 @@
 package io.activated.pipeline.micronaut;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import io.activated.pipeline.Context;
 import io.activated.pipeline.GetResult;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.micronaut.fixtures.DummyState;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,7 +16,6 @@ import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 // TODO - Restore in the future
-@Disabled
 public class GetDataFetcherImplTest {
 
   private final Class<DummyState> stateClass = DummyState.class;
@@ -24,15 +23,24 @@ public class GetDataFetcherImplTest {
 
   private GetDataFetcherImpl<DummyState> unit;
 
+  private final Context context = new Context();
+
   @BeforeEach
   public void setUp() {
-    unit = new GetDataFetcherImpl<DummyState>(pipeline, DummyState.class);
+    unit =
+        new GetDataFetcherImpl<DummyState>(pipeline, DummyState.class) {
+          @Override
+          protected Context getContext() {
+            return context;
+          }
+        };
   }
 
   @Test
   public void get() throws Exception {
     final var result = new GetResult<DummyState>();
-    when(pipeline.get(null, DummyState.class)).thenReturn(Mono.just(result));
+    when(pipeline.get(context, DummyState.class)).thenReturn(Mono.just(result));
     assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
+    verifyNoMoreInteractions(pipeline);
   }
 }

@@ -1,11 +1,12 @@
 package io.activated.pipeline.micronaut;
 
+import com.google.common.annotations.VisibleForTesting;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import io.activated.pipeline.Context;
 import io.activated.pipeline.GetResult;
 import io.activated.pipeline.Pipeline;
 import java.util.concurrent.CompletableFuture;
-import reactor.core.publisher.Mono;
 
 public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetResult<S>>> {
 
@@ -20,8 +21,11 @@ public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetR
   @Override
   public CompletableFuture<GetResult<S>> get(final DataFetchingEnvironment environment)
       throws Exception {
+    return pipeline.get(getContext(), stateClass).toFuture();
+  }
 
-    final var ctx = ContextUtils.getContext();
-    return Mono.from(pipeline.get(ctx, stateClass)).toFuture();
+  @VisibleForTesting
+  protected Context getContext() {
+    return ContextUtils.getContext();
   }
 }

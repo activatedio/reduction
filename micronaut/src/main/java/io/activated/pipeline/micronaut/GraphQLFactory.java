@@ -2,7 +2,6 @@ package io.activated.pipeline.micronaut;
 
 import io.activated.objectdiff.SnapshotterImpl;
 import io.activated.pipeline.Pipeline;
-import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.builtin.security.SecurityStateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
@@ -28,16 +27,14 @@ public class GraphQLFactory {
 
   @Singleton
   @Inject
-  public StateRepository stateRepository(MainRuntimeConfiguration configuration) {
+  public StateRepository stateRepository(MicronautPipelineConfiguration config) {
 
-    var host = configuration.getRedisHost();
-    var port = configuration.getRedisPort();
+    var host = config.getRedisHost();
+    var port = config.getRedisPort();
 
     LOGGER.info("Using pipeline.redisHost: [{}] pipeline.redisPort: [{}]", host, port);
 
     RedisClient client = RedisClient.create(String.format("redis://%s:%d", host, port));
-
-    var config = new PipelineConfig();
 
     return new RedisStateRepository(client.connect(), config);
   }

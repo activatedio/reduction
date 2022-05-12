@@ -1,7 +1,6 @@
 package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.env.SessionIdSupplier;
-import io.micronaut.http.context.ServerRequestContext;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
@@ -11,9 +10,12 @@ public class RequestSessionIdSupplier implements SessionIdSupplier {
 
   @Override
   public String get() {
+    throw new UnsupportedOperationException();
+    /*
     return ServerRequestContext.currentRequest()
-        .get()
-        .getHeaders()
-        .get(Constants.SESSION_ID_REQUEST_HEADER_NAME);
+        .orElseThrow()
+        .getAttribute(Constants.SESSION_ID_REQUEST_KEY, String.class).orElseThrow();
+
+     */
   }
 }
