@@ -18,7 +18,7 @@ import io.activated.pipeline.internal.ReducerKey;
 import io.activated.pipeline.internal.Registry;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.key.SessionKeyStrategy;
-import io.activated.pipeline.micronaut.MainRuntimeConfiguration;
+import io.activated.pipeline.micronaut.MicronautPipelineConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.util.ArgumentUtils;
 import jakarta.inject.Inject;
@@ -44,7 +44,7 @@ public class MicronautRegistry implements Registry {
   public MicronautRegistry(
       final ApplicationContext applicationContext,
       @Named("request") final SessionIdSupplier sessionIdSupplier,
-      final MainRuntimeConfiguration configuration) {
+      final MicronautPipelineConfiguration configuration) {
 
     this.defaultKeyStrategy = new SessionKeyStrategy();
     this.applicationContext = applicationContext;

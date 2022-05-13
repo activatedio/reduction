@@ -35,7 +35,7 @@ public class RedisStateRepository implements StateRepository {
   public RedisStateRepository(
       StatefulRedisConnection<String, String> connection, PipelineConfig config) {
     this.connection = connection;
-    this.ttl = config.getStateExpireInSeconds();
+    this.ttl = config.getStateExpireSeconds();
 
     objectMapper = new ObjectMapper();
   }

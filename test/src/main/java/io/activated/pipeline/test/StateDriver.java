@@ -42,10 +42,14 @@ public abstract class StateDriver<S> {
   }
 
   public void query(GraphQLQuery query, String path) {
-    client
-        .query(query, projectionNode, path, typeRef)
-        .doOnNext(defaultSuccessConsumer)
-        .doOnError(defaultErrorConsumer)
-        .block();
+    try {
+      client
+          .query(query, projectionNode, path, typeRef)
+          .doOnNext(defaultSuccessConsumer)
+          .doOnError(defaultErrorConsumer)
+          .block();
+    } catch (Exception e) {
+      // we have the error handler above so we can ignore this
+    }
   }
 }

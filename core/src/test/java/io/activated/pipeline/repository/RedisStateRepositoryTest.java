@@ -22,8 +22,23 @@ public class RedisStateRepositoryTest {
     RedisClient client = RedisClient.create("redis://localhost");
     StatefulRedisConnection<String, String> connection = client.connect();
 
-    var config = new PipelineConfig();
-    config.setStateExpireInSeconds(300);
+    var config =
+        new PipelineConfig() {
+          @Override
+          public int getStateExpireSeconds() {
+            return 300;
+          }
+
+          @Override
+          public String getSessionIdKeyName() {
+            return null;
+          }
+
+          @Override
+          public boolean isDevelopmentMode() {
+            return false;
+          }
+        };
 
     unit = new RedisStateRepository(connection, config);
   }

@@ -1,6 +1,8 @@
 package io.activated.pipeline.micronaut.internal;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.activated.pipeline.PipelineConfig;
+import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
@@ -9,7 +11,6 @@ import io.micronaut.http.cookie.SameSite;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.BiFunction;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
@@ -19,8 +20,11 @@ public class SessionIdFilter implements HttpServerFilter {
 
   private final PipelineConfig config;
 
-  public SessionIdFilter(PipelineConfig config) {
+  private final SessionIdSupplier sessionIdSupplier;
+
+  public SessionIdFilter(PipelineConfig config, SessionIdSupplier sessionIdSupplier) {
     this.config = config;
+    this.sessionIdSupplier = sessionIdSupplier;
   }
 
   private static class SessionCookieContext {
@@ -56,21 +60,28 @@ public class SessionIdFilter implements HttpServerFilter {
                             Optional.of(
                                 new SessionCookieContext(
                                     req,
-                                    UUID.randomUUID().toString(),
+                                    sessionIdSupplier.get(),
                                     (ctx, r) ->
                                         Mono.just(r)
                                             .map(
                                                 _r ->
                                                     _r.cookie(
                                                         buildCookie(
-                                                            Cookie.of(
+                                                            createCookie(
                                                                 config.getSessionIdKeyName(),
                                                                 ctx.sessionId)))))))
                     .orElseThrow())
         .flatMap(
             ctx ->
                 Mono.from(chain.proceed(ctx.request))
-                    .flatMap(resp -> ctx.postProcessor.apply(ctx, resp)));
+                    .flatMap(resp -> ctx.postProcessor.apply(ctx, resp))
+                    .map(
+                        resp -> resp.attribute(Constants.SESSION_ID_ATTRIBUTE_KEY, ctx.sessionId)));
+  }
+
+  @VisibleForTesting
+  protected Cookie createCookie(String name, String value) {
+    return Cookie.of(name, value);
   }
 
   private Cookie buildCookie(Cookie cookie) {
