@@ -19,6 +19,7 @@ public class ContextUtils {
     // TODO - How to test both types of headers
     headers.putAll(request.getHeaders().asMap());
     context.setHeaders(headers);
+    context.setAttributes(request.getAttributes().asMap());
     LOGGER.info("using context: " + context);
     return context;
   }

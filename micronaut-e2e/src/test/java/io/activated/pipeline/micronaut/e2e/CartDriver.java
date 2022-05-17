@@ -15,8 +15,7 @@ public class CartDriver extends StateDriver<Cart> {
         new CartProjectionRoot()
             .state()
             .threadName()
-            .pipelineSessionIdLowercase()
-            .pipelineSessionIdUppercase()
+            .pipelineSessionId()
             .longValue()
             .shippingAddress()
             .state());

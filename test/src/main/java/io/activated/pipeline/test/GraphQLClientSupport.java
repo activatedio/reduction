@@ -23,50 +23,23 @@ public class GraphQLClientSupport {
   private final WebClient webClient;
   private final WebClientGraphQLClient client;
 
-  private String sessionId;
   private String accessToken;
 
+  private List<String> cookies;
+
   public GraphQLClientSupport(GraphQLConfig config) {
-    this.webClient = WebClient.create(config.getURL());
+    this.webClient = WebClient.builder().baseUrl(config.getURL()).build();
     this.client =
         MonoGraphQLClient.createWithWebClient(
             webClient,
             headers -> {
-              if (sessionId != null) {
-                headers.put("pipeline-session-id", List.of(sessionId));
-              }
               if (accessToken != null) {
                 headers.put("Authorization", List.of("Bearer " + accessToken));
               }
+              if (cookies != null) {
+                headers.put("Cookie", cookies);
+              }
             });
-    newSession();
-  }
-
-  public void newSession() {
-
-    var bytes = new byte[32];
-    secureRandom.nextBytes(bytes);
-
-    sessionId = encoder.encodeToString(bytes);
-
-    LOGGER.debug("Setting new session id: {}", sessionId);
-  }
-
-  /** @return current session id, generating if not yet created */
-  public String getSessionIdCreateIfNeeded() {
-    if (sessionId == null) {
-      newSession();
-    }
-    return sessionId;
-  }
-
-  /**
-   * Set session id to use
-   *
-   * @param sessionId
-   */
-  public void setSessionId(String sessionId) {
-    this.sessionId = sessionId;
   }
 
   public void setAccessToken(String accessToken) {
@@ -95,6 +68,10 @@ public class GraphQLClientSupport {
             _v -> {
               if (_v.hasErrors()) {
                 throw new GraphQLErrorException(_v.getErrors().get(0).getMessage());
+              }
+
+              if (_v.getHeaders().containsKey("set-cookie")) {
+                cookies = _v.getHeaders().get("set-cookie");
               }
 
               return _v.extractValueAsObject(path, typeRef);

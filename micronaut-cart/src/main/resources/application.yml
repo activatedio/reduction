@@ -2,5 +2,6 @@ graphql:
   graphiql:
     enabled: true
 pipeline:
-  scanPackages:
+  development-mode: true
+  scan-packages:
     - io.activated.pipeline.micronaut.cart

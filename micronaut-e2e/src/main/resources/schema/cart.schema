@@ -1,3 +1,9 @@
+"Marks the field, argument, input field or enum value as deprecated"
+directive @deprecated(
+    "The reason for the deprecation"
+    reason: String = "No longer supported"
+  ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
+
 "Directs the executor to include this field or fragment only when the `if` argument is true"
 directive @include(
     "Included when true."
@@ -9,12 +15,6 @@ directive @skip(
     "Skipped when true."
     if: Boolean!
   ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
-
-"Marks the field or enum value as deprecated"
-directive @deprecated(
-    "The reason for the deprecation"
-    reason: String = "No longer supported"
-  ) on FIELD_DEFINITION | ENUM_VALUE
 
 "Exposes a URL that specifies the behaviour of this scalar."
 directive @specifiedBy(
@@ -34,9 +34,8 @@ type Cart {
   billingAddress: Address
   cartItems: [CartItem]
   count: Int
-  longValue: Long
-  pipelineSessionIdLowercase: String
-  pipelineSessionIdUppercase: String
+  longValue: Float
+  pipelineSessionId: String
   shippingAddress: Address
   threadName: String
 }
@@ -46,7 +45,7 @@ type CartItem {
   doubleAmount: Float
   otherAmount: Float
   otherDoubleAmount: Float
-  otherDoubleBigAmount: BigDecimal
+  otherDoubleBigAmount: Float
   product: Product
   quantity: Int
   rating: Int
@@ -73,12 +72,6 @@ type Product {
 type Query {
   cart: CartState
 }
-
-"Built-in java.math.BigDecimal"
-scalar BigDecimal
-
-"Long type"
-scalar Long
 
 input AddressInput {
   city: String

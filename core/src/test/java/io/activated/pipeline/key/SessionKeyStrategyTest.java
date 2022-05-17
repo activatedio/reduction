@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.activated.pipeline.Constants;
 import io.activated.pipeline.Context;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
@@ -27,19 +26,19 @@ public class SessionKeyStrategyTest {
     var context = new Context();
 
     assertThatThrownBy(() -> Mono.from(unit.apply(context)).block())
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessage("pipeline-session-id not provided in header");
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("Pipeline.pipeline-session-id");
   }
 
   @Test
   public void get() {
 
     var context = new Context();
-    context.getHeaders().put(Constants.SESSION_ID_CONTEXT_KEY, List.of(sessionId));
+    context.getAttributes().put(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId);
 
     var got =
         Mono.from(unit.apply(context))
-            .contextWrite(ctx -> ctx.put(Constants.SESSION_ID_CONTEXT_KEY, sessionId))
+            .contextWrite(ctx -> ctx.put(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId))
             .block();
 
     var reference = new Key();

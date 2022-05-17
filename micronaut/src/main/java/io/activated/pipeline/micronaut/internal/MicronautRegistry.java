@@ -12,7 +12,6 @@ import io.activated.pipeline.StateGuard;
 import io.activated.pipeline.annotations.Initial;
 import io.activated.pipeline.annotations.Operation;
 import io.activated.pipeline.annotations.State;
-import io.activated.pipeline.env.SessionIdSupplier;
 import io.activated.pipeline.internal.InitialStateKey;
 import io.activated.pipeline.internal.ReducerKey;
 import io.activated.pipeline.internal.Registry;
@@ -22,7 +21,6 @@ import io.activated.pipeline.micronaut.MicronautPipelineConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.util.ArgumentUtils;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.*;
 import org.reflections.Reflections;
@@ -43,7 +41,6 @@ public class MicronautRegistry implements Registry {
   @Inject
   public MicronautRegistry(
       final ApplicationContext applicationContext,
-      @Named("request") final SessionIdSupplier sessionIdSupplier,
       final MicronautPipelineConfiguration configuration) {
 
     this.defaultKeyStrategy = new SessionKeyStrategy();

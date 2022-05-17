@@ -14,10 +14,8 @@ public class DiagnosticReducer implements Reducer<Cart, DiagnosticAction> {
   @Override
   public Mono<Cart> reduce(Context context, Cart state, DiagnosticAction action) {
 
-    state.setPipelineSessionIdLowercase(
-        context.getHeaders().get(Constants.SESSION_ID_CONTEXT_KEY.toLowerCase()).get(0));
-    state.setPipelineSessionIdUppercase(
-        context.getHeaders().get(Constants.SESSION_ID_CONTEXT_KEY.toUpperCase()).get(0));
+    state.setPipelineSessionId(
+        (String) context.getAttributes().get(Constants.SESSION_ID_ATTRIBUTE_KEY));
 
     state.setThreadName(Thread.currentThread().getName());
     return Mono.just(state);

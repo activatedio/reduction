@@ -13,8 +13,7 @@ public class Cart {
   private Address billingAddress;
   private List<CartItem> cartItems = Lists.newArrayList();
   private String threadName;
-  private String pipelineSessionIdUppercase;
-  private String pipelineSessionIdLowercase;
+  private String pipelineSessionId;
   private Long longValue = 9999l;
 
   public Cart() {}
@@ -63,20 +62,12 @@ public class Cart {
     this.threadName = threadName;
   }
 
-  public String getPipelineSessionIdUppercase() {
-    return pipelineSessionIdUppercase;
+  public String getPipelineSessionId() {
+    return pipelineSessionId;
   }
 
-  public void setPipelineSessionIdUppercase(String pipelineSessionIdUppercase) {
-    this.pipelineSessionIdUppercase = pipelineSessionIdUppercase;
-  }
-
-  public String getPipelineSessionIdLowercase() {
-    return pipelineSessionIdLowercase;
-  }
-
-  public void setPipelineSessionIdLowercase(String pipelineSessionIdLowercase) {
-    this.pipelineSessionIdLowercase = pipelineSessionIdLowercase;
+  public void setPipelineSessionId(String pipelineSessionId) {
+    this.pipelineSessionId = pipelineSessionId;
   }
 
   public Long getLongValue() {
@@ -97,8 +88,7 @@ public class Cart {
         && Objects.equals(billingAddress, cart.billingAddress)
         && Objects.equals(cartItems, cart.cartItems)
         && Objects.equals(threadName, cart.threadName)
-        && Objects.equals(pipelineSessionIdUppercase, cart.pipelineSessionIdUppercase)
-        && Objects.equals(pipelineSessionIdLowercase, cart.pipelineSessionIdLowercase)
+        && Objects.equals(pipelineSessionId, cart.pipelineSessionId)
         && Objects.equals(longValue, cart.longValue);
   }
 
@@ -110,8 +100,7 @@ public class Cart {
         billingAddress,
         cartItems,
         threadName,
-        pipelineSessionIdUppercase,
-        pipelineSessionIdLowercase,
+        pipelineSessionId,
         longValue);
   }
 
@@ -129,11 +118,8 @@ public class Cart {
         + ", threadName='"
         + threadName
         + '\''
-        + ", pipelineSessionIdUppercase='"
-        + pipelineSessionIdUppercase
-        + '\''
-        + ", pipelineSessionIdLowercase='"
-        + pipelineSessionIdLowercase
+        + ", pipelineSessionId='"
+        + pipelineSessionId
         + '\''
         + ", longValue="
         + longValue

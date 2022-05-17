@@ -1,6 +1,7 @@
 package io.activated.pipeline.micronaut.internal;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.activated.pipeline.Constants;
 import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.env.SessionIdSupplier;
 import io.micronaut.http.HttpRequest;
@@ -10,19 +11,20 @@ import io.micronaut.http.cookie.Cookie;
 import io.micronaut.http.cookie.SameSite;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
+import jakarta.inject.Named;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-@Filter
+@Filter(Filter.MATCH_ALL_PATTERN)
 public class SessionIdFilter implements HttpServerFilter {
 
   private final PipelineConfig config;
 
   private final SessionIdSupplier sessionIdSupplier;
 
-  public SessionIdFilter(PipelineConfig config, SessionIdSupplier sessionIdSupplier) {
+  public SessionIdFilter(PipelineConfig config, @Named("new") SessionIdSupplier sessionIdSupplier) {
     this.config = config;
     this.sessionIdSupplier = sessionIdSupplier;
   }
@@ -73,10 +75,11 @@ public class SessionIdFilter implements HttpServerFilter {
                     .orElseThrow())
         .flatMap(
             ctx ->
-                Mono.from(chain.proceed(ctx.request))
-                    .flatMap(resp -> ctx.postProcessor.apply(ctx, resp))
-                    .map(
-                        resp -> resp.attribute(Constants.SESSION_ID_ATTRIBUTE_KEY, ctx.sessionId)));
+                Mono.from(
+                        chain.proceed(
+                            ctx.request.setAttribute(
+                                Constants.SESSION_ID_ATTRIBUTE_KEY, ctx.sessionId)))
+                    .flatMap(resp -> ctx.postProcessor.apply(ctx, resp)));
   }
 
   @VisibleForTesting
