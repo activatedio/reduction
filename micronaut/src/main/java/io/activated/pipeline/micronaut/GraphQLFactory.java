@@ -9,6 +9,7 @@ import io.activated.pipeline.internal.*;
 import io.activated.pipeline.repository.RedisStateRepository;
 import io.activated.pipeline.repository.StateRepository;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -27,16 +28,21 @@ public class GraphQLFactory {
 
   @Singleton
   @Inject
-  public StateRepository stateRepository(MicronautPipelineConfiguration config) {
+  public StatefulRedisConnection<?, ?> redisClient(MicronautPipelineConfiguration config) {
 
     var host = config.getRedisHost();
     var port = config.getRedisPort();
 
     LOGGER.info("Using pipeline.redisHost: [{}] pipeline.redisPort: [{}]", host, port);
 
-    RedisClient client = RedisClient.create(String.format("redis://%s:%d", host, port));
+    return RedisClient.create(String.format("redis://%s:%d", host, port)).connect();
+  }
 
-    return new RedisStateRepository(client.connect(), config);
+  @Singleton
+  @Inject
+  public StateRepository stateRepository(
+      MicronautPipelineConfiguration config, StatefulRedisConnection<String, String> connection) {
+    return new RedisStateRepository(connection, config);
   }
 
   @Singleton
