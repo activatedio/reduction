@@ -36,6 +36,7 @@ type Cart {
   count: Int
   longValue: Float
   pipelineSessionId: String
+  promoCodes: [String]
   shippingAddress: Address
   threadName: String
 }
@@ -60,6 +61,7 @@ type CartState {
 type Mutation {
   cartDiagnosticAction(action: DiagnosticActionInput): CartState
   cartExceptionAction(action: ExceptionActionInput): CartState
+  cartPromoCodeAction(action: PromoCodeActionInput): CartState
   cartRefreshAction(action: RefreshActionInput): CartState
   cartSetAddress(action: SetAddressInput): CartState
 }
@@ -87,6 +89,10 @@ input DiagnosticActionInput {
 
 input ExceptionActionInput {
   dummy: String
+}
+
+input PromoCodeActionInput {
+  promoCodes: [String]
 }
 
 input RefreshActionInput {

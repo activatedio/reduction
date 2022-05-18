@@ -63,7 +63,8 @@ public class PipelineGraphQLBuilder {
       GraphQLCodeRegistry.Builder registry) {
 
     var typeFactory =
-        new TypeFactoryImpl(new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>());
+        new TypeFactoryImpl(
+            new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>());
 
     var stateTypes = pipelineRegistry.getStateTypes();
 

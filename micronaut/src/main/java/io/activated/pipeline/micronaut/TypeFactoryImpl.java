@@ -19,15 +19,19 @@ public class TypeFactoryImpl implements TypeFactory {
   private final TypeCache<GraphQLOutputType> outputCache;
   private final TypeCache<GraphQLOutputType> outputListCache;
 
+  private final TypeCache<GraphQLInputType> inputListCache;
+
   private static final Set<String> EXCLUDED_PROPERTIES = Sets.newHashSet("class", "declaringClass");
 
   @Inject
   public TypeFactoryImpl(
       final TypeCache<GraphQLInputType> inputCache,
       final TypeCache<GraphQLOutputType> outputCache,
+      final TypeCache<GraphQLInputType> inputListCache,
       final TypeCache<GraphQLOutputType> outputListCache) {
     this.inputCache = inputCache;
     this.outputCache = outputCache;
+    this.inputListCache = inputListCache;
     this.outputListCache = outputListCache;
     initTypes();
   }
@@ -142,9 +146,16 @@ public class TypeFactoryImpl implements TypeFactory {
         if (EXCLUDED_PROPERTIES.contains(pDesc.getName())) {
           continue;
         }
-        oType =
-            oType.field(
-                field -> field.name(pDesc.getName()).type(getInputType(pDesc.getPropertyType())));
+        GraphQLInputType fType;
+        if (pDesc.getPropertyType().equals(List.class)) {
+          var elType =
+              ((ParameterizedType) pDesc.getReadMethod().getGenericReturnType())
+                  .getActualTypeArguments()[0];
+          fType = getInputListType((Class<?>) elType);
+        } else {
+          fType = getInputType(pDesc.getPropertyType());
+        }
+        oType = oType.field(field -> field.name(pDesc.getName()).type(fType));
       }
 
       final var result = oType.build();
@@ -154,5 +165,20 @@ public class TypeFactoryImpl implements TypeFactory {
     } catch (final IntrospectionException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private GraphQLInputType getInputListType(final Class<?> element) {
+
+    final var type = inputListCache.get(element);
+
+    if (type == null) {
+      return makeInputObjectListType(element);
+    } else {
+      return type;
+    }
+  }
+
+  private GraphQLInputType makeInputObjectListType(final Class<?> input) {
+    return new GraphQLList(getInputType(input));
   }
 }

@@ -16,6 +16,8 @@ public class Cart {
   private String pipelineSessionId;
   private Long longValue = 9999l;
 
+  private List<String> promoCodes = Lists.newArrayList();
+
   public Cart() {}
 
   public int getCount() {
@@ -78,10 +80,18 @@ public class Cart {
     this.longValue = longValue;
   }
 
+  public List<String> getPromoCodes() {
+    return promoCodes;
+  }
+
+  public void setPromoCodes(List<String> promoCodes) {
+    this.promoCodes = promoCodes;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Cart)) return false;
+    if (o == null || getClass() != o.getClass()) return false;
     Cart cart = (Cart) o;
     return count == cart.count
         && Objects.equals(shippingAddress, cart.shippingAddress)
@@ -89,7 +99,8 @@ public class Cart {
         && Objects.equals(cartItems, cart.cartItems)
         && Objects.equals(threadName, cart.threadName)
         && Objects.equals(pipelineSessionId, cart.pipelineSessionId)
-        && Objects.equals(longValue, cart.longValue);
+        && Objects.equals(longValue, cart.longValue)
+        && Objects.equals(promoCodes, cart.promoCodes);
   }
 
   @Override
@@ -101,7 +112,8 @@ public class Cart {
         cartItems,
         threadName,
         pipelineSessionId,
-        longValue);
+        longValue,
+        promoCodes);
   }
 
   @Override
@@ -123,6 +135,8 @@ public class Cart {
         + '\''
         + ", longValue="
         + longValue
+        + ", promoCodes="
+        + promoCodes
         + '}';
   }
 }

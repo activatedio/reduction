@@ -14,6 +14,7 @@ public class CartDriver extends StateDriver<Cart> {
         new TypeRef<>() {},
         new CartProjectionRoot()
             .state()
+            .promoCodes()
             .threadName()
             .pipelineSessionId()
             .longValue()

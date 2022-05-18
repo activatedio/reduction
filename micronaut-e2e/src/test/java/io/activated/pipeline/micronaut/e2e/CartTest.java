@@ -3,19 +3,14 @@ package io.activated.pipeline.micronaut.e2e;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.pipeline.micronaut.cart.Application;
-import io.activated.pipeline.micronaut.cart.client.CartDiagnosticActionGraphQLQuery;
-import io.activated.pipeline.micronaut.cart.client.CartExceptionActionGraphQLQuery;
-import io.activated.pipeline.micronaut.cart.client.CartGraphQLQuery;
-import io.activated.pipeline.micronaut.cart.client.CartSetAddressGraphQLQuery;
-import io.activated.pipeline.micronaut.cart.types.AddressInput;
-import io.activated.pipeline.micronaut.cart.types.DiagnosticActionInput;
-import io.activated.pipeline.micronaut.cart.types.ExceptionActionInput;
-import io.activated.pipeline.micronaut.cart.types.SetAddressInput;
+import io.activated.pipeline.micronaut.cart.client.*;
+import io.activated.pipeline.micronaut.cart.types.*;
 import io.activated.pipeline.test.GraphQLClientSupport;
 import io.activated.pipeline.test.GraphQLConfig;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.server.EmbeddedServer;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -119,5 +114,19 @@ public class CartTest {
 
     assertThat(driver.getLastState().getThreadName()).contains("parallel");
     assertThat(driver.getLastState().getPipelineSessionId()).isNotEmpty();
+
+    var promoCodes = List.of("p1", "p2");
+
+    // Test out the list string
+    var promoCodeQuery =
+        CartPromoCodeActionGraphQLQuery.newRequest()
+            .action(PromoCodeActionInput.newBuilder().promoCodes(promoCodes).build())
+            .build();
+
+    driver.query(promoCodeQuery, "cartPromoCodeAction");
+
+    assertThat(driver.getLastGraphQLError()).isNotNull();
+
+    assertThat(driver.getLastState().getPromoCodes()).isEqualTo(promoCodes);
   }
 }
