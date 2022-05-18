@@ -3,6 +3,7 @@ package io.activated.pipeline.micronaut.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import io.activated.pipeline.Constants;
 import io.activated.pipeline.PipelineConfig;
 import io.activated.pipeline.env.SessionIdSupplier;
 import io.activated.pipeline.micronaut.StubMicronautPipelineConfiguration;
@@ -73,8 +74,9 @@ public class SessionIdFilterTest {
     when(request.getCookies()).thenReturn(cookies);
     when(cookies.findCookie(config.getSessionIdKeyName())).thenReturn(Optional.of(cookie));
     when(cookie.getValue()).thenReturn(sessionId);
+    when(request.setAttribute(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId))
+        .thenReturn((HttpRequest) request);
     when(chain.proceed(request)).thenReturn(Mono.just(response));
-    when(response.attribute(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId)).thenReturn(response);
 
     assertThat(Mono.from(unit.doFilter(request, chain)).block()).isSameAs(response);
 
@@ -93,8 +95,9 @@ public class SessionIdFilterTest {
     when(cookie.httpOnly(true)).thenReturn(cookie);
     when(cookie.sameSite(SameSite.Strict)).thenReturn(cookie);
     when(response.cookie(cookie)).thenReturn(response);
+    when(request.setAttribute(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId))
+        .thenReturn((HttpRequest) request);
     when(chain.proceed(request)).thenReturn(Mono.just(response));
-    when(response.attribute(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId)).thenReturn(response);
 
     assertThat(Mono.from(unit.doFilter(request, chain)).block()).isSameAs(response);
 
@@ -110,8 +113,9 @@ public class SessionIdFilterTest {
     when(cookies.findCookie(config.getSessionIdKeyName())).thenReturn(Optional.empty());
     when(sessionIdSupplier.get()).thenReturn(sessionId);
     when(response.cookie(cookie)).thenReturn(response);
+    when(request.setAttribute(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId))
+        .thenReturn((HttpRequest) request);
     when(chain.proceed(request)).thenReturn(Mono.just(response));
-    when(response.attribute(Constants.SESSION_ID_ATTRIBUTE_KEY, sessionId)).thenReturn(response);
 
     assertThat(Mono.from(unit.doFilter(request, chain)).block()).isSameAs(response);
 
