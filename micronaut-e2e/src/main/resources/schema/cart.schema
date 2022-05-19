@@ -58,12 +58,21 @@ type CartState {
   state: Cart
 }
 
+type ExternalState {
+  keys: [String]
+}
+
+type ExternalStateState {
+  state: ExternalState
+}
+
 type Mutation {
   cartDiagnosticAction(action: DiagnosticActionInput): CartState
   cartExceptionAction(action: ExceptionActionInput): CartState
   cartPromoCodeAction(action: PromoCodeActionInput): CartState
   cartRefreshAction(action: RefreshActionInput): CartState
   cartSetAddress(action: SetAddressInput): CartState
+  externalStatePutEntryAction(action: PutEntryActionInput): ExternalStateState
 }
 
 type Product {
@@ -73,6 +82,7 @@ type Product {
 
 type Query {
   cart: CartState
+  externalState: ExternalStateState
 }
 
 input AddressInput {
@@ -93,6 +103,11 @@ input ExceptionActionInput {
 
 input PromoCodeActionInput {
   promoCodes: [String]
+}
+
+input PutEntryActionInput {
+  key: String
+  value: String
 }
 
 input RefreshActionInput {

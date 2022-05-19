@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
-// TODO - Restore in the future
 public class GetDataFetcherImplTest {
 
   private final Class<DummyState> stateClass = DummyState.class;

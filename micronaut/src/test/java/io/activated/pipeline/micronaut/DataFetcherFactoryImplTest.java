@@ -3,6 +3,7 @@ package io.activated.pipeline.micronaut;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.pipeline.Pipeline;
+import io.activated.pipeline.micronaut.fixtures.DummyInternalState;
 import io.activated.pipeline.micronaut.fixtures.DummyReducer;
 import io.activated.pipeline.micronaut.fixtures.DummyState;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,8 @@ class DataFetcherFactoryImplTest {
   private final Class<DummyState> stateClass = DummyState.class;
   private final Class<DummyReducer> actionClass = DummyReducer.class;
 
+  private final Class<DummyInternalState> exportableStateClass = DummyInternalState.class;
+
   @Mock private Pipeline pipeline;
 
   private DataFetcherFactoryImpl unit;
@@ -36,8 +39,20 @@ class DataFetcherFactoryImplTest {
   }
 
   @Test
+  public void getExportableGetDataFetcher() {
+    var got = unit.getExportableGetDataFetcher(exportableStateClass);
+    assertThat(got).isInstanceOf(ExportableGetDataFetcherImpl.class);
+  }
+
+  @Test
   public void getSetDataFetcher() {
     var got = unit.getSetDataFetcher(stateClass, actionClass);
     assertThat(got).isInstanceOf(SetDataFetcherImpl.class);
+  }
+
+  @Test
+  public void getExportableSetDataFetcher() {
+    var got = unit.getExportableSetDataFetcher(exportableStateClass, actionClass);
+    assertThat(got).isInstanceOf(ExportableSetDataFetcherImpl.class);
   }
 }

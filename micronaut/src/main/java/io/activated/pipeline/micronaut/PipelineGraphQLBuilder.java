@@ -71,12 +71,23 @@ public class PipelineGraphQLBuilder {
     Map<String, GraphQLOutputType> stateOutputTypes = Maps.newHashMap();
 
     for (final var state : stateTypes) {
-      final var oType = typeFactory.getOutputType(state);
-      final var queryName = lowerCamelCase(state.getSimpleName());
-      var stateOutputType = makeOutputType(state.getSimpleName(), oType);
-      stateOutputTypes.put(state.getSimpleName(), stateOutputType);
+
+      var exported = state;
+
+      var isExportable = TypeUtils.isExportable(state);
+      if (isExportable) {
+        exported = TypeUtils.toExportable(state);
+      }
+
+      final var oType = typeFactory.getOutputType(exported);
+      final var queryName = lowerCamelCase(exported.getSimpleName());
+      var stateOutputType = makeOutputType(exported.getSimpleName(), oType);
+      stateOutputTypes.put(exported.getSimpleName(), stateOutputType);
       qObj = qObj.field(field -> field.name(queryName).type(stateOutputType));
-      final var dFetch = dataFetcherFactory.getGetDataFetcher(state);
+      final var dFetch =
+          isExportable
+              ? dataFetcherFactory.getExportableGetDataFetcher(state)
+              : dataFetcherFactory.getGetDataFetcher(state);
       registry = registry.dataFetcher(FieldCoordinates.coordinates(QUERY_ROOT, queryName), dFetch);
     }
 
@@ -86,11 +97,19 @@ public class PipelineGraphQLBuilder {
 
       // TODO - Scan these interfaces for the candidate - in case there are more than one
       final var stateClass = (Class<?>) reducerKey.getStateType();
+
+      var exportedStateClass = stateClass;
+
+      var isExportable = TypeUtils.isExportable(stateClass);
+      if (isExportable) {
+        exportedStateClass = TypeUtils.toExportable(stateClass);
+      }
+
       final var actionClass = (Class<?>) reducerKey.getActionType();
       final var iType = typeFactory.getInputType(actionClass);
-      final var stateOutputType = stateOutputTypes.get(stateClass.getSimpleName());
+      final var stateOutputType = stateOutputTypes.get(exportedStateClass.getSimpleName());
       final var mutationName =
-          lowerCamelCase(stateClass.getSimpleName() + actionClass.getSimpleName());
+          lowerCamelCase(exportedStateClass.getSimpleName() + actionClass.getSimpleName());
       mObj =
           mObj.field(
               field ->
@@ -98,7 +117,10 @@ public class PipelineGraphQLBuilder {
                       .name(mutationName)
                       .argument(a -> a.name("action").type(iType))
                       .type(stateOutputType));
-      final var dFetch = dataFetcherFactory.getSetDataFetcher(stateClass, actionClass);
+      final var dFetch =
+          isExportable
+              ? dataFetcherFactory.getExportableSetDataFetcher(stateClass, actionClass)
+              : dataFetcherFactory.getSetDataFetcher(stateClass, actionClass);
       registry =
           registry.dataFetcher(FieldCoordinates.coordinates(MUTATION_ROOT, mutationName), dFetch);
     }

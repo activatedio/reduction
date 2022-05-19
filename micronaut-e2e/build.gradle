@@ -14,7 +14,7 @@ dependencies {
 
 generateJava{
   schemaPaths = ["${projectDir}/src/main/resources/schema"]
-  packageName = 'io.activated.pipeline.micronaut.cart'
+  packageName = 'io.activated.pipeline.micronaut.e2e'
   generateClient = true
   typeMapping = ["BigDecimal": "java.math.BigDecimal"]
 }

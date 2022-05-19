@@ -102,10 +102,16 @@ public class TypeFactoryImpl implements TypeFactory {
 
   private GraphQLOutputType makeOutputObjectType(final Class<?> input) {
 
+    var effective = input;
+
+    if (TypeUtils.isExportable(input)) {
+      effective = TypeUtils.toExportable(input);
+    }
+
     try {
 
-      final var pDescs = Introspector.getBeanInfo(input).getPropertyDescriptors();
-      var oType = GraphQLObjectType.newObject().name(input.getSimpleName());
+      final var pDescs = Introspector.getBeanInfo(effective).getPropertyDescriptors();
+      var oType = GraphQLObjectType.newObject().name(effective.getSimpleName());
 
       for (final var pDesc : pDescs) {
         if (EXCLUDED_PROPERTIES.contains(pDesc.getName())) {

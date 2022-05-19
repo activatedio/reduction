@@ -1,8 +1,8 @@
 package io.activated.pipeline.micronaut.e2e;
 
 import com.jayway.jsonpath.TypeRef;
-import io.activated.pipeline.micronaut.cart.client.CartProjectionRoot;
-import io.activated.pipeline.micronaut.cart.types.Cart;
+import io.activated.pipeline.micronaut.e2e.client.CartProjectionRoot;
+import io.activated.pipeline.micronaut.e2e.types.Cart;
 import io.activated.pipeline.test.GraphQLClientSupport;
 import io.activated.pipeline.test.StateDriver;
 
