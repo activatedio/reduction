@@ -78,6 +78,10 @@ public class GraphQLClientSupport {
             });
   }
 
+  public List<String> getCookies() {
+    return cookies;
+  }
+
   private <T> Mono<GraphQLResponse> query(String query) {
 
     return client.reactiveExecuteQuery(query, Maps.newHashMap());
