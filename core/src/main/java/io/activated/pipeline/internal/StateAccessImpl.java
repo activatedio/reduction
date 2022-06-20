@@ -95,16 +95,16 @@ public class StateAccessImpl implements StateAccess {
                     .get(keyExists.key.getValue(), stateName, stateType)
                     .map(Optional::get);
               } else {
-                var state = initial(stateType);
-                return stateRepository
-                    .set(keyExists.key.getValue(), stateName, state)
+                return initial(stateType, context)
+                    .flatMap(
+                        state ->
+                            stateRepository
+                                .set(keyExists.key.getValue(), stateName, state)
+                                .thenReturn(state))
                     .doOnSuccess(
                         v -> {
-                          changeLogger.initial(
-                              keyExists.key, stateName, snapshotter.snapshot(state));
-                        })
-                    .map(v -> state)
-                    .defaultIfEmpty(state);
+                          changeLogger.initial(keyExists.key, stateName, snapshotter.snapshot(v));
+                        });
               }
             });
   }
@@ -115,9 +115,9 @@ public class StateAccessImpl implements StateAccess {
     return initial.zero();
   }
 
-  private <S> S initial(Class<S> stateType) {
+  private <S> Mono<S> initial(Class<S> stateType, Context context) {
 
     var initial = registry.getInitial(InitialStateKey.create(stateType));
-    return initial.initial();
+    return initial.initial(context);
   }
 }

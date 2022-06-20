@@ -81,7 +81,7 @@ public class StateAccessImplTest {
     when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
-    when(initialState.initial()).thenReturn(state);
+    when(initialState.initial(context)).thenReturn(Mono.just(state));
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(snapshot);
 
@@ -89,12 +89,6 @@ public class StateAccessImplTest {
 
     assertThat(got).isSameAs(state);
 
-    verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).apply(context);
-    verify(stateRepository).exists(key.getValue(), stateName);
-    verify(registry).getInitial(InitialStateKey.create(stateType));
-    verify(initialState).initial();
-    verify(stateRepository).set(key.getValue(), stateName, state);
     verify(changeLogger).initial(key, stateName, snapshot);
 
     verifyNoMoreInteractions();
@@ -112,11 +106,6 @@ public class StateAccessImplTest {
 
     assertThat(got).isEqualTo(state);
 
-    verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).apply(context);
-    verify(stateRepository).exists(key.getValue(), stateName);
-    verify(stateRepository).get(key.getValue(), stateName, stateType);
-
     verifyNoMoreInteractions();
   }
 
@@ -129,20 +118,13 @@ public class StateAccessImplTest {
     when(stateRepository.exists(key.getMoveFrom(), stateName)).thenReturn(Mono.just(false));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
-    when(initialState.initial()).thenReturn(state);
+    when(initialState.initial(context)).thenReturn(Mono.just(state));
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(snapshot);
 
     var got = Mono.from(unit.get(context, stateType)).block();
     assertThat(got).isSameAs(state);
 
-    verify(registry).getKeyStrategy(stateType);
-    verify(keyStrategy).apply(context);
-    verify(stateRepository).exists(key.getMoveFrom(), stateName);
-    verify(stateRepository).exists(key.getValue(), stateName);
-    verify(registry).getInitial(InitialStateKey.create(stateType));
-    verify(initialState).initial();
-    verify(stateRepository).set(key.getValue(), stateName, state);
     verify(changeLogger).initial(key, stateName, snapshot);
 
     verifyNoMoreInteractions();

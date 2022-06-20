@@ -3,6 +3,7 @@ package io.activated.pipeline.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.base.JUnit5ModelTestSupport;
+import io.activated.pipeline.Context;
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.fixtures.Dummy1;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import reactor.core.publisher.Mono;
 
 public class InitialStateKeyTest extends JUnit5ModelTestSupport<InitialStateKey> {
 
@@ -55,8 +57,8 @@ public class InitialStateKeyTest extends JUnit5ModelTestSupport<InitialStateKey>
 
   public static class DummyInitialState1 implements InitialState<Dummy1> {
     @Override
-    public Dummy1 initial() {
-      return null;
+    public Mono<Dummy1> initial(Context context) {
+      return Mono.empty();
     }
 
     @Override
@@ -68,8 +70,8 @@ public class InitialStateKeyTest extends JUnit5ModelTestSupport<InitialStateKey>
   public static class DummyInitialState2
       implements InitialState<Dummy1>, Comparable<DummyInitialState2> {
     @Override
-    public Dummy1 initial() {
-      return null;
+    public Mono<Dummy1> initial(Context context) {
+      return Mono.empty();
     }
 
     @Override
