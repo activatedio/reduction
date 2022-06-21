@@ -2,6 +2,7 @@ package io.activated.pipeline.micronaut.cart;
 
 import com.google.common.collect.Lists;
 import io.activated.pipeline.annotations.State;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +16,8 @@ public class Cart {
   private String threadName;
   private String pipelineSessionId;
   private Long longValue = 9999l;
+
+  private String[] stringArrayValue = new String[] {"a", "b"};
 
   private List<String> promoCodes = Lists.newArrayList();
 
@@ -88,6 +91,14 @@ public class Cart {
     this.promoCodes = promoCodes;
   }
 
+  public String[] getStringArrayValue() {
+    return stringArrayValue;
+  }
+
+  public void setStringArrayValue(String[] stringArrayValue) {
+    this.stringArrayValue = stringArrayValue;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -100,20 +111,24 @@ public class Cart {
         && Objects.equals(threadName, cart.threadName)
         && Objects.equals(pipelineSessionId, cart.pipelineSessionId)
         && Objects.equals(longValue, cart.longValue)
+        && Arrays.equals(stringArrayValue, cart.stringArrayValue)
         && Objects.equals(promoCodes, cart.promoCodes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-        count,
-        shippingAddress,
-        billingAddress,
-        cartItems,
-        threadName,
-        pipelineSessionId,
-        longValue,
-        promoCodes);
+    int result =
+        Objects.hash(
+            count,
+            shippingAddress,
+            billingAddress,
+            cartItems,
+            threadName,
+            pipelineSessionId,
+            longValue,
+            promoCodes);
+    result = 31 * result + Arrays.hashCode(stringArrayValue);
+    return result;
   }
 
   @Override
@@ -135,6 +150,8 @@ public class Cart {
         + '\''
         + ", longValue="
         + longValue
+        + ", stringArrayValue="
+        + Arrays.toString(stringArrayValue)
         + ", promoCodes="
         + promoCodes
         + '}';

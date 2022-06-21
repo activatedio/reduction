@@ -88,6 +88,17 @@ public class TypeFactoryImpl implements TypeFactory {
     }
   }
 
+  private GraphQLOutputType getOutputArrayType(final Class<?> element) {
+
+    final var type = outputListCache.get(element);
+
+    if (type == null) {
+      return makeOutputArrayType(element);
+    } else {
+      return type;
+    }
+  }
+
   @Override
   public GraphQLInputType getInputType(final Class<?> input) {
 
@@ -123,6 +134,8 @@ public class TypeFactoryImpl implements TypeFactory {
               ((ParameterizedType) pDesc.getReadMethod().getGenericReturnType())
                   .getActualTypeArguments()[0];
           fType = getOutputListType((Class<?>) elType);
+        } else if (pDesc.getPropertyType().isArray()) {
+          fType = getOutputArrayType(pDesc.getPropertyType().getComponentType());
         } else {
           fType = getOutputType(pDesc.getPropertyType());
         }
@@ -139,6 +152,10 @@ public class TypeFactoryImpl implements TypeFactory {
   }
 
   private GraphQLOutputType makeOutputObjectListType(final Class<?> input) {
+    return new GraphQLList(getOutputType(input));
+  }
+
+  private GraphQLOutputType makeOutputArrayType(final Class<?> input) {
     return new GraphQLList(getOutputType(input));
   }
 

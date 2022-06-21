@@ -38,6 +38,7 @@ type Cart {
   pipelineSessionId: String
   promoCodes: [String]
   shippingAddress: Address
+  stringArrayValue: [String]
   threadName: String
 }
 
