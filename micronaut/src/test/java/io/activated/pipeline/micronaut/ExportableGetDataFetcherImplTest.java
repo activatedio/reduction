@@ -20,6 +20,8 @@ import reactor.core.publisher.Mono;
 public class ExportableGetDataFetcherImplTest {
 
   private final Class<DummyInternalState> stateClass = DummyInternalState.class;
+  @Mock
+  private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private ExportableGetDataFetcherImpl<DummyInternalState, DummyExternalState> unit;
@@ -29,12 +31,7 @@ public class ExportableGetDataFetcherImplTest {
   @BeforeEach
   public void setUp() {
     unit =
-        new ExportableGetDataFetcherImpl<>(pipeline, stateClass) {
-          @Override
-          protected Context getContext() {
-            return context;
-          }
-        };
+        new ExportableGetDataFetcherImpl<>(contextFactory, pipeline, stateClass) ;
   }
 
   @Test
@@ -54,6 +51,6 @@ public class ExportableGetDataFetcherImplTest {
 
     when(pipeline.get(context, DummyInternalState.class)).thenReturn(Mono.just(intermediate));
     assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
-    verifyNoMoreInteractions(pipeline);
+    verifyNoMoreInteractions(contextFactory, pipeline);
   }
 }

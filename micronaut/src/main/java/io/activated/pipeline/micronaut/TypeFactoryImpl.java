@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
-@Singleton
 public class TypeFactoryImpl implements TypeFactory {
 
   private final TypeCache<GraphQLInputType> inputCache;
@@ -23,21 +22,7 @@ public class TypeFactoryImpl implements TypeFactory {
 
   private static final Set<String> EXCLUDED_PROPERTIES = Sets.newHashSet("class", "declaringClass");
 
-  @Inject
-  public TypeFactoryImpl(
-      final TypeCache<GraphQLInputType> inputCache,
-      final TypeCache<GraphQLOutputType> outputCache,
-      final TypeCache<GraphQLInputType> inputListCache,
-      final TypeCache<GraphQLOutputType> outputListCache) {
-    this.inputCache = inputCache;
-    this.outputCache = outputCache;
-    this.inputListCache = inputListCache;
-    this.outputListCache = outputListCache;
-    initTypes();
-  }
-
-  private void initTypes() {
-
+  private final TypeCacheBuilder defaultTypeCacheBuilder = (inputCache, outputCache) -> {
     outputCache.put(String.class, Scalars.GraphQLString);
     outputCache.put(Integer.class, Scalars.GraphQLInt);
     outputCache.put(int.class, Scalars.GraphQLInt);
@@ -63,6 +48,28 @@ public class TypeFactoryImpl implements TypeFactory {
     inputCache.put(Double.class, Scalars.GraphQLFloat);
     inputCache.put(double.class, Scalars.GraphQLFloat);
     inputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
+  };
+
+  @Inject
+  public TypeFactoryImpl(
+      final TypeCache<GraphQLInputType> inputCache,
+      final TypeCache<GraphQLOutputType> outputCache,
+      final TypeCache<GraphQLInputType> inputListCache,
+      final TypeCache<GraphQLOutputType> outputListCache,
+      List<TypeCacheBuilder> typeCacheBuilders
+  ) {
+    this.inputCache = inputCache;
+    this.outputCache = outputCache;
+    this.inputListCache = inputListCache;
+    this.outputListCache = outputListCache;
+    defaultTypeCacheBuilder.build(inputCache, outputCache);
+    for (var b : typeCacheBuilders) {
+      b.build(inputCache, outputCache);
+    }
+  }
+
+  private void initTypes() {
+
   }
 
   @Override

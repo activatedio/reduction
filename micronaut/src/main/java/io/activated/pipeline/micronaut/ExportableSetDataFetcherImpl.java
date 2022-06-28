@@ -3,7 +3,6 @@ package io.activated.pipeline.micronaut;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
-import io.activated.pipeline.Context;
 import io.activated.pipeline.Exportable;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
@@ -17,13 +16,15 @@ public class ExportableSetDataFetcherImpl<I extends Exportable<E>, E, A>
 
   private final ObjectMapper mapper = new ObjectMapper();
 
+  private final ContextFactory contextFactory;
   private final Pipeline pipeline;
   private final Class<I> stateClass;
   private final Class<A> actionClass;
 
   @Inject
   public ExportableSetDataFetcherImpl(
-      final Pipeline pipeline, final Class<I> stateClass, final Class<A> actionClass) {
+      ContextFactory contextFactory, final Pipeline pipeline, final Class<I> stateClass, final Class<A> actionClass) {
+    this.contextFactory = contextFactory;
     this.pipeline = pipeline;
     this.stateClass = stateClass;
     this.actionClass = actionClass;
@@ -34,8 +35,7 @@ public class ExportableSetDataFetcherImpl<I extends Exportable<E>, E, A>
       throws Exception {
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    return pipeline
-        .set(getContext(), stateClass, action)
+    return contextFactory.create().flatMap(ctx -> pipeline.set(ctx, stateClass, action))
         .map(
             sr -> {
               var result = new SetResult<E>();
@@ -43,9 +43,5 @@ public class ExportableSetDataFetcherImpl<I extends Exportable<E>, E, A>
               return result;
             })
         .toFuture();
-  }
-
-  protected Context getContext() {
-    return ContextUtils.getContext();
   }
 }

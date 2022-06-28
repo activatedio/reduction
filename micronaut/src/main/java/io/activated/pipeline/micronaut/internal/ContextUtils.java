@@ -1,6 +1,7 @@
-package io.activated.pipeline.micronaut;
+package io.activated.pipeline.micronaut.internal;
 
 import io.activated.pipeline.*;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.context.ServerRequestContext;
 import java.util.List;
 import java.util.TreeMap;
@@ -9,9 +10,27 @@ import org.slf4j.LoggerFactory;
 
 public class ContextUtils {
 
+  public static class Result {
+    private final HttpRequest<?> request;
+    private final Context context;
+
+    public Result(HttpRequest<?> request, Context context) {
+      this.request = request;
+      this.context = context;
+    }
+
+    public HttpRequest<?> getRequest() {
+      return request;
+    }
+
+    public Context getContext() {
+      return context;
+    }
+  }
+
   private static final Logger LOGGER = LoggerFactory.getLogger(ContextUtils.class);
 
-  public static Context getContext() {
+  public static Result create() {
 
     var request = ServerRequestContext.currentRequest().get();
     var context = new Context();
@@ -21,6 +40,6 @@ public class ContextUtils {
     context.setHeaders(headers);
     context.setAttributes(request.getAttributes().asMap());
     LOGGER.info("using context: " + context);
-    return context;
+    return new Result(request, context);
   }
 }

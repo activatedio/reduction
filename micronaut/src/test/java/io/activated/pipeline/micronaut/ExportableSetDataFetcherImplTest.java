@@ -26,6 +26,7 @@ public class ExportableSetDataFetcherImplTest {
   private final Class<DummyInternalState> stateClass = DummyInternalState.class;
   private final Class<DummyAction> actionClass = DummyAction.class;
   @Mock private DataFetchingEnvironment environment;
+  @Mock private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private final Context context = new Context();
@@ -36,12 +37,7 @@ public class ExportableSetDataFetcherImplTest {
   public void setUp() {
 
     unit =
-        new ExportableSetDataFetcherImpl<>(pipeline, stateClass, actionClass) {
-          @Override
-          protected Context getContext() {
-            return context;
-          }
-        };
+        new ExportableSetDataFetcherImpl<>(contextFactory, pipeline, stateClass, actionClass);
   }
 
   @Test
@@ -75,6 +71,6 @@ public class ExportableSetDataFetcherImplTest {
 
     assertThat(got.get()).isEqualTo(result);
 
-    verifyNoMoreInteractions(pipeline);
+    verifyNoMoreInteractions(contextFactory, pipeline);
   }
 }

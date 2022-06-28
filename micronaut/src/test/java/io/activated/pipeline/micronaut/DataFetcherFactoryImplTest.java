@@ -23,13 +23,15 @@ class DataFetcherFactoryImplTest {
 
   private final Class<DummyInternalState> exportableStateClass = DummyInternalState.class;
 
+  @Mock
+  private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private DataFetcherFactoryImpl unit;
 
   @BeforeEach
   public void setUp() {
-    unit = new DataFetcherFactoryImpl(pipeline);
+    unit = new DataFetcherFactoryImpl(contextFactory, pipeline);
   }
 
   @Test

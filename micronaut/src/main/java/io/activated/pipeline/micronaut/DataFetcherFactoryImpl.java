@@ -16,10 +16,13 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DataFetcherFactoryImpl.class);
 
+  private final ContextFactory contextFactory;
+
   private final Pipeline pipeline;
 
   @Inject
-  public DataFetcherFactoryImpl(Pipeline pipeline) {
+  public DataFetcherFactoryImpl(ContextFactory contextFactory, Pipeline pipeline) {
+    this.contextFactory = contextFactory;
     this.pipeline = pipeline;
   }
 
@@ -28,7 +31,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
       final Class<S> stateClass) {
 
     LOGGER.debug("Creating get DataFetcher for stateClass: {}", stateClass);
-    return new GetDataFetcherImpl<S>(pipeline, stateClass);
+    return new GetDataFetcherImpl<S>(pipeline, contextFactory, stateClass);
   }
 
   @Override
@@ -37,7 +40,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
           Class<?> stateClass) {
 
     LOGGER.debug("Creating exportable get DataFetcher for stateClass: {}", stateClass);
-    return new ExportableGetDataFetcherImpl<>(pipeline, (Class<I>) stateClass);
+    return new ExportableGetDataFetcherImpl<>(contextFactory, pipeline, (Class<I>) stateClass);
   }
 
   @Override
@@ -46,7 +49,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
     LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
-    return new SetDataFetcherImpl<S, A>(pipeline, stateClass, actionClass);
+    return new SetDataFetcherImpl<S, A>(contextFactory, pipeline, stateClass, actionClass);
   }
 
   @Override
@@ -56,6 +59,6 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
     LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
-    return new ExportableSetDataFetcherImpl<I, E, A>(pipeline, (Class<I>) stateClass, actionClass);
+    return new ExportableSetDataFetcherImpl<I, E, A>(contextFactory, pipeline, (Class<I>) stateClass, actionClass);
   }
 }

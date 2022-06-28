@@ -122,7 +122,7 @@ public class MicronautRegistry implements Registry {
       return result;
     }
     for (var cls : clss) {
-      result.add((StateGuard<S>) applicationContext.getBean(cls));
+      result.add(applicationContext.getBean(cls));
     }
 
     return result;

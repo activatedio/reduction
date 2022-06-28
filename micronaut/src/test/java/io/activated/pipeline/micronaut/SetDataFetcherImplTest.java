@@ -25,6 +25,7 @@ public class SetDataFetcherImplTest {
   private final Class<DummyState> stateClass = DummyState.class;
   private final Class<DummyAction> actionClass = DummyAction.class;
   @Mock private DataFetchingEnvironment environment;
+  @Mock private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private final Context context = new Context();
@@ -35,12 +36,7 @@ public class SetDataFetcherImplTest {
   public void setUp() {
 
     unit =
-        new SetDataFetcherImpl<DummyState, DummyAction>(pipeline, stateClass, actionClass) {
-          @Override
-          protected Context getContext() {
-            return context;
-          }
-        };
+        new SetDataFetcherImpl<DummyState, DummyAction>(contextFactory, pipeline, stateClass, actionClass);
   }
 
   @Test
@@ -64,6 +60,6 @@ public class SetDataFetcherImplTest {
 
     assertThat(got.get()).isSameAs(result);
 
-    verifyNoMoreInteractions(pipeline);
+    verifyNoMoreInteractions(contextFactory, pipeline);
   }
 }

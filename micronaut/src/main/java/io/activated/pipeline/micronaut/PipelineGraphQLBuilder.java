@@ -6,6 +6,8 @@ import io.activated.pipeline.internal.*;
 import io.activated.pipeline.micronaut.internal.MapTypeCache;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +23,14 @@ public class PipelineGraphQLBuilder {
   private final Registry pipelineRegistry;
   private final DataFetcherFactory dataFetcherFactory;
 
+  private final List<TypeCacheBuilder> typeCacheBuilders;
+
   @Inject
   public PipelineGraphQLBuilder(
-      final Registry pipelineRegistry, final DataFetcherFactory dataFetcherFactory) {
+      final Registry pipelineRegistry, final DataFetcherFactory dataFetcherFactory, List<TypeCacheBuilder> typeCacheBuilders) {
     this.pipelineRegistry = pipelineRegistry;
     this.dataFetcherFactory = dataFetcherFactory;
+    this.typeCacheBuilders = typeCacheBuilders;
   }
 
   public GraphQLSchema create() {
@@ -64,7 +69,7 @@ public class PipelineGraphQLBuilder {
 
     var typeFactory =
         new TypeFactoryImpl(
-            new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>());
+            new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>(), new MapTypeCache<>(), typeCacheBuilders);
 
     var stateTypes = pipelineRegistry.getStateTypes();
 

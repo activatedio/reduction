@@ -16,13 +16,15 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
 
   private final ObjectMapper mapper = new ObjectMapper();
 
+  private final ContextFactory contextFactory;
   private final Pipeline pipeline;
   private final Class<S> stateClass;
   private final Class<A> actionClass;
 
   @Inject
   public SetDataFetcherImpl(
-      final Pipeline pipeline, final Class<S> stateClass, final Class<A> actionClass) {
+      ContextFactory contextFactory, final Pipeline pipeline, final Class<S> stateClass, final Class<A> actionClass) {
+    this.contextFactory = contextFactory;
     this.pipeline = pipeline;
     this.stateClass = stateClass;
     this.actionClass = actionClass;
@@ -33,10 +35,6 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
       throws Exception {
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    return Mono.from(pipeline.set(getContext(), stateClass, action)).toFuture();
-  }
-
-  protected Context getContext() {
-    return ContextUtils.getContext();
+    return contextFactory.create().flatMap(c -> pipeline.set(c, stateClass, action)).toFuture();
   }
 }
