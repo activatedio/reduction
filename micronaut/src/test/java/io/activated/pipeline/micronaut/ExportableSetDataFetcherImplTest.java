@@ -62,6 +62,7 @@ public class ExportableSetDataFetcherImplTest {
 
     result.setState(external);
 
+    when(contextFactory.create()).thenReturn(Mono.just(context));
     when(environment.getArgument("action")).thenReturn(argument);
     when(pipeline.set(context, DummyInternalState.class, action))
         .thenReturn(Mono.just(intermediate));
@@ -70,6 +71,6 @@ public class ExportableSetDataFetcherImplTest {
 
     assertThat(got.get()).isEqualTo(result);
 
-    verifyNoMoreInteractions(contextFactory, pipeline);
+    verifyNoMoreInteractions(contextFactory, pipeline, contextFactory);
   }
 }

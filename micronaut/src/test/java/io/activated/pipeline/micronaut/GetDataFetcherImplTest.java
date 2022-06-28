@@ -33,6 +33,7 @@ public class GetDataFetcherImplTest {
   @Test
   public void get() throws Exception {
     final var result = new GetResult<DummyState>();
+    when(contextFactory.create()).thenReturn(Mono.just(context));
     when(pipeline.get(context, DummyState.class)).thenReturn(Mono.just(result));
     assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
     verifyNoMoreInteractions(contextFactory, pipeline);

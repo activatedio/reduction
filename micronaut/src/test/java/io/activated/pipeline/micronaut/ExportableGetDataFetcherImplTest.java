@@ -47,8 +47,9 @@ public class ExportableGetDataFetcherImplTest {
     final var result = new GetResult<DummyExternalState>();
     result.setState(external);
 
+    when(contextFactory.create()).thenReturn(Mono.just(context));
     when(pipeline.get(context, DummyInternalState.class)).thenReturn(Mono.just(intermediate));
     assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
-    verifyNoMoreInteractions(contextFactory, pipeline);
+    verifyNoMoreInteractions(contextFactory, pipeline, contextFactory);
   }
 }
