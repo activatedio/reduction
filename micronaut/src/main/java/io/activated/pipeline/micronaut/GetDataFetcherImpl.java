@@ -23,5 +23,4 @@ public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetR
       throws Exception {
     return contextFactory.create().flatMap(c -> pipeline.get(c, stateClass)).toFuture();
   }
-
 }

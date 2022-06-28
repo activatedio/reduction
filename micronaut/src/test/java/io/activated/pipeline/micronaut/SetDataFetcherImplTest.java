@@ -36,7 +36,8 @@ public class SetDataFetcherImplTest {
   public void setUp() {
 
     unit =
-        new SetDataFetcherImpl<DummyState, DummyAction>(contextFactory, pipeline, stateClass, actionClass);
+        new SetDataFetcherImpl<DummyState, DummyAction>(
+            contextFactory, pipeline, stateClass, actionClass);
   }
 
   @Test

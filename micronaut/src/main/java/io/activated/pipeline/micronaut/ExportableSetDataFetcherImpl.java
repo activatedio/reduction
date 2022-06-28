@@ -23,7 +23,10 @@ public class ExportableSetDataFetcherImpl<I extends Exportable<E>, E, A>
 
   @Inject
   public ExportableSetDataFetcherImpl(
-      ContextFactory contextFactory, final Pipeline pipeline, final Class<I> stateClass, final Class<A> actionClass) {
+      ContextFactory contextFactory,
+      final Pipeline pipeline,
+      final Class<I> stateClass,
+      final Class<A> actionClass) {
     this.contextFactory = contextFactory;
     this.pipeline = pipeline;
     this.stateClass = stateClass;
@@ -35,7 +38,9 @@ public class ExportableSetDataFetcherImpl<I extends Exportable<E>, E, A>
       throws Exception {
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    return contextFactory.create().flatMap(ctx -> pipeline.set(ctx, stateClass, action))
+    return contextFactory
+        .create()
+        .flatMap(ctx -> pipeline.set(ctx, stateClass, action))
         .map(
             sr -> {
               var result = new SetResult<E>();

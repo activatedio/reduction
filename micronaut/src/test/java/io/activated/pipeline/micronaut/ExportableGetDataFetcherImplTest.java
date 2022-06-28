@@ -20,8 +20,7 @@ import reactor.core.publisher.Mono;
 public class ExportableGetDataFetcherImplTest {
 
   private final Class<DummyInternalState> stateClass = DummyInternalState.class;
-  @Mock
-  private ContextFactory contextFactory;
+  @Mock private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private ExportableGetDataFetcherImpl<DummyInternalState, DummyExternalState> unit;
@@ -30,8 +29,7 @@ public class ExportableGetDataFetcherImplTest {
 
   @BeforeEach
   public void setUp() {
-    unit =
-        new ExportableGetDataFetcherImpl<>(contextFactory, pipeline, stateClass) ;
+    unit = new ExportableGetDataFetcherImpl<>(contextFactory, pipeline, stateClass);
   }
 
   @Test

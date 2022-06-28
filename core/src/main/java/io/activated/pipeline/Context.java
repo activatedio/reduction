@@ -42,7 +42,9 @@ public class Context {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Context context = (Context) o;
-    return Objects.equals(headers, context.headers) && Objects.equals(attributes, context.attributes) && Objects.equals(principal, context.principal);
+    return Objects.equals(headers, context.headers)
+        && Objects.equals(attributes, context.attributes)
+        && Objects.equals(principal, context.principal);
   }
 
   @Override
@@ -52,10 +54,13 @@ public class Context {
 
   @Override
   public String toString() {
-    return "Context{" +
-        "headers=" + headers +
-        ", attributes=" + attributes +
-        ", principal=" + principal +
-        '}';
+    return "Context{"
+        + "headers="
+        + headers
+        + ", attributes="
+        + attributes
+        + ", principal="
+        + principal
+        + '}';
   }
 }

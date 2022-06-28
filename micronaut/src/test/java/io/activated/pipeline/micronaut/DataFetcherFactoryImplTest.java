@@ -23,8 +23,7 @@ class DataFetcherFactoryImplTest {
 
   private final Class<DummyInternalState> exportableStateClass = DummyInternalState.class;
 
-  @Mock
-  private ContextFactory contextFactory;
+  @Mock private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private DataFetcherFactoryImpl unit;

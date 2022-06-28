@@ -36,8 +36,7 @@ public class ExportableSetDataFetcherImplTest {
   @BeforeEach
   public void setUp() {
 
-    unit =
-        new ExportableSetDataFetcherImpl<>(contextFactory, pipeline, stateClass, actionClass);
+    unit = new ExportableSetDataFetcherImpl<>(contextFactory, pipeline, stateClass, actionClass);
   }
 
   @Test
