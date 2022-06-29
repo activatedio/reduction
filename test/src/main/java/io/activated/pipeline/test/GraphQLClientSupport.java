@@ -6,9 +6,11 @@ import com.netflix.graphql.dgs.client.*;
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
+import graphql.schema.Coercing;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -50,6 +52,17 @@ public class GraphQLClientSupport {
       GraphQLQuery query, BaseProjectionNode projectionNode, String path, TypeRef<T> typeRef) {
 
     var request = new GraphQLQueryRequest(query, projectionNode);
+    return query(request.serialize(), path, typeRef);
+  }
+
+  public <T> Mono<T> query(
+      GraphQLQuery query,
+      BaseProjectionNode projectionNode,
+      String path,
+      TypeRef<T> typeRef,
+      Map<Class<?>, ? extends Coercing<?, ?>> typeMap) {
+
+    var request = new GraphQLQueryRequest(query, projectionNode, typeMap);
     return query(request.serialize(), path, typeRef);
   }
 

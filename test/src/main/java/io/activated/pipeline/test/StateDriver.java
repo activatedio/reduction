@@ -44,7 +44,7 @@ public abstract class StateDriver<S> {
   public void query(GraphQLQuery query, String path) {
     try {
       client
-          .query(query, projectionNode, path, typeRef)
+          .query(query, projectionNode, path, typeRef, typeMap)
           .doOnNext(defaultSuccessConsumer)
           .doOnError(defaultErrorConsumer)
           .block();
