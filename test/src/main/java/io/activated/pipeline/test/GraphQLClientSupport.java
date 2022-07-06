@@ -27,7 +27,7 @@ public class GraphQLClientSupport {
 
   private String accessToken;
 
-  private List<String> cookies;
+  private List<String> cookies = List.of();
 
   public GraphQLClientSupport(GraphQLConfig config) {
     this.webClient = WebClient.builder().baseUrl(config.getURL()).build();
@@ -93,6 +93,10 @@ public class GraphQLClientSupport {
 
   public List<String> getCookies() {
     return cookies;
+  }
+
+  public void clearCookies() {
+    cookies = List.of();
   }
 
   private <T> Mono<GraphQLResponse> query(String query) {
