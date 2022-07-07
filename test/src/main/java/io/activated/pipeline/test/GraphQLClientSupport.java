@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,7 +26,7 @@ public class GraphQLClientSupport {
   private final WebClient webClient;
   private final WebClientGraphQLClient client;
 
-  private String accessToken;
+  private Supplier<String> accessTokenSupplier = () -> null;
 
   private List<String> cookies = List.of();
 
@@ -35,6 +36,7 @@ public class GraphQLClientSupport {
         MonoGraphQLClient.createWithWebClient(
             webClient,
             headers -> {
+              var accessToken = accessTokenSupplier.get();
               if (accessToken != null) {
                 headers.put("Authorization", List.of("Bearer " + accessToken));
               }
@@ -44,8 +46,8 @@ public class GraphQLClientSupport {
             });
   }
 
-  public void setAccessToken(String accessToken) {
-    this.accessToken = accessToken;
+  public void setAccessTokenSupplier(Supplier<String> accessTokenSupplier) {
+    this.accessTokenSupplier = accessTokenSupplier;
   }
 
   public <T> Mono<T> query(
