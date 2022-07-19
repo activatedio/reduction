@@ -97,6 +97,10 @@ public class GraphQLClientSupport {
     return cookies;
   }
 
+  public void setCookies(List<String> cookies) {
+    this.cookies = cookies;
+  }
+
   public void clearCookies() {
     cookies = List.of();
   }
