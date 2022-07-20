@@ -1,5 +1,7 @@
 package io.activated.pipeline;
 
+import java.util.Optional;
+
 public interface PipelineConfig {
 
   int getStateExpireSeconds();
@@ -7,4 +9,6 @@ public interface PipelineConfig {
   String getSessionIdKeyName();
 
   boolean isDevelopmentMode();
+
+  Optional<String> getCookieDomain();
 }
