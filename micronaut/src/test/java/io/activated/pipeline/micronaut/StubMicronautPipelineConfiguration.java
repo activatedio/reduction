@@ -26,6 +26,11 @@ public class StubMicronautPipelineConfiguration implements MicronautPipelineConf
   }
 
   @Override
+  public Optional<String> getCookiePath() {
+    return Optional.empty();
+  }
+
+  @Override
   public String getRedisHost() {
     return "test-redis-host";
   }

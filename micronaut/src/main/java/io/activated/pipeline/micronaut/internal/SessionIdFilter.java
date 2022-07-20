@@ -89,7 +89,13 @@ public class SessionIdFilter implements HttpServerFilter {
     // TODO - Update unit tests to cover cookie domain being set
     if (config.getCookieDomain().isPresent()) {
       var domain = config.getCookieDomain().get();
-      c.domain(domain);
+      c = c.domain(domain);
+    }
+
+    // TODO - Update unit tests to cover cookie domain being set
+    if (config.getCookiePath().isPresent()) {
+      var path = config.getCookiePath().get();
+      c = c.path(path);
     }
 
     return c;

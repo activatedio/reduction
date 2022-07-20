@@ -11,4 +11,6 @@ public interface PipelineConfig {
   boolean isDevelopmentMode();
 
   Optional<String> getCookieDomain();
+
+  Optional<String> getCookiePath();
 }
