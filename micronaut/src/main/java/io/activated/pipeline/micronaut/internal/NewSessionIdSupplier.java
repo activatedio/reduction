@@ -3,6 +3,7 @@ package io.activated.pipeline.micronaut.internal;
 import io.activated.pipeline.env.SessionIdSupplier;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.UUID;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -16,9 +17,6 @@ public class NewSessionIdSupplier implements SessionIdSupplier {
   @Override
   public String get() {
 
-    var bytes = new byte[32];
-    secureRandom.nextBytes(bytes);
-
-    return encoder.encodeToString(bytes);
+    return UUID.randomUUID().toString();
   }
 }
