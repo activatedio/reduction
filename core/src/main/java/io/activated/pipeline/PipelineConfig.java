@@ -2,7 +2,7 @@ package io.activated.pipeline;
 
 public class PipelineConfig {
 
-  private int stateExpireInSeconds = 28800;
+  private int stateExpireInSeconds = 7200;
   private int authenticationRefreshFailResetSeconds = 120;
   private int refreshTokenMarginSeconds = 240;
 
