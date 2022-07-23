@@ -10,6 +10,7 @@ import com.netflix.graphql.dgs.client.codegen.GraphQLQuery;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,7 @@ public class GraphQLClientSupport {
 
   public void newSession() {
 
-    var bytes = new byte[32];
-    secureRandom.nextBytes(bytes);
-
-    sessionId = encoder.encodeToString(bytes);
+    sessionId = UUID.randomUUID().toString();
 
     LOGGER.debug("Setting new session id: {}", sessionId);
   }
