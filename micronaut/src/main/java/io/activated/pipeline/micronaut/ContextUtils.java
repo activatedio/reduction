@@ -12,9 +12,8 @@ public class ContextUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContextUtils.class);
 
-  public static Context getContext(GraphQLContext graphQLContext) {
+  public static Context getContext(HttpRequest<?> request) {
 
-    var request = (HttpRequest<?>) graphQLContext.get("httpRequest");
     var context = new Context();
     var headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
     // TODO - How to test both types of headers
@@ -22,5 +21,11 @@ public class ContextUtils {
     context.setHeaders(headers);
     LOGGER.info("using context: {}", context);
     return context;
+  }
+
+  public static Context getContext(GraphQLContext graphQLContext) {
+
+    var request = (HttpRequest<?>) graphQLContext.get("httpRequest");
+    return getContext(request);
   }
 }
