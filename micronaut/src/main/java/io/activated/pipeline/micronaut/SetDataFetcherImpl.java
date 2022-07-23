@@ -1,6 +1,7 @@
 package io.activated.pipeline.micronaut;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import graphql.GraphQLContext;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.Pipeline;
@@ -30,9 +31,10 @@ public class SetDataFetcherImpl<S, A> implements DataFetcher<CompletableFuture<S
   @Override
   public CompletableFuture<SetResult<S>> get(final DataFetchingEnvironment environment)
       throws Exception {
+    var _ctx = (GraphQLContext) environment.getContext();
     final var arg = environment.getArgument("action");
     final var action = mapper.convertValue(arg, actionClass);
-    final var ctx = ContextUtils.getContext();
+    final var ctx = ContextUtils.getContext(_ctx);
     return Mono.from(pipeline.set(ctx, stateClass, action)).toFuture();
   }
 }

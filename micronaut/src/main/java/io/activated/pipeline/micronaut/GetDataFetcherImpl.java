@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut;
 
+import graphql.GraphQLContext;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import io.activated.pipeline.GetResult;
@@ -21,7 +22,8 @@ public class GetDataFetcherImpl<S> implements DataFetcher<CompletableFuture<GetR
   public CompletableFuture<GetResult<S>> get(final DataFetchingEnvironment environment)
       throws Exception {
 
-    final var ctx = ContextUtils.getContext();
+    var _ctx = (GraphQLContext) environment.getContext();
+    final var ctx = ContextUtils.getContext(_ctx);
     return Mono.from(pipeline.get(ctx, stateClass)).toFuture();
   }
 }

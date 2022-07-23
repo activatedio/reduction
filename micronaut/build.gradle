@@ -24,6 +24,7 @@ dependencies {
     api project(":core")
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.2'
     implementation group: 'com.graphql-java', name: 'graphql-java', version: '16.2'
+    implementation("io.micronaut.graphql:micronaut-graphql:2.3.1")
     provided "io.micronaut:micronaut-http-server:${micronautVersion}"
     implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.10'
     testImplementation("io.micronaut.test:micronaut-test-junit5")
