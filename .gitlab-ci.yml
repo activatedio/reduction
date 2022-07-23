@@ -1,4 +1,4 @@
-image: gradle:7.1.0-jdk11
+image: gradle:7.4.2-jdk11
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -34,6 +34,8 @@ publish:
       - build
   except:
     - master
+    - /^release-.*$/
+
 
 release:
   stage: release
@@ -54,4 +56,5 @@ release:
       - build
   only:
     - master
+    - /^release-.*$/
 
