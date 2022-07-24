@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.internal.InitialStateKey;
 import io.activated.pipeline.internal.ReducerKey;
+import io.activated.pipeline.key.PrincipalSessionKeyUpgradeStrategy;
 import io.activated.pipeline.key.SessionKeyStrategy;
 import io.activated.pipeline.micronaut.MainRuntimeConfiguration;
 import io.activated.pipeline.micronaut.fixtures.*;
@@ -90,7 +91,7 @@ public class MicronautRegistryTest {
 
   @Test
   public void getKeyStrategy() {
-    assertThat(unit.getKeyStrategy(Dummy1.class)).isInstanceOf(SessionKeyStrategy.class);
+    assertThat(unit.getKeyStrategy(Dummy1.class)).isInstanceOf(PrincipalSessionKeyUpgradeStrategy.class);
   }
 
   @Test
