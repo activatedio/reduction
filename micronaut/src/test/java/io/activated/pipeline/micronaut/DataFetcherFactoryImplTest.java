@@ -20,13 +20,15 @@ class DataFetcherFactoryImplTest {
   private final Class<DummyState> stateClass = DummyState.class;
   private final Class<DummyReducer> actionClass = DummyReducer.class;
 
+  @Mock private ContextFactory contextFactory;
+
   @Mock private Pipeline pipeline;
 
   private DataFetcherFactoryImpl unit;
 
   @BeforeEach
   public void setUp() {
-    unit = new DataFetcherFactoryImpl(pipeline);
+    unit = new DataFetcherFactoryImpl(contextFactory, pipeline);
   }
 
   @Test

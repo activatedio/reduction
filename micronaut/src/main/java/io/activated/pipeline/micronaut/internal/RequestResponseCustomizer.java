@@ -20,8 +20,7 @@ public class RequestResponseCustomizer implements GraphQLExecutionInputCustomize
       HttpRequest httpRequest,
       MutableHttpResponse<String> httpResponse) {
     GraphQLContext graphQLContext = (GraphQLContext) executionInput.getContext();
-    graphQLContext.put("httpRequest", httpRequest);
-    graphQLContext.put("httpResponse", httpResponse);
+    graphQLContext.put(Constants.GRAPHQL_CONTEXT_REQUEST_KEY, httpRequest);
     return Publishers.just(executionInput);
   }
 }

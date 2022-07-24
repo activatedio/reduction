@@ -15,10 +15,13 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DataFetcherFactoryImpl.class);
 
+  private final ContextFactory contextFactory;
+
   private final Pipeline pipeline;
 
   @Inject
-  public DataFetcherFactoryImpl(Pipeline pipeline) {
+  public DataFetcherFactoryImpl(ContextFactory contextFactory, Pipeline pipeline) {
+    this.contextFactory = contextFactory;
     this.pipeline = pipeline;
   }
 
@@ -27,7 +30,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
       final Class<S> stateClass) {
 
     LOGGER.debug("Creating get DataFetcher for stateClass: {}", stateClass);
-    return new GetDataFetcherImpl<S>(pipeline, stateClass);
+    return new GetDataFetcherImpl<S>(contextFactory, pipeline, stateClass);
   }
 
   @Override
@@ -36,6 +39,6 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
     LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
-    return new SetDataFetcherImpl<S, A>(pipeline, stateClass, actionClass);
+    return new SetDataFetcherImpl<S, A>(contextFactory, pipeline, stateClass, actionClass);
   }
 }
