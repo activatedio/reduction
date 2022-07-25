@@ -72,8 +72,9 @@ public class SessionKeyStrategyTest {
   public static Stream<Arguments> get_invalidData() {
 
     return Stream.of(
-        Arguments.of("test-id"),
-        Arguments.of("00000000-0000-0000-0000-000000000000"),
-        Arguments.of("00000000-0000-0000-0000-000000000001"));
+        Arguments.of(""), Arguments.of("test-id")
+        // Arguments.of("00000000-0000-0000-0000-000000000000"),
+        // Arguments.of("00000000-0000-0000-0000-000000000001")
+        );
   }
 }
