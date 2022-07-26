@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import graphql.Scalars;
 import graphql.schema.*;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.lang.reflect.ParameterizedType;
@@ -22,33 +21,34 @@ public class TypeFactoryImpl implements TypeFactory {
 
   private static final Set<String> EXCLUDED_PROPERTIES = Sets.newHashSet("class", "declaringClass");
 
-  private final TypeCacheBuilder defaultTypeCacheBuilder = (inputCache, outputCache) -> {
-    outputCache.put(String.class, Scalars.GraphQLString);
-    outputCache.put(Integer.class, Scalars.GraphQLInt);
-    outputCache.put(int.class, Scalars.GraphQLInt);
-    outputCache.put(Long.class, Scalars.GraphQLFloat);
-    outputCache.put(long.class, Scalars.GraphQLFloat);
-    outputCache.put(Boolean.class, Scalars.GraphQLBoolean);
-    outputCache.put(boolean.class, Scalars.GraphQLBoolean);
-    outputCache.put(Float.class, Scalars.GraphQLFloat);
-    outputCache.put(float.class, Scalars.GraphQLFloat);
-    outputCache.put(Double.class, Scalars.GraphQLFloat);
-    outputCache.put(double.class, Scalars.GraphQLFloat);
-    outputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
+  private final TypeCacheBuilder defaultTypeCacheBuilder =
+      (inputCache, outputCache) -> {
+        outputCache.put(String.class, Scalars.GraphQLString);
+        outputCache.put(Integer.class, Scalars.GraphQLInt);
+        outputCache.put(int.class, Scalars.GraphQLInt);
+        outputCache.put(Long.class, Scalars.GraphQLFloat);
+        outputCache.put(long.class, Scalars.GraphQLFloat);
+        outputCache.put(Boolean.class, Scalars.GraphQLBoolean);
+        outputCache.put(boolean.class, Scalars.GraphQLBoolean);
+        outputCache.put(Float.class, Scalars.GraphQLFloat);
+        outputCache.put(float.class, Scalars.GraphQLFloat);
+        outputCache.put(Double.class, Scalars.GraphQLFloat);
+        outputCache.put(double.class, Scalars.GraphQLFloat);
+        outputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
 
-    inputCache.put(String.class, Scalars.GraphQLString);
-    inputCache.put(Integer.class, Scalars.GraphQLInt);
-    inputCache.put(int.class, Scalars.GraphQLInt);
-    inputCache.put(Long.class, Scalars.GraphQLFloat);
-    inputCache.put(long.class, Scalars.GraphQLFloat);
-    inputCache.put(Boolean.class, Scalars.GraphQLBoolean);
-    inputCache.put(boolean.class, Scalars.GraphQLBoolean);
-    inputCache.put(Float.class, Scalars.GraphQLFloat);
-    inputCache.put(float.class, Scalars.GraphQLFloat);
-    inputCache.put(Double.class, Scalars.GraphQLFloat);
-    inputCache.put(double.class, Scalars.GraphQLFloat);
-    inputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
-  };
+        inputCache.put(String.class, Scalars.GraphQLString);
+        inputCache.put(Integer.class, Scalars.GraphQLInt);
+        inputCache.put(int.class, Scalars.GraphQLInt);
+        inputCache.put(Long.class, Scalars.GraphQLFloat);
+        inputCache.put(long.class, Scalars.GraphQLFloat);
+        inputCache.put(Boolean.class, Scalars.GraphQLBoolean);
+        inputCache.put(boolean.class, Scalars.GraphQLBoolean);
+        inputCache.put(Float.class, Scalars.GraphQLFloat);
+        inputCache.put(float.class, Scalars.GraphQLFloat);
+        inputCache.put(Double.class, Scalars.GraphQLFloat);
+        inputCache.put(double.class, Scalars.GraphQLFloat);
+        inputCache.put(BigDecimal.class, Scalars.GraphQLFloat);
+      };
 
   @Inject
   public TypeFactoryImpl(
@@ -56,8 +56,7 @@ public class TypeFactoryImpl implements TypeFactory {
       final TypeCache<GraphQLOutputType> outputCache,
       final TypeCache<GraphQLInputType> inputListCache,
       final TypeCache<GraphQLOutputType> outputListCache,
-      List<TypeCacheBuilder> typeCacheBuilders
-  ) {
+      List<TypeCacheBuilder> typeCacheBuilders) {
     this.inputCache = inputCache;
     this.outputCache = outputCache;
     this.inputListCache = inputListCache;
@@ -68,9 +67,7 @@ public class TypeFactoryImpl implements TypeFactory {
     }
   }
 
-  private void initTypes() {
-
-  }
+  private void initTypes() {}
 
   @Override
   public GraphQLOutputType getOutputType(final Class<?> input) {

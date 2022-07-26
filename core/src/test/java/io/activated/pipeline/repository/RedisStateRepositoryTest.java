@@ -38,6 +38,16 @@ public class RedisStateRepositoryTest {
           public boolean isDevelopmentMode() {
             return false;
           }
+
+          @Override
+          public Optional<String> getCookieDomain() {
+            return Optional.empty();
+          }
+
+          @Override
+          public Optional<String> getCookiePath() {
+            return Optional.empty();
+          }
         };
 
     unit = new RedisStateRepository(connection, config);

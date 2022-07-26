@@ -3,9 +3,15 @@ package io.activated.pipeline.test;
 import com.jayway.jsonpath.TypeRef;
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode;
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery;
+import graphql.schema.Coercing;
+import java.util.Map;
 import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class StateDriver<S> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(StateDriver.class);
 
   private final TypeRef<GetResult<S>> typeRef;
   private final GraphQLClientSupport client;
@@ -50,6 +56,21 @@ public abstract class StateDriver<S> {
           .block();
     } catch (Exception e) {
       // we have the error handler above so we can ignore this
+      LOGGER.error("error encountered in query", e);
+    }
+  }
+
+  public void query(
+      GraphQLQuery query, String path, Map<Class<?>, ? extends Coercing<?, ?>> typeMap) {
+    try {
+      client
+          .query(query, projectionNode, path, typeRef, typeMap)
+          .doOnNext(defaultSuccessConsumer)
+          .doOnError(defaultErrorConsumer)
+          .block();
+    } catch (Exception e) {
+      // we have the error handler above so we can ignore this
+      LOGGER.error("error encountered in query", e);
     }
   }
 }

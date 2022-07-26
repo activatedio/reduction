@@ -84,7 +84,21 @@ public class SessionIdFilter implements HttpServerFilter {
 
   @VisibleForTesting
   protected Cookie createCookie(String name, String value) {
-    return Cookie.of(name, value);
+    var c = Cookie.of(name, value);
+
+    // TODO - Update unit tests to cover cookie domain being set
+    if (config.getCookieDomain().isPresent()) {
+      var domain = config.getCookieDomain().get();
+      c = c.domain(domain);
+    }
+
+    // TODO - Update unit tests to cover cookie domain being set
+    if (config.getCookiePath().isPresent()) {
+      var path = config.getCookiePath().get();
+      c = c.path(path);
+    }
+
+    return c;
   }
 
   private Cookie buildCookie(Cookie cookie) {

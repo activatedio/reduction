@@ -59,6 +59,7 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
     LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
-    return new ExportableSetDataFetcherImpl<I, E, A>(contextFactory, pipeline, (Class<I>) stateClass, actionClass);
+    return new ExportableSetDataFetcherImpl<I, E, A>(
+        contextFactory, pipeline, (Class<I>) stateClass, actionClass);
   }
 }

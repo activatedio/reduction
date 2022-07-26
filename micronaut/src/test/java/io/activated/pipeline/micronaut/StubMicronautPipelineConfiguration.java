@@ -1,5 +1,6 @@
 package io.activated.pipeline.micronaut;
 
+import java.util.Optional;
 import javax.validation.constraints.NotNull;
 
 public class StubMicronautPipelineConfiguration implements MicronautPipelineConfiguration {
@@ -17,6 +18,16 @@ public class StubMicronautPipelineConfiguration implements MicronautPipelineConf
   @Override
   public boolean isDevelopmentMode() {
     return false;
+  }
+
+  @Override
+  public Optional<String> getCookieDomain() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<String> getCookiePath() {
+    return Optional.empty();
   }
 
   @Override

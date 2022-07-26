@@ -36,7 +36,8 @@ public class SetDataFetcherImplTest {
   public void setUp() {
 
     unit =
-        new SetDataFetcherImpl<DummyState, DummyAction>(contextFactory, pipeline, stateClass, actionClass);
+        new SetDataFetcherImpl<DummyState, DummyAction>(
+            contextFactory, pipeline, stateClass, actionClass);
   }
 
   @Test
@@ -53,6 +54,7 @@ public class SetDataFetcherImplTest {
 
     var pubResult = Mono.just(result);
 
+    when(contextFactory.create()).thenReturn(Mono.just(context));
     when(environment.getArgument("action")).thenReturn(argument);
     when(pipeline.set(context, DummyState.class, action)).thenReturn(pubResult);
 

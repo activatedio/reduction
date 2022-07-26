@@ -12,7 +12,8 @@ public class MicronautRuntime {
   public static GraphQLConfig CONFIG;
 
   static {
-    APPLICATION_CONTEXT = Micronaut.run(Application.class);
+    APPLICATION_CONTEXT = Micronaut.build(new String[] {}).classes(Application.class).start();
+
     var server = APPLICATION_CONTEXT.getBean(EmbeddedServer.class);
     CONFIG =
         new GraphQLConfig() {

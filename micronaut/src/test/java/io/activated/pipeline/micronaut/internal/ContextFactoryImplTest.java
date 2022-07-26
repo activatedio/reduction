@@ -1,10 +1,12 @@
 package io.activated.pipeline.micronaut.internal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 import io.activated.pipeline.Context;
 import io.activated.pipeline.micronaut.ContextBuilder;
 import io.micronaut.http.HttpRequest;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,20 +16,13 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class ContextFactoryImplTest {
 
-  @Mock
-  private ContextBuilder contextBuilder1, contextBuilder2;
+  @Mock private ContextBuilder contextBuilder1, contextBuilder2;
 
-  @Mock
-  private HttpRequest<?> request;
+  @Mock private HttpRequest<?> request;
 
   private final Context context = new Context();
 
@@ -61,7 +56,8 @@ public class ContextFactoryImplTest {
     when(contextBuilder2.order()).thenReturn(20);
     when(contextBuilder2.build(request, context)).thenReturn(Mono.just(context));
 
-    assertThat(makeUnit(List.of(contextBuilder1, contextBuilder2)).create().block()).isEqualTo(context);
+    assertThat(makeUnit(List.of(contextBuilder1, contextBuilder2)).create().block())
+        .isEqualTo(context);
 
     // Reverse order but the sort fixes that
     var inOrder = Mockito.inOrder(contextBuilder2, contextBuilder1);

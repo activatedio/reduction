@@ -18,8 +18,7 @@ import reactor.core.publisher.Mono;
 public class GetDataFetcherImplTest {
 
   private final Class<DummyState> stateClass = DummyState.class;
-  @Mock
-  private ContextFactory contextFactory;
+  @Mock private ContextFactory contextFactory;
   @Mock private Pipeline pipeline;
 
   private GetDataFetcherImpl<DummyState> unit;
@@ -28,14 +27,13 @@ public class GetDataFetcherImplTest {
 
   @BeforeEach
   public void setUp() {
-    unit =
-        new GetDataFetcherImpl<DummyState>(pipeline, contextFactory, DummyState.class)
-        ;
+    unit = new GetDataFetcherImpl<DummyState>(pipeline, contextFactory, DummyState.class);
   }
 
   @Test
   public void get() throws Exception {
     final var result = new GetResult<DummyState>();
+    when(contextFactory.create()).thenReturn(Mono.just(context));
     when(pipeline.get(context, DummyState.class)).thenReturn(Mono.just(result));
     assertThat(Mono.fromFuture(unit.get(null)).block()).isEqualTo(result);
     verifyNoMoreInteractions(contextFactory, pipeline);
