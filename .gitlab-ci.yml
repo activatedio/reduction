@@ -36,7 +36,6 @@ publish:
     - master
     - /^release-.*$/
 
-
 release:
   stage: release
   script: 
@@ -45,9 +44,9 @@ release:
     - git remote set-url --push origin "${CI_PUSH_REPO}"
     - git config --global user.email "ci@activated.io"
     - git config --global user.name "CI"
-    - git checkout master
+    - git checkout "${CI_COMMIT_BRANCH}"
     - gradle release 
-    - git push -o ci.skip origin master
+    - git push -o ci.skip origin "${CI_COMMIT_BRANCH}"
     - git push -o ci.skip origin --tags
   cache:
     key: "$CI_COMMIT_REF_NAME"

@@ -16,6 +16,7 @@ import io.activated.pipeline.internal.InitialStateKey;
 import io.activated.pipeline.internal.ReducerKey;
 import io.activated.pipeline.internal.Registry;
 import io.activated.pipeline.key.KeyStrategy;
+import io.activated.pipeline.key.PrincipalSessionKeyUpgradeStrategy;
 import io.activated.pipeline.key.SessionKeyStrategy;
 import io.activated.pipeline.micronaut.MicronautPipelineConfiguration;
 import io.micronaut.context.ApplicationContext;
@@ -43,7 +44,8 @@ public class MicronautRegistry implements Registry {
       final ApplicationContext applicationContext,
       final MicronautPipelineConfiguration configuration) {
 
-    this.defaultKeyStrategy = new SessionKeyStrategy();
+    // TOOD - Make this injectable one day
+    this.defaultKeyStrategy = new PrincipalSessionKeyUpgradeStrategy(new SessionKeyStrategy());
     this.applicationContext = applicationContext;
 
     ArgumentUtils.requireNonNull("configuration", configuration);
