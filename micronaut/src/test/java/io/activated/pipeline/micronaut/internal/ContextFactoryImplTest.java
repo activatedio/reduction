@@ -30,8 +30,8 @@ public class ContextFactoryImplTest {
 
     return new ContextFactoryImpl(contextBuilders) {
       @Override
-      protected ContextUtils.Result initial() {
-        return new ContextUtils.Result(request, context);
+      protected Context initial(HttpRequest<?> request) {
+        return new Context();
       }
     };
   }
@@ -43,7 +43,7 @@ public class ContextFactoryImplTest {
   @Test
   public void create_empty() {
 
-    assertThat(makeUnit(List.of()).create().block()).isEqualTo(context);
+    assertThat(makeUnit(List.of()).create(request).block()).isEqualTo(context);
 
     verifyNoMoreInteractions();
   }
@@ -56,7 +56,7 @@ public class ContextFactoryImplTest {
     when(contextBuilder2.order()).thenReturn(20);
     when(contextBuilder2.build(request, context)).thenReturn(Mono.just(context));
 
-    assertThat(makeUnit(List.of(contextBuilder1, contextBuilder2)).create().block())
+    assertThat(makeUnit(List.of(contextBuilder1, contextBuilder2)).create(request).block())
         .isEqualTo(context);
 
     // Reverse order but the sort fixes that

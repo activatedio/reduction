@@ -12,8 +12,6 @@ import io.activated.pipeline.fixtures.DummyState;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.repository.StateRepository;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +62,6 @@ public class StateAccessImplTest {
   public void setUp() {
 
     context = new Context();
-    context.setHeaders(Map.of("header1", List.of("value1")));
 
     unit = new StateAccessImpl(registry, stateRepository, snapshotter, changeLogger);
   }

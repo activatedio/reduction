@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.internal.InitialStateKey;
 import io.activated.pipeline.internal.ReducerKey;
-import io.activated.pipeline.key.SessionKeyStrategy;
+import io.activated.pipeline.key.PrincipalSessionKeyUpgradeStrategy;
 import io.activated.pipeline.micronaut.StubMicronautPipelineConfiguration;
 import io.activated.pipeline.micronaut.fixtures.*;
 import io.micronaut.context.ApplicationContext;
@@ -70,6 +70,18 @@ public class MicronautRegistryTest {
   }
 
   @Test
+  public void constructor_nullScanPackages() {
+
+    assertThatThrownBy(
+            () -> {
+              var config = new StubMicronautPipelineConfiguration();
+              new MicronautRegistry(applicationContext, config);
+            })
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("Argument [configuration.scanPackages] cannot be null");
+  }
+
+  @Test
   public void getReducer_NotFound() {
     var key = ReducerKey.create(String.class, String.class);
     assertThat(catchThrowable(() -> unit.getReducer(key)))
@@ -90,7 +102,8 @@ public class MicronautRegistryTest {
 
   @Test
   public void getKeyStrategy() {
-    assertThat(unit.getKeyStrategy(Dummy1.class)).isInstanceOf(SessionKeyStrategy.class);
+    assertThat(unit.getKeyStrategy(Dummy1.class))
+        .isInstanceOf(PrincipalSessionKeyUpgradeStrategy.class);
   }
 
   @Test

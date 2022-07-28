@@ -42,6 +42,6 @@ public class StubMicronautPipelineConfiguration implements MicronautPipelineConf
 
   @Override
   public @NotNull String[] getScanPackages() {
-    return new String[] {"test.package"};
+    return null;
   }
 }

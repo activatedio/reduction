@@ -9,8 +9,6 @@ import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.StateGuard;
 import io.activated.pipeline.fixtures.DummyState;
-import java.util.List;
-import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +41,6 @@ class GuardedStateAccessTest {
   public void setup() {
 
     context = new Context();
-    context.setHeaders(Map.of("header1", List.of("value1")));
 
     unit = new GuardedStateAccess(registry, delegate);
   }
