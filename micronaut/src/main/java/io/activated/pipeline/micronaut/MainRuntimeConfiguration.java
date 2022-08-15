@@ -9,6 +9,10 @@ public class MainRuntimeConfiguration {
   private int redisPort = 6379;
   private String[] scanPackages;
 
+  private int sessionLockAcquireSeconds = 10;
+
+  private int sessionLockLengthSeconds = 30;
+
   public String getRedisHost() {
     return redisHost;
   }
@@ -31,5 +35,21 @@ public class MainRuntimeConfiguration {
 
   public void setScanPackages(String[] scanPackages) {
     this.scanPackages = scanPackages;
+  }
+
+  public int getSessionLockAcquireSeconds() {
+    return sessionLockAcquireSeconds;
+  }
+
+  public void setSessionLockAcquireSeconds(int sessionLockAcquireSeconds) {
+    this.sessionLockAcquireSeconds = sessionLockAcquireSeconds;
+  }
+
+  public int getSessionLockLengthSeconds() {
+    return sessionLockLengthSeconds;
+  }
+
+  public void setSessionLockLengthSeconds(int sessionLockLengthSeconds) {
+    this.sessionLockLengthSeconds = sessionLockLengthSeconds;
   }
 }

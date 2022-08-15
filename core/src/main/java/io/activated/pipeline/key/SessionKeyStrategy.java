@@ -24,17 +24,6 @@ public class SessionKeyStrategy implements KeyStrategy {
               if (raw.trim().length() < 16) {
                 throw new IllegalStateException("invalid pipeline-session-id");
               }
-              /*
-              try {
-                var got = UUID.fromString(raw);
-                if (got.version() != 4) {
-                  throw new IllegalStateException("uuid is not v4");
-                }
-              } catch (Exception e) {
-                LOGGER.error("error reading pipeline-session-id", e);
-                throw new IllegalStateException("invalid pipeline-session-id");
-              }
-               */
               return raw;
             })
         .map(

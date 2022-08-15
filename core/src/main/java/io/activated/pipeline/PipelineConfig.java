@@ -6,6 +6,10 @@ public class PipelineConfig {
   private int authenticationRefreshFailResetSeconds = 120;
   private int refreshTokenMarginSeconds = 240;
 
+  private int sessionLockAcquireSeconds = 10;
+
+  private int sessionLockLengthSeconds = 30;
+
   public int getStateExpireInSeconds() {
     return stateExpireInSeconds;
   }
@@ -28,5 +32,21 @@ public class PipelineConfig {
 
   public void setRefreshTokenMarginSeconds(int refreshTokenMarginSeconds) {
     this.refreshTokenMarginSeconds = refreshTokenMarginSeconds;
+  }
+
+  public int getSessionLockAcquireSeconds() {
+    return sessionLockAcquireSeconds;
+  }
+
+  public void setSessionLockAcquireSeconds(int sessionLockAcquireSeconds) {
+    this.sessionLockAcquireSeconds = sessionLockAcquireSeconds;
+  }
+
+  public int getSessionLockLengthSeconds() {
+    return sessionLockLengthSeconds;
+  }
+
+  public void setSessionLockLengthSeconds(int sessionLockLengthSeconds) {
+    this.sessionLockLengthSeconds = sessionLockLengthSeconds;
   }
 }

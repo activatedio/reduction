@@ -7,6 +7,8 @@ import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.builtin.security.SecurityStateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
 import io.activated.pipeline.internal.*;
+import io.activated.pipeline.repository.LockRepository;
+import io.activated.pipeline.repository.RedisLockRepository;
 import io.activated.pipeline.repository.RedisStateRepository;
 import io.activated.pipeline.repository.StateRepository;
 import io.lettuce.core.RedisClient;
@@ -28,18 +30,39 @@ public class GraphQLFactory {
 
   @Singleton
   @Inject
-  public StateRepository stateRepository(MainRuntimeConfiguration configuration) {
+  public RedisClient redisClient(MainRuntimeConfiguration configuration) {
 
     var host = configuration.getRedisHost();
     var port = configuration.getRedisPort();
 
     LOGGER.info("Using pipeline.redisHost: [{}] pipeline.redisPort: [{}]", host, port);
 
-    RedisClient client = RedisClient.create(String.format("redis://%s:%d", host, port));
+    return RedisClient.create(String.format("redis://%s:%d", host, port));
+  }
+
+  @Singleton
+  public PipelineConfig pipelineConfig(MainRuntimeConfiguration configuration) {
 
     var config = new PipelineConfig();
 
-    return new RedisStateRepository(client.connect(), config);
+    config.setSessionLockLengthSeconds(configuration.getSessionLockLengthSeconds());
+    config.setSessionLockAcquireSeconds(configuration.getSessionLockAcquireSeconds());
+
+    return config;
+  }
+
+  @Singleton
+  @Inject
+  public StateRepository stateRepository(RedisClient client, PipelineConfig pipelineConfig) {
+
+    return new RedisStateRepository(client.connect(), pipelineConfig);
+  }
+
+  @Singleton
+  @Inject
+  public LockRepository lockRepository(RedisClient client, PipelineConfig pipelineConfig) {
+
+    return new RedisLockRepository(client.connect(), pipelineConfig);
   }
 
   @Singleton
@@ -55,14 +78,18 @@ public class GraphQLFactory {
   @Inject
   public Pipeline pipeline(
       ValidatorFactory validatorFactory,
+      LockRepository lockRepository,
       Registry registry,
       StateAccess stateAccess,
       StateRepository stateRepository,
       ChangeLogger changeLogger) {
-    return new ValidatingPipeline(
-        validatorFactory,
-        new PipelineImpl(
-            registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger));
+
+    return new LockingPipeline(
+        lockRepository,
+        new ValidatingPipeline(
+            validatorFactory,
+            new PipelineImpl(
+                registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger)));
   }
 
   @Singleton
