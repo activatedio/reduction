@@ -26,7 +26,7 @@ public class LockingPipeline implements Pipeline {
               context.getAttributes().put(LOCK_ATTRIBUTE_KEY, l);
               return Mono.from(delegate.get(context, stateType));
             },
-            lockRepository::release)
+            this::releaseLock)
         .subscribeOn(Schedulers.boundedElastic());
   }
 
@@ -38,13 +38,15 @@ public class LockingPipeline implements Pipeline {
               context.getAttributes().put(LOCK_ATTRIBUTE_KEY, l);
               return Mono.from(delegate.set(context, stateType, action));
             },
-            lockRepository::release)
+            this::releaseLock)
         .subscribeOn(Schedulers.boundedElastic());
   }
 
   private Lock acquireLock(Context context) {
     if (context.getAttributes().containsKey(LOCK_ATTRIBUTE_KEY)) {
-      return (Lock) context.getAttributes().get(LOCK_ATTRIBUTE_KEY);
+      var l = (Lock) context.getAttributes().get(LOCK_ATTRIBUTE_KEY);
+      l.incrementNesting();
+      return l;
     } else {
       return lockRepository.acquire(getSessionId(context));
     }
@@ -57,5 +59,14 @@ public class LockingPipeline implements Pipeline {
       throw new IllegalStateException("pipeline-session-id not provided in header");
     }
     return sessionId.get(0);
+  }
+
+  private void releaseLock(Lock lock) {
+
+    if (lock.getNesting() > 0) {
+      lock.decrementNesting();
+    } else {
+      lockRepository.release(lock);
+    }
   }
 }
