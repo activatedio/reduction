@@ -8,6 +8,8 @@ import reactor.core.scheduler.Schedulers;
 
 public class LockingPipeline implements Pipeline {
 
+  private static final String LOCK_ATTRIBUTE_KEY = "Pipeline.Lock";
+
   private final LockRepository lockRepository;
   private final Pipeline delegate;
 
@@ -19,8 +21,11 @@ public class LockingPipeline implements Pipeline {
   @Override
   public <S> Publisher<GetResult<S>> get(Context context, Class<S> stateType) {
     return Mono.using(
-            () -> lockRepository.acquire(getSessionId(context)),
-            l -> Mono.from(delegate.get(context, stateType)),
+            () -> acquireLock(context),
+            l -> {
+              context.getAttributes().put(LOCK_ATTRIBUTE_KEY, l);
+              return Mono.from(delegate.get(context, stateType));
+            },
             lockRepository::release)
         .subscribeOn(Schedulers.boundedElastic());
   }
@@ -28,10 +33,21 @@ public class LockingPipeline implements Pipeline {
   @Override
   public <S, A> Publisher<SetResult<S>> set(Context context, Class<S> stateType, A action) {
     return Mono.using(
-            () -> lockRepository.acquire(getSessionId(context)),
-            l -> Mono.from(delegate.set(context, stateType, action)),
+            () -> acquireLock(context),
+            l -> {
+              context.getAttributes().put(LOCK_ATTRIBUTE_KEY, l);
+              return Mono.from(delegate.set(context, stateType, action));
+            },
             lockRepository::release)
         .subscribeOn(Schedulers.boundedElastic());
+  }
+
+  private Lock acquireLock(Context context) {
+    if (context.getAttributes().containsKey(LOCK_ATTRIBUTE_KEY)) {
+      return (Lock) context.getAttributes().get(LOCK_ATTRIBUTE_KEY);
+    } else {
+      return lockRepository.acquire(getSessionId(context));
+    }
   }
 
   private String getSessionId(Context context) {

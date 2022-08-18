@@ -26,6 +26,10 @@ import reactor.core.publisher.Mono;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class LockingPipelineTest {
 
+  // TODO - Improve this unit test to capture the addition of the lock to the context
+
+  private static final String LOCK_ATTRIBUTE_KEY = "Pipeline.Lock";
+
   @Mock private LockRepository lockRepository;
 
   @Mock private Pipeline delegate;
@@ -86,8 +90,11 @@ public class LockingPipelineTest {
   @Test
   public void get_withException() {
 
+    var delegateContext = new Context();
+    delegateContext.getAttributes().put(LOCK_ATTRIBUTE_KEY, lock);
+
     when(lockRepository.acquire(sessionId)).thenReturn(lock);
-    when(delegate.get(context, Dummy1.class))
+    when(delegate.get(delegateContext, Dummy1.class))
         .thenThrow(new ApplicationRuntimeException("test-exception"));
 
     assertThatThrownBy(() -> Mono.from(unit.get(context, Dummy1.class)).block())
@@ -103,7 +110,6 @@ public class LockingPipelineTest {
   @Test
   public void set() {
 
-    when(lockRepository.acquire(sessionId)).thenReturn(lock);
     when(delegate.set(context, Dummy1.class, action)).thenReturn(Mono.just(setResult));
 
     var got = Mono.from(unit.set(context, Dummy1.class, action)).block();
