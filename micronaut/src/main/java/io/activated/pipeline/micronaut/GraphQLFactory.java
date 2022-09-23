@@ -7,6 +7,8 @@ import io.activated.pipeline.StateAccess;
 import io.activated.pipeline.builtin.security.SecurityStateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
 import io.activated.pipeline.internal.*;
+import io.activated.pipeline.key.PrincipalSessionKeyUpgradeStrategy;
+import io.activated.pipeline.key.SessionKeyStrategy;
 import io.activated.pipeline.repository.LockRepository;
 import io.activated.pipeline.repository.RedisLockRepository;
 import io.activated.pipeline.repository.RedisStateRepository;
@@ -111,5 +113,17 @@ public class GraphQLFactory {
   @Inject
   public SecurityStateGuard securityStateGuard(PrincipalSupplier principalSupplier) {
     return new SecurityStateGuard(principalSupplier);
+  }
+
+  @Singleton
+  public SessionKeyStrategy sessionKeyStrategy() {
+    return new SessionKeyStrategy();
+  }
+
+  @Singleton
+  @Inject
+  public PrincipalSessionKeyUpgradeStrategy principalSessionKeyUpgradeStrategy(
+      SessionKeyStrategy sessionKeyStrategy) {
+    return new PrincipalSessionKeyUpgradeStrategy(sessionKeyStrategy);
   }
 }

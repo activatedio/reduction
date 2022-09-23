@@ -14,8 +14,6 @@ import io.activated.pipeline.internal.InitialStateKey;
 import io.activated.pipeline.internal.ReducerKey;
 import io.activated.pipeline.internal.Registry;
 import io.activated.pipeline.key.KeyStrategy;
-import io.activated.pipeline.key.PrincipalSessionKeyUpgradeStrategy;
-import io.activated.pipeline.key.SessionKeyStrategy;
 import io.activated.pipeline.micronaut.MainRuntimeConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.core.io.scan.ClassPathAnnotationScanner;
@@ -34,14 +32,12 @@ public class MicronautRegistry implements Registry {
   private final Map<InitialStateKey<?>, Class<? extends InitialState>> initialStates;
   private final Map<Class<?>, List<Class<? extends StateGuard>>> stateGuardClasses;
 
-  private KeyStrategy defaultKeyStrategy;
+  private final Map<Class<?>, Class<? extends KeyStrategy>> keyStrategies;
 
   @Inject
   public MicronautRegistry(
       final ApplicationContext applicationContext, final MainRuntimeConfiguration configuration) {
 
-    // TOOD - Make this injectable one day
-    this.defaultKeyStrategy = new PrincipalSessionKeyUpgradeStrategy(new SessionKeyStrategy());
     this.applicationContext = applicationContext;
     var scanner = new ClassPathAnnotationScanner();
 
@@ -50,12 +46,15 @@ public class MicronautRegistry implements Registry {
 
     Set<Class<?>> stateTypes = Sets.newHashSet();
     Map<Class<?>, List<Class<? extends StateGuard>>> stateGuardClasses = Maps.newHashMap();
+    Map<Class<?>, Class<? extends KeyStrategy>> keyStrategies = Maps.newHashMap();
+
     scanner
         .scan(State.class, configuration.getScanPackages())
         .forEach(
             (c) -> {
               stateTypes.add(c);
               registerStateGuards(stateGuardClasses, c);
+              registerKeyStrategies(keyStrategies, c);
             });
 
     this.stateTypes = Collections.unmodifiableSet(stateTypes);
@@ -63,6 +62,8 @@ public class MicronautRegistry implements Registry {
 
     final Set<Class<? extends StateGuard>> guards = Sets.newHashSet();
     this.stateGuardClasses.values().forEach(guards::addAll);
+
+    this.keyStrategies = keyStrategies;
 
     final Map<ReducerKey<?, ?>, Class<? extends Reducer>> reducers = Maps.newHashMap();
     scanner
@@ -100,7 +101,8 @@ public class MicronautRegistry implements Registry {
 
   @Override
   public <S> KeyStrategy getKeyStrategy(final Class<S> stateType) {
-    return defaultKeyStrategy;
+    return applicationContext.getBean(
+        Objects.requireNonNull(keyStrategies.get(stateType), "keyStrategy"));
   }
 
   @Override
@@ -147,6 +149,15 @@ public class MicronautRegistry implements Registry {
     var ann = stateClass.getAnnotation(State.class);
     if (ann != null && ann.guards() != null) {
       stateGuardClasses.put(stateClass, Lists.newArrayList(ann.guards()));
+    }
+  }
+
+  private static void registerKeyStrategies(
+      Map<Class<?>, Class<? extends KeyStrategy>> keyStrategies, Class<?> stateClass) {
+
+    var ann = stateClass.getAnnotation(State.class);
+    if (ann != null) {
+      keyStrategies.put(stateClass, Objects.requireNonNull(ann.keyStrategy(), "keyStrategy"));
     }
   }
 }

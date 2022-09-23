@@ -90,7 +90,7 @@ public class MicronautRegistryTest {
 
   @Test
   public void getKeyStrategy() {
-    assertThat(unit.getKeyStrategy(Dummy1.class))
+    assertThat(unit.getKeyStrategy(DummyState.class))
         .isInstanceOf(PrincipalSessionKeyUpgradeStrategy.class);
   }
 
