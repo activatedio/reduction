@@ -19,7 +19,7 @@ public class RedisStateRepositoryTest {
   @BeforeEach
   public void setUp() {
 
-    RedisClient client = RedisClient.create("redis://localhost");
+    RedisClient client = RedisClient.create("redis://redis");
     StatefulRedisConnection<String, String> connection = client.connect();
 
     var config =
