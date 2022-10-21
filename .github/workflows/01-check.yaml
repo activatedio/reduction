@@ -9,7 +9,9 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-
+    services:
+      redis:
+        image: redis
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 11
