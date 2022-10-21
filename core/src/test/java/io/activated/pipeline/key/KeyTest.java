@@ -1,6 +1,6 @@
 package io.activated.pipeline.key;
 
-import io.activated.base.JUnit5ModelTestSupport;
+import io.activated.pipeline.JUnit5ModelTestSupport;
 
 public class KeyTest extends JUnit5ModelTestSupport<Key> {
 

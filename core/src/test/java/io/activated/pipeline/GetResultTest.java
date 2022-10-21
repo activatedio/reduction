@@ -1,6 +1,5 @@
 package io.activated.pipeline;
 
-import io.activated.base.JUnit5ModelTestSupport;
 import io.activated.pipeline.fixtures.DummyState;
 
 public class GetResultTest extends JUnit5ModelTestSupport<GetResult<DummyState>> {

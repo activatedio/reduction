@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.activated.base.ApplicationRuntimeException;
 import io.activated.pipeline.*;
 import io.activated.pipeline.fixtures.Dummy1;
 import io.activated.pipeline.fixtures.DummyAction;
@@ -116,10 +115,10 @@ public class LockingPipelineTest {
 
     when(lockRepository.acquire(sessionId)).thenReturn(lock);
     when(delegate.get(makeContext(lock), Dummy1.class))
-        .thenThrow(new ApplicationRuntimeException("test-exception"));
+        .thenThrow(new PipelineException("test-exception"));
 
     assertThatThrownBy(() -> Mono.from(unit.get(context, Dummy1.class)).block())
-        .isInstanceOf(ApplicationRuntimeException.class)
+        .isInstanceOf(PipelineException.class)
         .hasMessage("test-exception");
 
     // Ensure release is always called
@@ -133,11 +132,10 @@ public class LockingPipelineTest {
 
     var context = makeContext(lock);
 
-    when(delegate.get(context, Dummy1.class))
-        .thenThrow(new ApplicationRuntimeException("test-exception"));
+    when(delegate.get(context, Dummy1.class)).thenThrow(new PipelineException("test-exception"));
 
     assertThatThrownBy(() -> Mono.from(unit.get(context, Dummy1.class)).block())
-        .isInstanceOf(ApplicationRuntimeException.class)
+        .isInstanceOf(PipelineException.class)
         .hasMessage("test-exception");
 
     verifyNoMoreInteractions();
@@ -177,10 +175,10 @@ public class LockingPipelineTest {
 
     when(lockRepository.acquire(sessionId)).thenReturn(lock);
     when(delegate.set(makeContext(lock), Dummy1.class, action))
-        .thenThrow(new ApplicationRuntimeException("test-exception"));
+        .thenThrow(new PipelineException("test-exception"));
 
     assertThatThrownBy(() -> Mono.from(unit.set(context, Dummy1.class, action)).block())
-        .isInstanceOf(ApplicationRuntimeException.class)
+        .isInstanceOf(PipelineException.class)
         .hasMessage("test-exception");
 
     // Ensure release is always called
@@ -195,10 +193,10 @@ public class LockingPipelineTest {
     var context = makeContext(lock);
 
     when(delegate.set(context, Dummy1.class, action))
-        .thenThrow(new ApplicationRuntimeException("test-exception"));
+        .thenThrow(new PipelineException("test-exception"));
 
     assertThatThrownBy(() -> Mono.from(unit.set(context, Dummy1.class, action)).block())
-        .isInstanceOf(ApplicationRuntimeException.class)
+        .isInstanceOf(PipelineException.class)
         .hasMessage("test-exception");
 
     verifyNoMoreInteractions();

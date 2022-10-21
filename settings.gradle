@@ -1,4 +1,4 @@
-rootProject.name = 'pipeline'
+rootProject.name = 'reduction'
 include('core')
 include('micronaut')
 include('test')

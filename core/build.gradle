@@ -24,7 +24,7 @@ dependencies {
     }
     api group: 'com.flipkart.zjsonpatch', name: 'zjsonpatch', version: '0.4.11'
     api group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.3'
-    api 'io.activated.objectdiff:objectdiff:0.0.2'
+    api 'io.activated.objectdiff:objectdiff:0.0.11'
 
     api group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 

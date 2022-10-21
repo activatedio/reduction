@@ -7,8 +7,16 @@ buildscript {
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'signing'
     id 'net.researchgate.release' version '2.8.1'
-    id 'com.diffplug.spotless' version '5.16.0'
+    id 'com.diffplug.spotless' version '6.11.0'
+    id('io.github.gradle-nexus.publish-plugin') version '1.1.0'
+}
+
+nexusPublishing {
+  repositories {
+    sonatype()
+  }
 }
 
 subprojects {
@@ -16,6 +24,7 @@ subprojects {
   apply plugin: 'java-library'
   apply plugin: 'maven-publish'
   apply plugin: 'com.diffplug.spotless'
+  apply plugin: 'signing'
 
   repositories {
       mavenCentral()
@@ -24,9 +33,11 @@ subprojects {
   spotless {
     java {
       target 'src/**/*.java'
+      importOrder()
+      removeUnusedImports()
       googleJavaFormat()
     }
-  } 
+  }
 
   publishing {
 
@@ -35,8 +46,36 @@ subprojects {
 
           if (project.name != "micronaut-e2e") {
 
-              groupId "io.activated.pipeline"
-              artifactId "pipeline-${project.name}"
+          pom {
+
+              groupId "io.activated.reduction"
+              artifactId "reduction-${project.name}"
+
+              name = 'Reduction ' + project.name
+
+              description = 'Reduction'
+              url = 'https://reductionproject.com'
+
+              licenses {
+                license {
+                  name = 'The Apache License, Version 2.0'
+                  url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+              }
+
+              developers {
+                developer {
+                  id = 'btomasini'
+                  name = 'Ben Tomasini'
+                  email = 'btomasini@activated.io'
+                }
+              }
+              scm {
+                connection = 'scm:git:git://github.com/activatedio/reduction.git'
+                developerConnection = 'scm:git:git://github.com/activatedio/reduction.git'
+                url = 'https://github.com/activatedio/reduction'
+              }
+              }
 
               from components.java
           }
@@ -44,45 +83,19 @@ subprojects {
        }
     }
 
-    repositories {
-      maven {
-        def repoBase = "https://nexus.authkit.com/repository"
-        def releasesRepoUrl = "$repoBase/maven-releases"
-        def snapshotsRepoUrl = "$repoBase/maven-snapshots"
-        url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        credentials {
-          username "$authkitMavenUser"
-          password "$authkitMavenPassword"
-        }
-      }
-    }
-  }
-
-  repositories {
-      maven {
-        url 'https://nexus.authkit.com/repository/maven-all/'
-        credentials {
-          username "$authkitMavenUser"
-          password "$authkitMavenPassword"
-        }
-      }
   }
 
   java {
       sourceCompatibility = JavaVersion.toVersion("11")
       targetCompatibility = JavaVersion.toVersion("11")
+      withSourcesJar()
+      withJavadocJar()
   }
-
-/*
-  sourceCompatibility = 11
-  targetCompatibility = 11
-  */
 
   dependencies {
       implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
       implementation 'com.google.guava:guava:30.0-jre'
       testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.15.0'
-      testImplementation group: 'io.activated.base', name: 'activated-base', version: '0.2.0'
       testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
       testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
       testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.6.0'
@@ -93,10 +106,10 @@ subprojects {
 
   release {
       afterReleaseBuild.dependsOn publish
-      git {
-          requireBranch = ''
-          pushToRemote = false
-      }
+  }
+
+  signing {
+    sign publishing.publications.mavenJava
   }
 
 }
