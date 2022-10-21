@@ -2,11 +2,7 @@ package io.activated.pipeline.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.activated.base.JUnit5ModelTestSupport;
-import io.activated.pipeline.BlockingReducer;
-import io.activated.pipeline.Context;
-import io.activated.pipeline.PipelineException;
-import io.activated.pipeline.Reducer;
+import io.activated.pipeline.*;
 import io.activated.pipeline.fixtures.Dummy1;
 import io.activated.pipeline.fixtures.Dummy2;
 import io.activated.pipeline.fixtures.Dummy3;
