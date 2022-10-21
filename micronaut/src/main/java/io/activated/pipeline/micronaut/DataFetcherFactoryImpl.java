@@ -5,6 +5,7 @@ import io.activated.pipeline.Exportable;
 import io.activated.pipeline.GetResult;
 import io.activated.pipeline.Pipeline;
 import io.activated.pipeline.SetResult;
+import io.activated.pipeline.micronaut.internal.Exporter;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.concurrent.CompletableFuture;
@@ -31,16 +32,17 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
       final Class<S> stateClass) {
 
     LOGGER.debug("Creating get DataFetcher for stateClass: {}", stateClass);
-    return new GetDataFetcherImpl<S>(pipeline, contextFactory, stateClass);
+    return new GetDataFetcherImpl(contextFactory, pipeline, stateClass, s -> s);
   }
 
   @Override
-  public <I extends Exportable<E>, E>
+  public <S extends Exportable<E>, E>
       DataFetcher<CompletableFuture<GetResult<E>>> getExportableGetDataFetcher(
           Class<?> stateClass) {
 
     LOGGER.debug("Creating exportable get DataFetcher for stateClass: {}", stateClass);
-    return new ExportableGetDataFetcherImpl<>(contextFactory, pipeline, (Class<I>) stateClass);
+    return new GetDataFetcherImpl<>(
+        contextFactory, pipeline, (Class<S>) stateClass, new Exporter<>());
   }
 
   @Override
@@ -49,17 +51,17 @@ public class DataFetcherFactoryImpl implements DataFetcherFactory {
 
     LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
-    return new SetDataFetcherImpl<S, A>(contextFactory, pipeline, stateClass, actionClass);
+    return new SetDataFetcherImpl<>(contextFactory, pipeline, stateClass, actionClass, s -> s);
   }
 
   @Override
-  public <I extends Exportable<E>, E, A>
+  public <S extends Exportable<E>, E, A>
       DataFetcher<CompletableFuture<SetResult<E>>> getExportableSetDataFetcher(
           final Class<?> stateClass, final Class<A> actionClass) {
 
     LOGGER.debug(
         "Creating set DataFetcher for stateClass: {}, actionClass: {}", stateClass, actionClass);
-    return new ExportableSetDataFetcherImpl<I, E, A>(
-        contextFactory, pipeline, (Class<I>) stateClass, actionClass);
+    return new SetDataFetcherImpl<>(
+        contextFactory, pipeline, (Class<S>) stateClass, actionClass, new Exporter<>());
   }
 }

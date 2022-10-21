@@ -42,7 +42,7 @@ class DataFetcherFactoryImplTest {
   @Test
   public void getExportableGetDataFetcher() {
     var got = unit.getExportableGetDataFetcher(exportableStateClass);
-    assertThat(got).isInstanceOf(ExportableGetDataFetcherImpl.class);
+    assertThat(got).isInstanceOf(GetDataFetcherImpl.class);
   }
 
   @Test
@@ -54,6 +54,6 @@ class DataFetcherFactoryImplTest {
   @Test
   public void getExportableSetDataFetcher() {
     var got = unit.getExportableSetDataFetcher(exportableStateClass, actionClass);
-    assertThat(got).isInstanceOf(ExportableSetDataFetcherImpl.class);
+    assertThat(got).isInstanceOf(SetDataFetcherImpl.class);
   }
 }

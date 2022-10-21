@@ -14,8 +14,6 @@ import io.activated.pipeline.fixtures.DummyState2;
 import io.activated.pipeline.key.Key;
 import io.activated.pipeline.key.KeyStrategy;
 import io.activated.pipeline.repository.StateRepository;
-import java.util.List;
-import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -80,7 +78,6 @@ public class PipelineImplTest {
   public void setUp() {
 
     context = new Context();
-    context.setHeaders(Map.of("header1", List.of("value1")));
 
     unit = new PipelineImpl(registry, stateAccess, stateRepository, snapshotter, changeLogger);
   }
@@ -92,8 +89,10 @@ public class PipelineImplTest {
   }
 
   @Test
-  @Disabled
   public void get() {
+
+    when(registry.getReducer(ReducerKey.create(stateType, RefreshAction.class)))
+        .thenThrow(new RuntimeException("can't find"));
 
     when(stateAccess.get(context, stateType)).thenReturn(Mono.just(state));
 
@@ -104,7 +103,6 @@ public class PipelineImplTest {
 
     assertThat(got).isEqualTo(expected);
 
-    verify(stateAccess).get(context, stateType);
     verifyNoMoreInteractions();
   }
 
