@@ -2,21 +2,19 @@ package io.activated.pipeline.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.activated.base.JUnit5ModelTestSupport;
 import io.activated.pipeline.BlockingReducer;
 import io.activated.pipeline.Context;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.Reducer;
 import io.activated.pipeline.fixtures.Dummy1;
 import io.activated.pipeline.fixtures.Dummy2;
-import io.activated.pipeline.fixtures.Dummy3;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.reactivestreams.Publisher;
 
-public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
+public class ReducerKeyTest {
 
   private static Stream<Arguments> fromReducerClassArguments() {
     return Stream.of(
@@ -28,16 +26,6 @@ public class ReducerKeyTest extends JUnit5ModelTestSupport<ReducerKey> {
         Arguments.of(DummyReducer2.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
         Arguments.of(DummyReducer3.class, ReducerKey.create(Dummy1.class, Dummy2.class), null),
         Arguments.of(DummyReducer4.class, ReducerKey.create(Dummy1.class, Dummy2.class), null));
-  }
-
-  @Override
-  protected ReducerKey makeReference() {
-    return ReducerKey.create(Dummy1.class, Dummy2.class);
-  }
-
-  @Override
-  protected ReducerKey modifyReference(final ReducerKey input) {
-    return ReducerKey.create(Dummy1.class, Dummy3.class);
   }
 
   @ParameterizedTest

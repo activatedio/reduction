@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.activated.base.ApplicationRuntimeException;
 import io.activated.pipeline.*;
 import io.activated.pipeline.fixtures.Dummy1;
 import io.activated.pipeline.fixtures.DummyAction;

@@ -2,17 +2,15 @@ package io.activated.pipeline.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.activated.base.JUnit5ModelTestSupport;
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.fixtures.Dummy1;
-import io.activated.pipeline.fixtures.Dummy2;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class InitialStateKeyTest extends JUnit5ModelTestSupport<InitialStateKey> {
+public class InitialStateKeyTest  {
 
   private static Stream<Arguments> fromInitialStateClassArguments() {
     return Stream.of(
@@ -22,16 +20,6 @@ public class InitialStateKeyTest extends JUnit5ModelTestSupport<InitialStateKey>
             new PipelineException("Invalid InitialState class: " + String.class.toString())),
         Arguments.of(DummyInitialState1.class, InitialStateKey.create(Dummy1.class), null),
         Arguments.of(DummyInitialState2.class, InitialStateKey.create(Dummy1.class), null));
-  }
-
-  @Override
-  protected InitialStateKey makeReference() {
-    return InitialStateKey.create(Dummy1.class);
-  }
-
-  @Override
-  protected InitialStateKey modifyReference(final InitialStateKey input) {
-    return InitialStateKey.create(Dummy2.class);
   }
 
   @ParameterizedTest

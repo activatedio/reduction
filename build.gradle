@@ -50,22 +50,12 @@ subprojects {
         def releasesRepoUrl = "$repoBase/maven-releases"
         def snapshotsRepoUrl = "$repoBase/maven-snapshots"
         url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        credentials {
-          username "$authkitMavenUser"
-          password "$authkitMavenPassword"
-        }
       }
     }
   }
 
   repositories {
-      maven {
-        url 'https://nexus.authkit.com/repository/maven-all/'
-        credentials {
-          username "$authkitMavenUser"
-          password "$authkitMavenPassword"
-        }
-      }
+      mavenCentral()
   }
 
   java {
@@ -82,7 +72,6 @@ subprojects {
       implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
       implementation 'com.google.guava:guava:30.0-jre'
       testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.15.0'
-      testImplementation group: 'io.activated.base', name: 'activated-base', version: '0.2.0'
       testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
       testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
       testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.6.0'
