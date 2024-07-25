@@ -3,6 +3,7 @@ package io.activated.pipeline.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.activated.pipeline.InitialState;
+import io.activated.pipeline.JUnit5ModelTestSupport;
 import io.activated.pipeline.PipelineException;
 import io.activated.pipeline.fixtures.Dummy1;
 import java.util.stream.Stream;

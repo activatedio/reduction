@@ -4,11 +4,7 @@ import io.activated.pipeline.Context;
 import io.activated.pipeline.StateGuard;
 import io.activated.pipeline.env.PrincipalSupplier;
 
-/**
- * Requires a logged in user to continue
- *
- * @param <S>
- */
+/** Requires a logged in user to continue */
 public class SecurityStateGuard implements StateGuard<Object> {
 
   private final PrincipalSupplier principalSupplier;

@@ -22,7 +22,9 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import javax.inject.Singleton;
 
-/** @author Marcel Overdijk */
+/**
+ * @author Marcel Overdijk
+ */
 @Factory
 @SuppressWarnings("Duplicates")
 public class GraphQLFactory {
