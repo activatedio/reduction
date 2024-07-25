@@ -2,9 +2,8 @@ package io.activated.pipeline.micronaut.fixtures;
 
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.annotations.Initial;
-import org.reactivestreams.Publisher;
-
 import javax.inject.Singleton;
+import org.reactivestreams.Publisher;
 
 @Initial
 @Singleton

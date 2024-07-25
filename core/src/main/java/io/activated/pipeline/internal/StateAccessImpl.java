@@ -96,11 +96,11 @@ public class StateAccessImpl implements StateAccess {
                         stateRepository.get(keyExists.key.getValue(), stateName, stateType))
                     .map(Optional::get);
               } else {
-                  return Mono.from(initial(stateType)).doOnSuccess(v -> stateRepository.set(keyExists.key.getValue(), stateName, v))
+                return Mono.from(initial(stateType))
+                    .doOnSuccess(v -> stateRepository.set(keyExists.key.getValue(), stateName, v))
                     .doOnSuccess(
                         v -> {
-                          changeLogger.initial(
-                              keyExists.key, stateName, snapshotter.snapshot(v));
+                          changeLogger.initial(keyExists.key, stateName, snapshotter.snapshot(v));
                         });
               }
             });
