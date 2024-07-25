@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.reactivestreams.Publisher;
 
 public class InitialStateKeyTest  {
 
@@ -43,7 +44,7 @@ public class InitialStateKeyTest  {
 
   public static class DummyInitialState1 implements InitialState<Dummy1> {
     @Override
-    public Dummy1 initial() {
+    public Publisher<Dummy1> initial() {
       return null;
     }
 
@@ -56,7 +57,7 @@ public class InitialStateKeyTest  {
   public static class DummyInitialState2
       implements InitialState<Dummy1>, Comparable<DummyInitialState2> {
     @Override
-    public Dummy1 initial() {
+    public Publisher<Dummy1> initial() {
       return null;
     }
 

@@ -2,13 +2,15 @@ package io.activated.pipeline.micronaut.fixtures;
 
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.annotations.Initial;
+import org.reactivestreams.Publisher;
+
 import javax.inject.Singleton;
 
 @Initial
 @Singleton
 public class DummyInitialState implements InitialState<DummyState> {
   @Override
-  public DummyState initial() {
+  public Publisher<DummyState> initial() {
     return null;
   }
 

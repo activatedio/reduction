@@ -81,7 +81,7 @@ public class StateAccessImplTest {
     when(keyStrategy.apply(context)).thenReturn(Mono.just(key));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
-    when(initialState.initial()).thenReturn(state);
+    when(initialState.initial()).thenReturn(Mono.just(state));
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(snapshot);
 
@@ -129,7 +129,7 @@ public class StateAccessImplTest {
     when(stateRepository.exists(key.getMoveFrom(), stateName)).thenReturn(Mono.just(false));
     when(stateRepository.exists(key.getValue(), stateName)).thenReturn(Mono.just(false));
     when(registry.getInitial(InitialStateKey.create(stateType))).thenReturn(initialState);
-    when(initialState.initial()).thenReturn(state);
+    when(initialState.initial()).thenReturn(Mono.just(state));
     when(stateRepository.set(key.getValue(), stateName, state)).thenReturn(Mono.empty());
     when(snapshotter.snapshot(state)).thenReturn(snapshot);
 

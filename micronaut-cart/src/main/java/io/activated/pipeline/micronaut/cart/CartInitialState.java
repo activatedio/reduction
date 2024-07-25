@@ -2,6 +2,9 @@ package io.activated.pipeline.micronaut.cart;
 
 import io.activated.pipeline.InitialState;
 import io.activated.pipeline.annotations.Initial;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
+
 import javax.inject.Singleton;
 
 @Initial
@@ -9,15 +12,18 @@ import javax.inject.Singleton;
 public class CartInitialState implements InitialState<Cart> {
 
   @Override
-  public Cart initial() {
+  public Publisher<Cart> initial() {
 
-    var c = new Cart();
-    var a = new Address();
-    a.setCity("Test City");
+    return Mono.fromCallable(() -> {
+      var c = new Cart();
+      var a = new Address();
+      a.setCity("Test City");
 
-    c.setShippingAddress(a);
+      c.setShippingAddress(a);
 
-    return c;
+      return c;
+    });
+
   }
 
   @Override
