@@ -28,45 +28,54 @@ subprojects {
     }
   } 
 
-  publishing {
-
-    publications {
-       mavenJava(MavenPublication) {
-
-          if (project.name != "micronaut-e2e") {
-
-              groupId "io.activated.pipeline"
-              artifactId "pipeline-${project.name}"
-
-              from components.java
-          }
-
-       }
-    }
-
+  nexusPublishing {
     repositories {
-      maven {
-        def repoBase = "https://nexus.authkit.com/repository"
-        def releasesRepoUrl = "$repoBase/maven-releases"
-        def snapshotsRepoUrl = "$repoBase/maven-snapshots"
-        url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-      }
+      sonatype()
     }
   }
 
-  repositories {
-      mavenCentral()
+  publishing {
+    publications {
+      mavenJava(MavenPublication) {
+        if (project.name != "micronaut-e2e") {
+
+            pom {
+              groupId "io.activated.pipeline"
+              artifactId "pipeline-${project.name}"
+              name = "Pipeline ${project.name}"
+              description = "Pipeline ${project.name}"
+              url = 'https://activated.io/projects/reduction'
+              licenses {
+                license {
+                  name = 'The Apache License, Version 2.0'
+                  url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+              }
+
+              developers {
+                developer {
+                  id = 'btomasini'
+                  name = 'Ben Tomasini'
+                  email = 'btomasini@activated.io'
+                }
+              }
+              scm {
+                connection = 'scm:git:git://github.com/activatedio/reduction.git'
+                developerConnection = 'scm:git:git://github.com/activatedio/reduction.git'
+                url = 'https://github.com/activatedio/reduction'
+              }
+            }
+
+            from components.java
+        }
+      }
+    }
   }
 
   java {
       sourceCompatibility = JavaVersion.toVersion("11")
       targetCompatibility = JavaVersion.toVersion("11")
   }
-
-/*
-  sourceCompatibility = 11
-  targetCompatibility = 11
-  */
 
   dependencies {
       implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
@@ -82,10 +91,10 @@ subprojects {
 
   release {
       afterReleaseBuild.dependsOn publish
-      git {
-          requireBranch = ''
-          pushToRemote = false
-      }
+  }
+
+  signing {
+      sign publishing.publications.mavenJava
   }
 
 }
