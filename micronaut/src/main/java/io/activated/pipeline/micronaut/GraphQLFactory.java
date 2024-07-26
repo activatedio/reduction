@@ -18,10 +18,6 @@ import io.micronaut.context.annotation.Factory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ValidatorFactory;
-import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.client.api.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,17 +90,7 @@ public class GraphQLFactory {
                 registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger)));
   }
 
-  @Singleton
-  @Inject
-  public ChangeLogger changeLogger(ChangeLoggerRuntimeConfiguration configuration)
-      throws PulsarClientException {
-
-    if ("pulsar".equals(configuration.getType())) {
-      var client = PulsarClient.builder().serviceUrl(configuration.getPulsarServiceUrl()).build();
-      Producer<String> producer =
-          client.newProducer(Schema.STRING).topic("authkit-saas-pipeline").create();
-      return new PulsarChangeLogger(producer);
-    }
+  public ChangeLogger changeLogger() {
 
     return new Slf4JChangeLogger();
   }

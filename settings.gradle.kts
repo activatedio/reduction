@@ -7,4 +7,4 @@ pluginManagement {
 
 rootProject.name = "reduction"
 
-include("core")
+include("core", "micronaut", "test", "micronaut-cart", "micronaut-e2e")

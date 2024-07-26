@@ -1,22 +1,40 @@
 plugins {
     `library-publishing-conventions`
+    id("io.micronaut.application") version "1.5.3"
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("io.activated.pipeline.micronaut.cart.*")
+    }
 }
 
 dependencies {
-    api("io.lettuce:lettuce-core:6.1.0.RELEASE") {
-        exclude(group = "io.netty")
-    }
-    api("com.fasterxml.jackson.core:jackson-databind:2.12.2")
-    api("com.flipkart.zjsonpatch:zjsonpatch:0.4.11")
-    api("org.reactivestreams:reactive-streams:1.0.3")
-    api("io.activated.objectdiff:objectdiff:0.0.11")
-    api("javax.validation:validation-api:2.0.1.Final")
-    testImplementation("org.hibernate.validator:hibernate-validator:6.0.23.Final")
-    testImplementation("org.glassfish:javax.el:3.0.0")
-    testImplementation("io.projectreactor:reactor-core:3.4.10")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testImplementation("io.netty:netty-common:4.1.60.Final")
-    testImplementation("io.netty:netty-handler:4.1.60.Final")
+    implementation(project(":micronaut"))
+    implementation("io.micronaut.graphql:micronaut-graphql:2.3.1")
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("javax.annotation:javax.annotation-api")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut:micronaut-http-server:" + findProperty("micronautVersion"))
 }
 
+application {
+    mainClass.set("io.activated.pipeline.micronaut.cart.Application")
+}
+
+task("exportSchema", JavaExec::class) {
+  group = "Execution"
+  description = "Run the schema exporter"
+  classpath = sourceSets.getByName("main").runtimeClasspath
+  main = "io.activated.pipeline.micronaut.cart.SchemaExporter"
+  args(listOf(rootDir.path + "/micronaut-e2e/src/main/resources/schema/cart.schema"))
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 

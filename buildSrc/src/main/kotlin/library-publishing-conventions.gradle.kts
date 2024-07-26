@@ -21,15 +21,6 @@ java {
     withSourcesJar()
 }
 
-/*
-spotless {
-  java {
-    target = "src/**/*.java"
-    googleJavaFormat()
-  }
-} 
-*/
-
 dependencies {
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("com.google.guava:guava:30.0-jre")
@@ -41,6 +32,16 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
+
+
+/*
+spotless {
+  java {
+    target = "src/**/*.java"
+    googleJavaFormat()
+  }
+} 
+*/
 
 /*
 release {
