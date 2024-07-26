@@ -1,0 +1,25 @@
+plugins {
+  id("com.netflix.dgs.codegen") version "5.0.5"
+}
+
+dependencies {
+  implementation(project(":micronaut-cart"))
+  testImplementation(project(":test"))
+  testImplementation(project(":core"))
+  testImplementation("io.micronaut:micronaut-http-server:${micronautVersion}")
+  testImplementation("io.micronaut:micronaut-runtime:${micronautVersion}")
+  runtimeOnly("ch.qos.logback:logback-classic")
+}
+
+generateJava{
+  schemaPaths = ["${projectDir}/src/main/resources/schema"]
+  packageName = 'io.activated.pipeline.micronaut.cart'
+  generateClient = true
+  typeMapping = ["BigDecimal": "java.math.BigDecimal"]
+}
+
+compileJava.dependsOn generateJava
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}

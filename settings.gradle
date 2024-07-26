@@ -1,6 +1,0 @@
-rootProject.name = 'reduction'
-include('core')
-include('micronaut')
-include('test')
-include('micronaut-cart')
-include('micronaut-e2e')

@@ -1,4 +1,5 @@
 plugins {
+    `library-publishing-conventions`
     id("io.micronaut.application") version "1.5.3"
 }
 
@@ -31,5 +32,9 @@ task exportSchema(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   main = "io.activated.pipeline.micronaut.cart.SchemaExporter"
   args rootDir.path + "/micronaut-e2e/src/main/resources/schema/cart.schema"
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
