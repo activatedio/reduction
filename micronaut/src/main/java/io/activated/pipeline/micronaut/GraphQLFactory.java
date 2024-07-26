@@ -90,8 +90,9 @@ public class GraphQLFactory {
                 registry, stateAccess, stateRepository, new SnapshotterImpl(), changeLogger)));
   }
 
+  @Singleton
+  @Inject
   public ChangeLogger changeLogger() {
-
     return new Slf4JChangeLogger();
   }
 
