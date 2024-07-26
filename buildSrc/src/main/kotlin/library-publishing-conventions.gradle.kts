@@ -41,9 +41,7 @@ spotless {
     googleJavaFormat()
   }
 } 
-*/
 
-/*
 release {
     afterReleaseBuild.dependsOn("publish")
 }
