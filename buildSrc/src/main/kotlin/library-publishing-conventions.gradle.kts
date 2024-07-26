@@ -51,7 +51,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifactId = "pipeline-" + project.name
+            artifactId = "reduction-" + project.name
             pom {
                 name.set("Activated Reduction")
                 description.set("Activated Reduction Library")

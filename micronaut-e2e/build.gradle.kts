@@ -2,6 +2,18 @@ plugins {
   id("com.netflix.dgs.codegen") version "5.0.5"
 }
 
+group = "io.activated.reduction"
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
+}
+
 dependencies {
   implementation(project(":micronaut-cart"))
   implementation("org.slf4j:slf4j-api:1.7.30")
@@ -36,8 +48,3 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-group = "io.activated.reduction"
-
-repositories {
-    mavenCentral()
-}
